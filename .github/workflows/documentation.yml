@@ -37,6 +37,7 @@ jobs:
           <html lang="en">
           <head>
             <title>$title</title>
+            <link rel="icon" href="favicon.svg">
             <meta charset="utf-8"/>
             <meta name="viewport" content="width=device-width, initial-scale=1">
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.5.0/github-markdown.min.css">
@@ -53,10 +54,8 @@ jobs:
           done
       - name: Rename README.html to index.html
         run: mv _site/README.html _site/index.html
-      - name: Generate Favicon from "kinegram-emrtd-connector/logo-icon.svg"
-        run: >
-          convert -background transparent -define 'icon:auto-resize=16,24,32,64,128'
-          kinegram-emrtd-connector/logo-icon.svg _site/favicon.ico
+      - name: Copy Favicon to directory "_site"
+        run: cp kinegram-emrtd-connector/logo-icon.svg _site/favicon.svg
       - name: Upload artifact for Github pages
         uses: actions/upload-pages-artifact@v3
   deploy:
