@@ -1,7 +1,7 @@
 # Kinegram eMRTD Connector SDK Android
 
-Enable the Document Validation Server (DocVal Server) to read and verify an eMRTD through a
-WebSocket connection.
+Enable the [Document Validation Server][docval] to read and verify an eMRTD (electronic Machine
+Readable Travel Document) through a WebSocket connection.
 
 ## Example App
 
@@ -59,6 +59,8 @@ style.
 ## Changelog
 
 [Changelog](CHANGELOG.md)
+
+[docval]: https://kta.pages.kurzdigital.com/kta-kinegram-document-validation-service/
 
 [android]: https://developer.android.com/studio
 
