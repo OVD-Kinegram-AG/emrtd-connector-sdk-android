@@ -1,7 +1,37 @@
 # Kinegram eMRTD Connector SDK Android
 
-Enable the [Document Validation Server][docval] to read and verify an eMRTD (electronic Machine
-Readable Travel Document) through a WebSocket connection.
+The Kinegram eMRTD Connector enables your Android app to read and verify electronic passports / id
+cards ([eMRTDs][emrtd]).
+
+```
+    ┌───────────────┐     Results     ┌─────────────────┐
+    │ DocVal Server │────────────────▶│   Your Server   │
+    └───────────────┘                 └─────────────────┘
+            ▲
+            │ WebSocket
+            ▼
+┏━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃                        ┃
+┃    eMRTD Connector     ┃
+┃                        ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━┛
+            ▲
+            │ NFC
+            ▼
+    ┌──────────────┐
+    │              │
+    │   PASSPORT   │
+    │              │
+    │   ID CARD    │
+    │              │
+    │              │
+    │   (eMRTD)    │
+    │              │
+    └──────────────┘
+```
+
+The *Kinegram eMRTD Connector* enables the [Document Validation Server (DocVal)][docval] to 
+communicate with the eMRTD through a secure WebSocket connection.
 
 ## Example App
 
@@ -60,16 +90,11 @@ style.
 
 [Changelog](CHANGELOG.md)
 
+[emrtd]: https://kta.pages.kurzdigital.com/kta-kinegram-document-validation-service/Security%20Mechanisms
 [docval]: https://kta.pages.kurzdigital.com/kta-kinegram-document-validation-service/
-
 [android]: https://developer.android.com/studio
-
 [debugging]: https://developer.android.com/tools/help/adb.html#Enabling
-
 [emrtd-connector-releases]: https://github.com/OVD-Kinegram-AG/emrtd-connector-sdk-android/releases
-
 [add-dependencies]: https://developer.android.com/build/dependencies
-
 [documentation-dokka]: https://ovd-kinegram-ag.github.io/emrtd-connector-sdk-android/dokka
-
 [documentation-javadoc]: https://ovd-kinegram-ag.github.io/emrtd-connector-sdk-android/javadoc

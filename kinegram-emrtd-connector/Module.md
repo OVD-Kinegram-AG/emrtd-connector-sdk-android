@@ -26,7 +26,7 @@ Activity to receive the [ACTION_TECH_DISCOVERED][action_tech_discovered] intent.
 2️⃣ Enable the DocVal Server to access the eMRTD via an
 [EmrtdConnector](com.kinegram.android.emrtdconnector.EmrtdConnector) instance as shown below.
 
-💡 [Library Package was changed to "com.kinegram.android.emrtdconnector"](#package-comkinegramandroidemrtdconnector)
+💡[Library Package was changed to "com.kinegram.android.emrtdconnector"](#package-comkinegramandroidemrtdconnector)
 
 ```kotlin
 // Client ID Functions as an API Access key.
