@@ -90,6 +90,10 @@ style.
 
 [Changelog](CHANGELOG.md)
 
+## Privacy Notice
+
+ℹ️ [Privacy Notice](eMRTD%20Connector%20App%20DocVal%20Server_Privacy%20Notice.pdf)
+
 [emrtd]: https://kta.pages.kurzdigital.com/kta-kinegram-document-validation-service/Security%20Mechanisms
 [docval]: https://kta.pages.kurzdigital.com/kta-kinegram-document-validation-service/
 [android]: https://developer.android.com/studio

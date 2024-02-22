@@ -22,11 +22,12 @@ jobs:
         run: chmod +x gradlew
       - name: Build Dokka documentation (HTML + JavaDoc)
         run: ./gradlew :kinegram-emrtd-connector:dokkaHtml :kinegram-emrtd-connector:dokkaJavaDoc
-      - name: Copy Dokka documentation to "_site"
+      - name: Copy Dokka documentation and pdfs to "_site"
         run: |
           mkdir -p _site
           cp -r kinegram-emrtd-connector/build/dokka/html _site/dokka
           cp -r kinegram-emrtd-connector/build/dokka/javadoc _site/javadoc
+          cp *.pdf _site/.
       - name: Render Markdown files to directory "_site"
         run: |
           for file in *.md; do
