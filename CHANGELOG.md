@@ -1,5 +1,9 @@
 # Kinegram eMRTD Connector SDK Android - Changelog
 
+## 1.0.1
+* Publish to Maven Central. Remove the old `.arr` file from your app's `libs`
+  folder and update the Gradle dependency as described in the README.
+
 ## 1.0.0
 * Improve documentation and example app
 * Change library package ~~com.kurzdigital.android.emrtdconnector~~ to `com.kinegram.android.emrtdconnector`!

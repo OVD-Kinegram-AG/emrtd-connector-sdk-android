@@ -30,7 +30,7 @@ cards ([eMRTDs][emrtd]).
     └──────────────┘
 ```
 
-The *Kinegram eMRTD Connector* enables the [Document Validation Server (DocVal)][docval] to 
+The *Kinegram eMRTD Connector* enables the [Document Validation Server (DocVal)][docval] to
 communicate with the eMRTD through a secure WebSocket connection.
 
 ## Example App
@@ -47,10 +47,10 @@ Open the project with [Android Studio][android] and click run.
 
 [Add the dependencies][add-dependencies] to your app's gradle build configuration.
 
-1. Copy the latest `kinegram-emrtd-connector-<version>.aar` from [Releases][emrtd-connector-releases]
-   to your app's `libs` directory (`app/libs`).
-2. Configure your app-level build.gradle (`app/build.gradle`) file to include local dependencies and
-   the [Java-WebSocket](https://github.com/TooTallNate/Java-WebSocket) dependency.
+1. Configure your app-level build.gradle (`app/build.gradle`) file to include the `emrtdconnector`
+   dependency and the [Java-WebSocket](https://github.com/TooTallNate/Java-WebSocket) dependency.
+2. Replace `<version>` with the version you want to use. You can find the latest version in the
+   [releases][emrtd-connector-releases].
 
 <details open>
 <summary>Kotlin (app/build.gradle.kts)</summary>
@@ -58,7 +58,7 @@ Open the project with [Android Studio][android] and click run.
 ```kotlin
 dependencies {
 	...
-	implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar", "*.aar"))))
+	implementation("com.kinegram.android:emrtdconnector:<version>")
 	implementation("org.java-websocket:Java-WebSocket:1.5.5")
 }
 ```
@@ -72,7 +72,7 @@ dependencies {
 ```groovy
 dependencies {
 	...
-	implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+	implementation 'com.kinegram.android:emrtdconnector:<version>'
 	implementation 'org.java-websocket:Java-WebSocket:1.5.5'
 }
 ```
