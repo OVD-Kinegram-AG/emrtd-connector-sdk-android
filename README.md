@@ -48,7 +48,7 @@ Open the project with [Android Studio][android] and click run.
 [Add the dependencies][add-dependencies] to your app's gradle build configuration.
 
 1. Configure your app-level build.gradle (`app/build.gradle`) file to include the `emrtdconnector`
-   dependency and the [Java-WebSocket](https://github.com/TooTallNate/Java-WebSocket) dependency.
+   dependency.
 2. Replace `<version>` with the version you want to use. You can find the latest version in the
    [releases][emrtd-connector-releases].
 
@@ -59,7 +59,6 @@ Open the project with [Android Studio][android] and click run.
 dependencies {
 	...
 	implementation("com.kinegram.android:emrtdconnector:<version>")
-	implementation("org.java-websocket:Java-WebSocket:1.5.5")
 }
 ```
 
@@ -73,7 +72,6 @@ dependencies {
 dependencies {
 	...
 	implementation 'com.kinegram.android:emrtdconnector:<version>'
-	implementation 'org.java-websocket:Java-WebSocket:1.5.5'
 }
 ```
 
