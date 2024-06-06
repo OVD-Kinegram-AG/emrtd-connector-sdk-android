@@ -37,6 +37,11 @@ communicate with the eMRTD through a secure WebSocket connection.
 
 This project contains an Example App to demonstrate usage and functionality.
 
+### Requirements
+
+* [Android Studio][android]
+* Device running Android 5 (API level 21) or later with NFC capabilities
+
 ### Running
 
 [Enable adb debugging][debugging] on your device and connect it with USB.
@@ -81,8 +86,8 @@ dependencies {
 
 Open the [Dokka Documentation][documentation-dokka] in your preferred browser.
 
-There is also a [JavaDoc Documentation][documentation-javadoc] available if you prefer the old JavaDoc
-style.
+There is also a [JavaDoc Documentation][documentation-javadoc] available if you prefer the old
+JavaDoc style.
 
 ## Changelog
 
