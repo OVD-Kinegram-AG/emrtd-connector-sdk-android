@@ -9,6 +9,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      GH_API_TOKEN: ${{ secrets.GH_API_TOKEN }}
     steps:
       - name: Check-out repo
         uses: actions/checkout@v4
@@ -22,7 +24,7 @@ jobs:
         run: chmod +x gradlew
       - name: Build Dokka documentation (HTML + JavaDoc)
         run: ./gradlew :kinegram-emrtd-connector:dokkaHtml :kinegram-emrtd-connector:dokkaJavaDoc
-      - name: Copy Dokka documentation and pdfs to "_site"
+      - name: Copy Dokka documentation to "_site"
         run: |
           mkdir -p _site
           cp -r kinegram-emrtd-connector/build/dokka/html _site/dokka
@@ -31,7 +33,16 @@ jobs:
         run: |
           for file in *.md; do
             title=$(head -n 1 "$file" | sed 's/^# //')
-            rendered_html=$(curl -s -X POST "https://api.github.com/markdown/raw" -H "Content-Type: text/plain" --data-binary @"$file")
+            response=$(curl -s -o response.html -w "%{http_code}" -X POST "https://api.github.com/markdown/raw" \
+              -H "Content-Type: text/plain" --data-binary @"$file" \
+              -H "Authorization: Bearer $GH_API_TOKEN")
+          
+            if [[ "$response" -lt 200 || "$response" -ge 300 ]]; then
+              echo "Error: Received HTTP status code $response for file $file"
+              exit 1
+            fi
+            rendered_html=$(<response.html)
+          
             cat <<EOF >"_site/$(basename "$file" .md).html"
           <!DOCTYPE html>
           <html lang="en">
