@@ -95,7 +95,7 @@ JavaDoc style.
 
 ## Privacy Notice
 
-ℹ️ [Privacy Notice](eMRTD%20Connector%20App%20DocVal%20Server_Privacy%20Notice.pdf)
+ℹ️ [Privacy Notice][privacy-notice]
 
 [emrtd]: https://kta.pages.kurzdigital.com/kta-kinegram-document-validation-service/Security%20Mechanisms
 [docval]: https://kta.pages.kurzdigital.com/kta-kinegram-document-validation-service/
@@ -105,3 +105,4 @@ JavaDoc style.
 [add-dependencies]: https://developer.android.com/build/dependencies
 [documentation-dokka]: https://ovd-kinegram-ag.github.io/emrtd-connector-sdk-android/dokka
 [documentation-javadoc]: https://ovd-kinegram-ag.github.io/emrtd-connector-sdk-android/javadoc
+[privacy-notice]: https://kinegram.digital/privacy-notice/
