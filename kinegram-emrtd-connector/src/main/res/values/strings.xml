@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- NFC Session Bottom Sheet -->
+    <string name="title_read_document_chip">Read Document Chip</string>
+    <string name="status_place_phone_on_document">Place the center of your phone on the document. Try the positions shown above.</string>
+    <string name="status_connecting_to_server">Hold still</string>
+    <string name="status_chip_reading">Reading data from Chip</string>
+    <string name="status_chip_verifying">Verifying</string>
+    <string name="status_done">Done</string>
+    <string name="cancel">Cancel</string>
+
+    <!-- EmrtdConnectorActivity -->
+    <string name="ready_to_scan">Ready to Scan</string>
+    <string name="status_text">Place the center of your phone on the document.</string>
+    <string name="nfc_unavailable">NFC unavailable</string>
+    <string name="unexpected_intent_action">Unexpected Intent Action: %s</string>
+    <string name="unexpected_tag">Unexpected Tag: %s</string>
+    <string name="already_connected">Already connected to an NFC chip</string>
+    <string name="button_cancel">Cancel</string>
+</resources>

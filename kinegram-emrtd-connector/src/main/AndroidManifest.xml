@@ -4,6 +4,18 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.NFC" />
 
-    <uses-feature android:name="android.hardware.nfc" />
+    <uses-feature android:name="android.hardware.nfc" android:required="true" />
 
+    <application>
+        <activity
+            android:name="com.kinegram.android.emrtdconnector.EmrtdConnectorActivity"
+            android:exported="true"
+            android:label="@string/ready_to_scan"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.AppCompat.Translucent">
+            <intent-filter>
+                <action android:name="android.nfc.action.TECH_DISCOVERED" />
+            </intent-filter>
+        </activity>
+    </application>
 </manifest>

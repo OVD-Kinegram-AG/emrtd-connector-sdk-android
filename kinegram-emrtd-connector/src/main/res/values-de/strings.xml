@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_read_document_chip">Dokumentenchip auslesen</string>
+    <string name="status_place_phone_on_document">Platzieren Sie die Mitte Ihres Telefons auf dem Dokument.</string>
+    <string name="status_connecting_to_server">Halten Sie Telefon und Dokument still</string>
+    <string name="status_chip_reading">Lese Daten aus dem Chip</string>
+    <string name="status_chip_verifying">Verifiziere</string>
+    <string name="status_done">Fertig</string>
+    <string name="cancel">Abbrechen</string>
+
+    <!-- EmrtdConnectorActivity -->
+    <string name="ready_to_scan">Bereit zum Scannen</string>
+    <string name="status_text">Platzieren Sie die Mitte Ihres Smartphones auf dem Dokument.</string>
+    <string name="nfc_unavailable">NFC nicht verfügbar</string>
+    <string name="unexpected_intent_action">Unerwartete Intent-Aktion: %s</string>
+    <string name="unexpected_tag">Unerwarteter Tag: %s</string>
+    <string name="already_connected">Bereits mit NFC chip verbunden</string>
+    <string name="button_cancel">Abbrechen</string>
+</resources>
