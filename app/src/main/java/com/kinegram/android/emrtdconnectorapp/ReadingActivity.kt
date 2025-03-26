@@ -112,13 +112,13 @@ class ReadingActivity : AppCompatActivity() {
 		cancelButton.isEnabled = true
 		cancelButton.visibility = View.VISIBLE
 
-		if (can.isNotEmpty()) {
-			emrtdConnector.connect(isoDep, validationId, can)
+		val chipAccessKey = if (can.isNotEmpty()) {
+			ChipAccessKey.FromCan(can)
 		} else {
-			emrtdConnector.connect(
-				isoDep, validationId, documentNumber, dateOfBirth, dateOfExpiry
-			)
+			ChipAccessKey.FromMrz(documentNumber, dateOfBirth, dateOfExpiry)
 		}
+
+		emrtdConnector.connect(isoDep, validationId, chipAccessKey)
 	}
 
 	@SuppressLint("SetTextI18n")

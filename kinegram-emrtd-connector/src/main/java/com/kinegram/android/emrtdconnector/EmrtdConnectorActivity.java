@@ -130,13 +130,16 @@ public class EmrtdConnectorActivity extends AppCompatActivity implements ClosedL
 		IsoDep isoDep = IsoDep.get(tag);
 		_nfcChipConnected = true;
 
+		ChipAccessKey chipAccessKey;
 		if (_can != null && !_can.isEmpty()) {
-			_progressIndicator.setVisibility(View.VISIBLE);
-			_emrtdConnector.connect(isoDep, _validationId, _can);
+			chipAccessKey = new ChipAccessKey.FromCan(_can);
 		} else {
-			_progressIndicator.setVisibility(View.VISIBLE);
-			_emrtdConnector.connect(isoDep, _validationId, _documentNumber, _dateOfBirth, _dateOfExpiry);
+			chipAccessKey = new ChipAccessKey.FromMrz(
+					_documentNumber, _dateOfBirth, _dateOfExpiry);
 		}
+
+		_progressIndicator.setVisibility(View.VISIBLE);
+		_emrtdConnector.connect(isoDep, _validationId, chipAccessKey);
 	}
 
 	// ClosedListener

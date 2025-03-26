@@ -108,36 +108,46 @@ public class EmrtdConnector {
 	 * @param isoDep       {@link IsoDep} of an ICAO-9303 NFC Tag
 	 * @param validationId Unique String to identify this session.
 	 * @param can          CAN, a 6 digit number, printed on the front of the document.
+	 * @deprecated Use {@link #connect(IsoDep, String, ChipAccessKey)} with
+	 * {@link ChipAccessKey.FromCan} instead.
+	 * <p>
+	 * <pre>
+	 * {@code
+	 * // Before
+	 * connect(isoDep, "validationId", "can");
+	 * // After
+	 * connect(isoDep, "validationId", new ChipAccessKey.FromCan("can"));}
+	 * </pre>
 	 */
-	public void connect(
-			IsoDep isoDep,
-			String validationId,
-			String can
-	) {
+	@Deprecated
+	public void connect(IsoDep isoDep, String validationId, String can) {
 		String msg = "`isoDep`, `validationId` or `can` is null";
 		requireNonNull(msg, isoDep, validationId, can);
 
-		JSONObject accessKey = new JSONObject();
-		try {
-			accessKey.put("can", can);
-		} catch (JSONException e) {
-			String msg2 = "Failed to create Access Key JSON";
-			throw new IllegalStateException(msg2, e);
-		}
-		connect(isoDep, validationId, accessKey);
+		connect(isoDep, validationId, new ChipAccessKey.FromCan(can));
 	}
 
 	/**
 	 * Starts the Session.
 	 * <p>
-	 * The `documentNumber`, `dateOfBirth`, `dateOfExpiry` function as the AccessKey,
-	 * required to access the chip.
+	 * The `documentNumber`, `dateOfBirth`, `dateOfExpiry` function as the
+	 * AccessKey required to access the chip.
 	 *
 	 * @param isoDep         {@link IsoDep} of an ICAO-9303 NFC Tag
 	 * @param validationId   Unique String to identify this session.
 	 * @param documentNumber Document Number from the MRZ.
 	 * @param dateOfBirth    Date of Birth from the MRZ (Format: yyMMDD)
 	 * @param dateOfExpiry   Date of Expiry from the MRZ (Format: yyMMDD)
+	 * @deprecated Use {@link #connect(IsoDep, String, ChipAccessKey)} with
+	 * {@link ChipAccessKey.FromMrz} instead.
+	 * <p>
+	 * <pre>
+	 * {@code
+	 * // Before
+	 * connect(isoDep, "validationId", "documentNumber", "dateOfBirth", "dateOfExpiry");
+	 * // After
+	 * connect(isoDep, "validationId", new ChipAccessKey.FromMrz("documentNumber", "dateOfBirth", "dateOfExpiry"));}
+	 * </pre>
 	 */
 	public void connect(
 			IsoDep isoDep,
@@ -151,45 +161,26 @@ public class EmrtdConnector {
 		requireNonNull(msg, isoDep, validationId, documentNumber,
 				dateOfBirth, dateOfExpiry);
 
-		JSONObject accessKey = new JSONObject();
-		try {
-			accessKey.put("document_number", documentNumber);
-			accessKey.put("date_of_birth", dateOfBirth);
-			accessKey.put("date_of_expiry", dateOfExpiry);
-		} catch (JSONException e) {
-			String msg2 = "Failed to create Access Key JSON";
-			throw new IllegalStateException(msg2, e);
-		}
-		nfcException = null;
-		webSocketClientException = null;
-		connect(isoDep, validationId, accessKey);
+		connect(isoDep, validationId, new ChipAccessKey.FromMrz(documentNumber, dateOfBirth, dateOfExpiry));
 	}
 
 	/**
-	 * Cancels this session as soon as possible.
-	 * <p>
-	 * The ClosedListener will be called once the WebSocket Session is closed.
-	 * The Close Reason will be "CANCELLED_BY_USER".
+	 * Starts the session.
+	 *
+	 * @param isoDep        {@link IsoDep} of an ICAO-9303 NFC Tag.
+	 * @param validationId  Unique string to identify this session.
+	 * @param chipAccessKey Access key for the chip access procedure to
+	 *                      authenticate to the chip of the eMRTD.
 	 */
-	public void cancel() {
-		if (webSocketClient != null && webSocketClient.isOpen()) {
-			webSocketClient.close(
-					1001, ClosedListener.CANCELLED_BY_USER);
-		}
-	}
-
-	/**
-	 * @return true if session is open
-	 */
-	public boolean isOpen() {
-		return webSocketClient != null && webSocketClient.isOpen();
-	}
-
-	private void connect(
+	public void connect(
 			IsoDep isoDep,
 			String validationId,
-			JSONObject accessKey
+			ChipAccessKey chipAccessKey
 	) {
+		String msg = "`isoDep`, `validationId` or `chipAccessKey` is null";
+		requireNonNull(msg, isoDep, validationId, chipAccessKey);
+
+		JSONObject accessKey = chipAccessKey.toJson();
 		String startMessageString;
 		try {
 			JSONObject startMessage = new JSONObject();
@@ -201,8 +192,8 @@ public class EmrtdConnector {
 					isoDep.isExtendedLengthApduSupported());
 			startMessageString = startMessage.toString();
 		} catch (JSONException e) {
-			String msg = "Failed to create StartMessage JSON";
-			throw new IllegalStateException(msg, e);
+			String msg2 = "Failed to create StartMessage JSON";
+			throw new IllegalStateException(msg2, e);
 		}
 
 		cancel();
@@ -340,6 +331,26 @@ public class EmrtdConnector {
 		webSocketClient.setConnectionLostTimeout(2000);
 		webSocketClient.setTcpNoDelay(true);
 		webSocketClient.connect();
+	}
+
+	/**
+	 * Cancels this session as soon as possible.
+	 * <p>
+	 * The ClosedListener will be called once the WebSocket Session is closed.
+	 * The Close Reason will be "CANCELLED_BY_USER".
+	 */
+	public void cancel() {
+		if (webSocketClient != null && webSocketClient.isOpen()) {
+			webSocketClient.close(
+					1001, ClosedListener.CANCELLED_BY_USER);
+		}
+	}
+
+	/**
+	 * @return true if session is open
+	 */
+	public boolean isOpen() {
+		return webSocketClient != null && webSocketClient.isOpen();
 	}
 
 	private void onStatusUpdate(String status) {
