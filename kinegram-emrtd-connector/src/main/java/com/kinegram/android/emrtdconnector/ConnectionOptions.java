@@ -1,15 +1,24 @@
 package com.kinegram.android.emrtdconnector;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Options to configure the eMRTD read.
  */
 public class ConnectionOptions {
 	private final String validationId;
 	private final ChipAccessKey chipAccessKey;
+	private final Map<String, String> httpHeaders;
 
 	private ConnectionOptions(Builder builder) {
 		this.validationId = builder.validationId;
 		this.chipAccessKey = builder.chipAccessKey;
+		if (builder.httpHeaders == null) {
+			this.httpHeaders = new HashMap<>();
+		} else {
+			this.httpHeaders = builder.httpHeaders;
+		}
 	}
 
 	/**
@@ -31,11 +40,22 @@ public class ConnectionOptions {
 	}
 
 	/**
+	 * Gets additional http headers that will be used for the websocket
+	 * connection.
+	 *
+	 * @return The http headers.
+	 */
+	public Map<String, String> getHttpHeaders() {
+		return this.httpHeaders;
+	}
+
+	/**
 	 * A builder to create connection options for the {@link EmrtdConnector}.
 	 */
 	public static class Builder {
 		private String validationId;
 		private ChipAccessKey chipAccessKey;
+		private Map<String, String> httpHeaders;
 
 		public Builder() {
 		}
@@ -94,6 +114,20 @@ public class ConnectionOptions {
 		 */
 		public Builder setValidationId(String validationId) {
 			this.validationId = validationId;
+			return this;
+		}
+
+		/**
+		 * Sets additional HTTP headers that will be set for the websocket
+		 * connection.
+		 * <p>
+		 * Can for example be used to set an Authorization header.
+		 *
+		 * @param httpHeaders The http headers.
+		 * @return This instance of the builder for easier chaining.
+		 */
+		public Builder setHttpHeaders(Map<String, String> httpHeaders) {
+			this.httpHeaders = httpHeaders;
 			return this;
 		}
 

@@ -228,7 +228,8 @@ public class EmrtdConnector {
 		}
 
 		cancel();
-		webSocketClient = new WebSocketClient(webSocketUri) {
+		webSocketClient = new WebSocketClient(
+				webSocketUri, options.getHttpHeaders()) {
 			@Override
 			protected void onSetSSLParameters(SSLParameters sslParameters) {
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
