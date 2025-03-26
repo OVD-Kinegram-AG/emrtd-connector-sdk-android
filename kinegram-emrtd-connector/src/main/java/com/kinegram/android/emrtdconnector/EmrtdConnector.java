@@ -101,22 +101,25 @@ public class EmrtdConnector {
 	}
 
 	/**
-	 * Starts the Session.
+	 * Starts the session.
 	 * <p>
 	 * The `can` functions as the AccessKey and is required to access the chip.
 	 *
 	 * @param isoDep       {@link IsoDep} of an ICAO-9303 NFC Tag
 	 * @param validationId Unique String to identify this session.
 	 * @param can          CAN, a 6 digit number, printed on the front of the document.
-	 * @deprecated Use {@link #connect(IsoDep, String, ChipAccessKey)} with
-	 * {@link ChipAccessKey.FromCan} instead.
+	 * @deprecated Use {@link #connect(IsoDep, ConnectionOptions)} instead.
 	 * <p>
 	 * <pre>
 	 * {@code
 	 * // Before
 	 * connect(isoDep, "validationId", "can");
 	 * // After
-	 * connect(isoDep, "validationId", new ChipAccessKey.FromCan("can"));}
+	 * ConnectionOptions options = new ConnectionOptions.Builder()
+	 * 			.setChipAccessKeyFromCan("can")
+	 * 			.setValidationId("validationId")
+	 * 			.build();
+	 * connect(isoDep, options);}
 	 * </pre>
 	 */
 	@Deprecated
@@ -124,11 +127,16 @@ public class EmrtdConnector {
 		String msg = "`isoDep`, `validationId` or `can` is null";
 		requireNonNull(msg, isoDep, validationId, can);
 
-		connect(isoDep, validationId, new ChipAccessKey.FromCan(can));
+		ConnectionOptions options = new ConnectionOptions.Builder()
+				.setChipAccessKeyFromCan(can)
+				.setValidationId(validationId)
+				.build();
+
+		connect(isoDep, options);
 	}
 
 	/**
-	 * Starts the Session.
+	 * Starts the session.
 	 * <p>
 	 * The `documentNumber`, `dateOfBirth`, `dateOfExpiry` function as the
 	 * AccessKey required to access the chip.
@@ -138,15 +146,18 @@ public class EmrtdConnector {
 	 * @param documentNumber Document Number from the MRZ.
 	 * @param dateOfBirth    Date of Birth from the MRZ (Format: yyMMDD)
 	 * @param dateOfExpiry   Date of Expiry from the MRZ (Format: yyMMDD)
-	 * @deprecated Use {@link #connect(IsoDep, String, ChipAccessKey)} with
-	 * {@link ChipAccessKey.FromMrz} instead.
+	 * @deprecated Use {@link #connect(IsoDep, ConnectionOptions)} instead.
 	 * <p>
 	 * <pre>
 	 * {@code
 	 * // Before
 	 * connect(isoDep, "validationId", "documentNumber", "dateOfBirth", "dateOfExpiry");
 	 * // After
-	 * connect(isoDep, "validationId", new ChipAccessKey.FromMrz("documentNumber", "dateOfBirth", "dateOfExpiry"));}
+	 * ConnectionOptions options = new ConnectionOptions.Builder()
+	 * 			.setChipAccessKeyFromMrz("documentNumber", "dateOfBirth", "dateOfExpiry")
+	 * 			.setValidationId("validationId")
+	 * 			.build();
+	 * connect(isoDep, options);}
 	 * </pre>
 	 */
 	public void connect(
@@ -161,22 +172,42 @@ public class EmrtdConnector {
 		requireNonNull(msg, isoDep, validationId, documentNumber,
 				dateOfBirth, dateOfExpiry);
 
-		connect(isoDep, validationId, new ChipAccessKey.FromMrz(documentNumber, dateOfBirth, dateOfExpiry));
+		ConnectionOptions options = new ConnectionOptions.Builder()
+				.setChipAccessKeyFromMrz(documentNumber, dateOfBirth, dateOfExpiry)
+				.setValidationId(validationId)
+				.build();
+		connect(isoDep, options);
 	}
 
 	/**
 	 * Starts the session.
+	 * <p>
+	 * Example usage:
+	 * <pre>{@code
+	 * 	// Access Key values from the MRZ
+	 * 	String documentNumber = "123456789";
+	 * 	String dateOfBirth = "970101"; // yyMMDD
+	 * 	String dateOfExpiry = "221212"; // yyMMDD
 	 *
-	 * @param isoDep        {@link IsoDep} of an ICAO-9303 NFC Tag.
-	 * @param validationId  Unique string to identify this session.
-	 * @param chipAccessKey Access key for the chip access procedure to
-	 *                      authenticate to the chip of the eMRTD.
+	 * 	// Unique transaction ID, usually from your server
+	 * 	String validationId = UUID.randomUUID().toString();
+	 *
+	 * 	ConnectionOptions options = new ConnectionOptions.Builder()
+	 * 			.setChipAccessKeyFromMrz(documentNumber, dateOfBirth, dateOfExpiry)
+	 * 			.setValidationId(validationId)
+	 * 			.build();
+	 *
+	 * 	emrtdConnector.connect(isoDep, options);
+	 * }</pre>
+	 *
+	 * @param isoDep  {@link IsoDep} of an ICAO-9303 NFC Tag.
+	 * @param options Options for this read. Can be constructed with the
+	 *                {@link ConnectionOptions.Builder}.
 	 */
-	public void connect(
-			IsoDep isoDep,
-			String validationId,
-			ChipAccessKey chipAccessKey
-	) {
+	public void connect(IsoDep isoDep,ConnectionOptions options) {
+		String validationId = options.getValidationId();
+		ChipAccessKey chipAccessKey = options.getChipAccessKey();
+
 		String msg = "`isoDep`, `validationId` or `chipAccessKey` is null";
 		requireNonNull(msg, isoDep, validationId, chipAccessKey);
 

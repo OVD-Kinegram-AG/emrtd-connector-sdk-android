@@ -118,7 +118,12 @@ class ReadingActivity : AppCompatActivity() {
 			ChipAccessKey.FromMrz(documentNumber, dateOfBirth, dateOfExpiry)
 		}
 
-		emrtdConnector.connect(isoDep, validationId, chipAccessKey)
+		val options = ConnectionOptions.Builder()
+			.setValidationId(validationId)
+			.setChipAccessKey(chipAccessKey)
+			.build()
+
+		emrtdConnector.connect(isoDep, options)
 	}
 
 	@SuppressLint("SetTextI18n")

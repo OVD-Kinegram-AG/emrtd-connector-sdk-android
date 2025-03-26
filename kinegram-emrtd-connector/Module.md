@@ -51,9 +51,12 @@ fun connect() {
 	// Unique transaction ID, usually from your Server
 	val validationId = UUID.randomUUID().toString()
 
-	emrtdConnector.connect(
-		isoDep, validationId, documentNumber, dateOfBirth, dateOfExpiry
-	)
+	val options = ConnectionOptions.Builder()
+		.setValidationId(validationId)
+		.setChipAccessKeyFromMrz(documentNumber, dateOfBirth, dateOfExpiry)
+		.build()
+
+	emrtdConnector.connect(isoDep, options)
 }
 
 fun closedListener(code: Int, reason: String, remote: Boolean) {

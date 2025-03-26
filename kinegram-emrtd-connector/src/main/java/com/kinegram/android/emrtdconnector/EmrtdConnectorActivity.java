@@ -138,8 +138,13 @@ public class EmrtdConnectorActivity extends AppCompatActivity implements ClosedL
 					_documentNumber, _dateOfBirth, _dateOfExpiry);
 		}
 
+		ConnectionOptions options = new ConnectionOptions.Builder()
+				.setChipAccessKey(chipAccessKey)
+				.setValidationId(_validationId)
+				.build();
+
 		_progressIndicator.setVisibility(View.VISIBLE);
-		_emrtdConnector.connect(isoDep, _validationId, chipAccessKey);
+		_emrtdConnector.connect(isoDep, options);
 	}
 
 	// ClosedListener
