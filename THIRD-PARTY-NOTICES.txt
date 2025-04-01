@@ -622,7 +622,7 @@ POM License: The Apache Software License, Version 2.0 - http://www.apache.org/li
 
 --------------------------------------------------------------------------------
 
-56. Group: org.jetbrains.kotlin  Name: kotlin-stdlib  Version: 1.8.22
+56. Group: org.jetbrains.kotlin  Name: kotlin-stdlib  Version: 1.9.22
 
 POM Project URL: https://kotlinlang.org/
 
@@ -630,7 +630,7 @@ POM License: The Apache License, Version 2.0 - http://www.apache.org/licenses/LI
 
 --------------------------------------------------------------------------------
 
-57. Group: org.jetbrains.kotlin  Name: kotlin-stdlib-common  Version: 1.8.22
+57. Group: org.jetbrains.kotlin  Name: kotlin-stdlib-common  Version: 1.9.22
 
 POM Project URL: https://kotlinlang.org/
 
@@ -697,5 +697,5 @@ POM License: MIT License - http://www.opensource.org/licenses/mit-license.php
 --------------------------------------------------------------------------------
 
 
-This report was generated at Tue Apr 01 16:02:48 GMT 2025.
+This report was generated at Tue Apr 01 16:05:33 GMT 2025.
 

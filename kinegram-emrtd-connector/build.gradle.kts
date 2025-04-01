@@ -6,7 +6,7 @@ import com.github.jk1.license.render.*
 
 plugins {
 	id("com.android.library")
-	//id("kotlin-android") // Needed for Dokka to document anything
+	id("kotlin-android") // Needed for Dokka to document anything
 	id("org.jetbrains.dokka") version "1.9.10"
 	id("maven-publish")
 	id("signing")
