@@ -2,6 +2,7 @@ import org.jetbrains.dokka.base.DokkaBase
 import org.jetbrains.dokka.base.DokkaBaseConfiguration
 import org.jetbrains.dokka.gradle.DokkaTask
 import java.net.URL
+import com.github.jk1.license.render.*
 
 plugins {
 	id("com.android.library")
@@ -9,6 +10,7 @@ plugins {
 	id("org.jetbrains.dokka") version "1.9.10"
 	id("maven-publish")
 	id("signing")
+	id("com.github.jk1.dependency-license-report") version "2.9"
 }
 
 android {
@@ -140,4 +142,9 @@ tasks.register<Zip>("generateDistributionZip") {
 	into("")
 	exclude("**/maven-metadata*.*") // Sonatype does not want these files in ZIP file
 	archiveFileName.set("kinegram-emrtd-connector.zip")
+}
+
+licenseReport {
+	configurations = arrayOf("releaseRuntimeClasspath")
+	renderers = arrayOf(TextReportRenderer())
 }

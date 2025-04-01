@@ -103,11 +103,6 @@ Now:
 import com.kinegram.android.emrtdconnector.*
 ```
 
-
-## Open Source Licenses
-
-* [Java-WebSocket (org.java-websocket)](https://github.com/TooTallNate/Java-WebSocket) MIT
-
 [icao9303]: https://www.icao.int/publications/pages/publication.aspx?docnum=9303
 
 [iso_dep]: https://developer.android.com/reference/android/nfc/tech/IsoDep
