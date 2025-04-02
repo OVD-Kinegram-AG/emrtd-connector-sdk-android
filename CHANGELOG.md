@@ -1,7 +1,7 @@
 # Kinegram eMRTD Connector SDK Android - Changelog
 
 ## 1.1.0
-* Add mew overload for `EmrtdConnector#connect(...)` method that accepts a `ConnectionOptions` parameter
+* Add new overload for `EmrtdConnector#connect(...)` method that accepts a `ConnectionOptions` parameter
 * Deprecate old `EmrtdConnector#connect(...)` method overloads that do not use `ConnectionOptions`
 * Add option to send custom HTTP headers in handshake using `ConnectionOptions.Builder#setHttpHeaders(...)`
 
