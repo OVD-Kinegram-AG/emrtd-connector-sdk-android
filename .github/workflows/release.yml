@@ -56,6 +56,7 @@ jobs:
             echo -e "### Changes\n$CHANGES" > "CHANGELOG-$GITHUB_REF_NAME.md"
           else
             echo "No changes found for version $GITHUB_REF_NAME."
+            echo "No changelog" > "CHANGELOG-$GITHUB_REF_NAME.md"
           fi
       - name: Github Release
         uses: softprops/action-gh-release@v1
