@@ -26,7 +26,7 @@ import java.util.Arrays;
 
 public class EmrtdConnectorActivity extends AppCompatActivity implements ClosedListener, StatusListener, EmrtdPassportListener {
 	private final static String CLIENT_ID = "example_client";
-	private final static String URL = "wss://kinegramdocval.lkis.de/ws1/validate";
+	private final static String URL = "wss://docval.kurzdigital.com/ws1/validate";
 	private final static String TECH_ISO_DEP = "android.nfc.tech.IsoDep";
 
 	private final static String VALIDATION_ID_KEY = "VALIDATION_ID";
