@@ -695,7 +695,3 @@ POM Project URL: http://www.slf4j.org
 POM License: MIT License - http://www.opensource.org/licenses/mit-license.php
 
 --------------------------------------------------------------------------------
-
-
-This report was generated at Tue Apr 01 16:05:33 GMT 2025.
-

@@ -1,0 +1,55 @@
+name: Verify License Report
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '**/build.gradle.kts'
+      - '**/gradle.properties'
+      - 'gradle/wrapper/gradle-wrapper.properties'
+      - 'Makefile'
+      - 'THIRD-PARTY-NOTICES.txt'
+  pull_request:
+    paths:
+      - '**/build.gradle.kts'
+      - '**/gradle.properties'
+      - 'gradle/wrapper/gradle-wrapper.properties'
+      - 'Makefile'
+      - 'THIRD-PARTY-NOTICES.txt'
+  workflow_dispatch:
+
+jobs:
+  verify-notice:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Cache original notice file
+        run: |
+          if [ -f "THIRD-PARTY-NOTICES.txt" ]; then
+            cp THIRD-PARTY-NOTICES.txt THIRD-PARTY-NOTICES.original.txt
+          else
+            echo "Original THIRD-PARTY-NOTICES.txt not found!"
+            exit 1
+          fi
+
+      - name: Generate fresh license report
+        run: make update-license-report
+
+      - name: Compare and verify license report
+        run: |
+          if diff -q THIRD-PARTY-NOTICES.original.txt THIRD-PARTY-NOTICES.txt > /dev/null; then
+            echo "✅ License report is up-to-date!"
+          else
+            echo "❌ License report is out of date!"
+            echo "Please run 'make update-license-report' locally and commit the changes."
+            exit 1
+          fi
