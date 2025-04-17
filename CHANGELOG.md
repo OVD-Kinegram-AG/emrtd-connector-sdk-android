@@ -1,5 +1,8 @@
 # Kinegram eMRTD Connector SDK Android - Changelog
 
+## 1.2.0
+* Add new `ConnectionOptions.Builder#setEnableDiagnostics(boolean)` method to enable diagnostics in the DocVal server.
+
 ## 1.1.0
 * Add new overload for `EmrtdConnector#connect(...)` method that accepts a `ConnectionOptions` parameter
 * Deprecate old `EmrtdConnector#connect(...)` method overloads that do not use `ConnectionOptions`

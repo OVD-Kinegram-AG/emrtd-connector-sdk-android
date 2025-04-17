@@ -8,11 +8,13 @@ import java.util.Map;
  */
 public class ConnectionOptions {
 	private final String validationId;
+	private final boolean enableDiagnostics;
 	private final ChipAccessKey chipAccessKey;
 	private final Map<String, String> httpHeaders;
 
 	private ConnectionOptions(Builder builder) {
 		this.validationId = builder.validationId;
+		this.enableDiagnostics = builder.enableDiagnostics;
 		this.chipAccessKey = builder.chipAccessKey;
 		if (builder.httpHeaders == null) {
 			this.httpHeaders = new HashMap<>();
@@ -28,6 +30,19 @@ public class ConnectionOptions {
 	 */
 	public String getValidationId() {
 		return validationId;
+	}
+
+	/**
+	 * Returns {@code true} if diagnostics are enabled.
+	 * <p>
+	 * When enabled, the DocVal server will collect and store extra diagnostic
+	 * information to troubleshoot issues. This data may contain personal
+	 * information.
+	 *
+	 * @return Whether diagnostics are enabled.
+	 */
+	public boolean isDiagnosticsEnabled() {
+		return enableDiagnostics;
 	}
 
 	/**
@@ -54,6 +69,7 @@ public class ConnectionOptions {
 	 */
 	public static class Builder {
 		private String validationId;
+		private boolean enableDiagnostics;
 		private ChipAccessKey chipAccessKey;
 		private Map<String, String> httpHeaders;
 
@@ -114,6 +130,23 @@ public class ConnectionOptions {
 		 */
 		public Builder setValidationId(String validationId) {
 			this.validationId = validationId;
+			return this;
+		}
+
+		/**
+		 * Enable or disable collection of diagnostics.
+		 * <p>
+		 * When enabled, the DocVal server will collect and store extra
+		 * diagnostic information to troubleshoot issues.
+		 * <p>
+		 * This information may contain personal data, so only enable it if you
+		 * have user consent.
+		 *
+		 * @param enableDiagnostics {@code true} to turn on diagnostics.
+		 * @return This instance of the builder for easier chaining.
+		 */
+		public Builder setEnableDiagnostics(boolean enableDiagnostics) {
+			this.enableDiagnostics = enableDiagnostics;
 			return this;
 		}
 

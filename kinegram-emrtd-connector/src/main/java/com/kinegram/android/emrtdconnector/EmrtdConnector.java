@@ -204,7 +204,7 @@ public class EmrtdConnector {
 	 * @param options Options for this read. Can be constructed with the
 	 *                {@link ConnectionOptions.Builder}.
 	 */
-	public void connect(IsoDep isoDep,ConnectionOptions options) {
+	public void connect(IsoDep isoDep, ConnectionOptions options) {
 		String validationId = options.getValidationId();
 		ChipAccessKey chipAccessKey = options.getChipAccessKey();
 
@@ -221,6 +221,13 @@ public class EmrtdConnector {
 			startMessage.put("platform", "android");
 			startMessage.put("nfc_adapter_supports_extended_length",
 					isoDep.isExtendedLengthApduSupported());
+			if (options.isDiagnosticsEnabled()) {
+				// Older versions of the DocVal server that do not support this
+				// field, will throw an error because they do not allow unknown
+				// fields. So we omit the field when diagnostics are disabled
+				// (instead of sending false).
+				startMessage.put("enable_diagnostics", true);
+			}
 			startMessageString = startMessage.toString();
 		} catch (JSONException e) {
 			String msg2 = "Failed to create StartMessage JSON";
