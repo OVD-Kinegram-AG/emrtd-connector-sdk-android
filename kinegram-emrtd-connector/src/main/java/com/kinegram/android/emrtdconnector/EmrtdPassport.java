@@ -41,23 +41,26 @@ public class EmrtdPassport implements Parcelable {
 
 	private final JSONObject jsonObject;
 
-	EmrtdPassport(JSONObject obj) throws JSONException {
+	/**
+	 * Internal.
+	 */
+	public EmrtdPassport(JSONObject obj) throws JSONException {
 		this.jsonObject = obj;
 		sodInfo = SODInfo.opt(obj);
 		mrzInfo = MRZInfo.opt(obj);
-		facePhoto = JSONUtils.decodeB64(obj.optString("face_photo", null));
-		signaturePhotos = JSONUtils.optByteArrayList(obj, "signature_photos");
+		facePhoto = JSONUtils.decodeB64(obj.optString("facePhoto", null));
+		signaturePhotos = JSONUtils.optByteArrayList(obj, "signaturePhotos");
 		additionalPersonalDetails = AdditionalPersonalDetails.opt(obj);
 		additionalDocumentDetails = AdditionalDocumentDetails.opt(obj);
-		passiveAuthentication = obj.getBoolean("passive_authentication");
+		passiveAuthentication = obj.getBoolean("passiveAuthentication");
 		passiveAuthenticationDetails = PassiveAuthenticationDetails.opt(obj);
 		activeAuthenticationResult = CheckResult.valueOf(
-				obj.getString("active_authentication_result"));
+				obj.getString("activeAuthenticationResult"));
 		chipAuthenticationResult = CheckResult.valueOf(
-				obj.getString("chip_authentication_result"));
+				obj.getString("chipAuthenticationResult"));
 		errors = JSONUtils.optStringArray(obj, "errors");
 
-		JSONObject filesBinaryObj = obj.optJSONObject("files_binary");
+		JSONObject filesBinaryObj = obj.optJSONObject("filesBinary");
 		if (filesBinaryObj != null) {
 			filesBinary = new HashMap<>();
 			for (Iterator<String> it = filesBinaryObj.keys(); it.hasNext(); ) {
@@ -139,8 +142,8 @@ public class EmrtdPassport implements Parcelable {
 		public final Map<Integer, String> hashForDataGroup = new HashMap<>();
 
 		private SODInfo(JSONObject obj) throws JSONException {
-			this.hashAlgorithm = obj.getString("hash_algorithm");
-			JSONObject objHashForDG = obj.getJSONObject("hash_for_data_group");
+			this.hashAlgorithm = obj.getString("hashAlgorithm");
+			JSONObject objHashForDG = obj.getJSONObject("hashForDataGroup");
 			Iterator<String> keys = objHashForDG.keys();
 			while (keys.hasNext()) {
 				String key = keys.next();
@@ -150,7 +153,7 @@ public class EmrtdPassport implements Parcelable {
 		}
 
 		private static SODInfo opt(JSONObject obj) throws JSONException {
-			JSONObject objSodInfo = obj.optJSONObject("sod_info");
+			JSONObject objSodInfo = obj.optJSONObject("sodInfo");
 			return objSodInfo != null ? new SODInfo(objSodInfo) : null;
 		}
 
@@ -178,22 +181,22 @@ public class EmrtdPassport implements Parcelable {
 		public final String optionalData2;
 
 		private MRZInfo(JSONObject obj) throws JSONException {
-			documentType = obj.getString("document_type");
-			documentCode = obj.getString("document_code");
-			issuingState = obj.getString("issuing_state");
-			primaryIdentifier = obj.getString("primary_identifier");
-			secondaryIdentifier = JSONUtils.optStringArray(obj, "secondary_identifier");
+			documentType = obj.getString("documentType");
+			documentCode = obj.getString("documentCode");
+			issuingState = obj.getString("issuingState");
+			primaryIdentifier = obj.getString("primaryIdentifier");
+			secondaryIdentifier = JSONUtils.optStringArray(obj, "secondaryIdentifier");
 			nationality = obj.getString("nationality");
-			documentNumber = obj.getString("document_number");
-			dateOfBirth = obj.getString("date_of_birth");
-			dateOfExpiry = obj.getString("date_of_expiry");
+			documentNumber = obj.getString("documentNumber");
+			dateOfBirth = obj.getString("dateOfBirth");
+			dateOfExpiry = obj.getString("dateOfExpiry");
 			gender = obj.getString("gender");
-			optionalData1 = obj.getString("optional_data1");
-			optionalData2 = obj.optString("optional_data2", null);
+			optionalData1 = obj.getString("optionalData1");
+			optionalData2 = obj.optString("optionalData2", null);
 		}
 
 		private static MRZInfo opt(JSONObject obj) throws JSONException {
-			JSONObject objMrzInfo = obj.optJSONObject("mrz_info");
+			JSONObject objMrzInfo = obj.optJSONObject("mrzInfo");
 			return objMrzInfo != null ? new MRZInfo(objMrzInfo) : null;
 		}
 
@@ -232,25 +235,25 @@ public class EmrtdPassport implements Parcelable {
 		public final String custodyInformation;
 
 		private AdditionalPersonalDetails(JSONObject obj) throws JSONException {
-			fullNameOfHolder = obj.optString("full_name_of_holder");
-			otherNames = JSONUtils.optStringArray(obj, "other_names");
-			personalNumber = obj.optString("personal_number");
-			fullDateOfBirth = obj.optString("full_date_of_birth");
-			placeOfBirth = obj.optString("place_of_birth");
-			permanentAddress = JSONUtils.optStringArray(obj, "permanent_address");
+			fullNameOfHolder = obj.optString("fullNameOfHolder");
+			otherNames = JSONUtils.optStringArray(obj, "otherNames");
+			personalNumber = obj.optString("personalNumber");
+			fullDateOfBirth = obj.optString("fullDateOfBirth");
+			placeOfBirth = obj.optString("placeOfBirth");
+			permanentAddress = JSONUtils.optStringArray(obj, "permanentAddress");
 			telephone = obj.optString("telephone");
 			profession = obj.optString("profession");
 			title = obj.optString("title");
-			personalSummary = obj.optString("personal_summary");
+			personalSummary = obj.optString("personalSummary");
 			proofOfCitizenshipImage = JSONUtils.decodeB64(
-					obj.optString("proof_of_citizenship_image"));
+					obj.optString("proofOfCitizenshipImage"));
 			otherValidTravelDocumentNumbers = JSONUtils.optStringArray(
-					obj, "other_valid_travel_document_numbers");
-			custodyInformation = obj.optString("custody_information");
+					obj, "otherValidTravelDocumentNumbers");
+			custodyInformation = obj.optString("custodyInformation");
 		}
 
 		private static AdditionalPersonalDetails opt(JSONObject obj) throws JSONException {
-			JSONObject objPersDet = obj.optJSONObject("additional_personal_details");
+			JSONObject objPersDet = obj.optJSONObject("additionalPersonalDetails");
 			return objPersDet != null ? new AdditionalPersonalDetails(objPersDet) : null;
 		}
 
@@ -286,20 +289,20 @@ public class EmrtdPassport implements Parcelable {
 		public final String personalizationSystemSerialNumber;
 
 		private AdditionalDocumentDetails(JSONObject obj) throws JSONException {
-			issuingAuthority = obj.optString("issuing_authority");
-			dateOfIssue = obj.optString("date_of_issue");
-			namesOfOtherPersons = obj.optString("names_of_other_persons");
-			endorsementsAndObservations = obj.optString("endorsements_and_bservations");
-			taxOrExitRequirements = obj.optString("tax_or_exit_requirements");
-			imageOfFront = JSONUtils.decodeB64(obj.optString("image_of_front"));
-			imageOfRear = JSONUtils.decodeB64(obj.optString("image_of_rear"));
-			dateAndTimeOfPersonalization = obj.optString("date_and_time_of_personalization");
+			issuingAuthority = obj.optString("issuingAuthority");
+			dateOfIssue = obj.optString("dateOfIssue");
+			namesOfOtherPersons = obj.optString("namesOfOtherPersons");
+			endorsementsAndObservations = obj.optString("endorsementsAndObservations");
+			taxOrExitRequirements = obj.optString("taxOrExitRequirements");
+			imageOfFront = JSONUtils.decodeB64(obj.optString("imageOfFront"));
+			imageOfRear = JSONUtils.decodeB64(obj.optString("imageOfRear"));
+			dateAndTimeOfPersonalization = obj.optString("dateAndTimeOfPersonalization");
 			personalizationSystemSerialNumber =
-					obj.optString("personalization_system_serial_number");
+					obj.optString("personalizationSystemSerialNumber");
 		}
 
 		private static AdditionalDocumentDetails opt(JSONObject obj) throws JSONException {
-			JSONObject objDocDet = obj.optJSONObject("additional_document_details");
+			JSONObject objDocDet = obj.optJSONObject("additionalDocumentDetails");
 			return objDocDet != null ? new AdditionalDocumentDetails(objDocDet) : null;
 		}
 
@@ -328,17 +331,17 @@ public class EmrtdPassport implements Parcelable {
 		public final String error;
 
 		private PassiveAuthenticationDetails(JSONObject obj) throws JSONException {
-			sodSignatureValid = JSONUtils.optBool(obj, "sod_signature_valid");
-			documentCertificateValid = JSONUtils.optBool(obj, "document_certificate_valid");
-			dataGroupsChecked = JSONUtils.optIntArray(obj, "data_groups_checked");
+			sodSignatureValid = JSONUtils.optBool(obj, "sodSignatureValid");
+			documentCertificateValid = JSONUtils.optBool(obj, "documentCertificateValid");
+			dataGroupsChecked = JSONUtils.optIntArray(obj, "dataGroupsChecked");
 			dataGroupsWithValidHash = JSONUtils.optIntArray(
-					obj, "data_groups_with_valid_hash");
-			allHashesValid = JSONUtils.optBool(obj, "all_hashes_valid");
+					obj, "dataGroupsWithValidHash");
+			allHashesValid = JSONUtils.optBool(obj, "allHashesValid");
 			error = obj.getString("error");
 		}
 
 		private static PassiveAuthenticationDetails opt(JSONObject obj) throws JSONException {
-			JSONObject objPassAuthDet = obj.optJSONObject("passive_authentication_details");
+			JSONObject objPassAuthDet = obj.optJSONObject("passiveAuthenticationDetails");
 			return objPassAuthDet != null ? new PassiveAuthenticationDetails(objPassAuthDet) : null;
 		}
 

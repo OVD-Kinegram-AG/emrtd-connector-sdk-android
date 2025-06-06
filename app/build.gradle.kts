@@ -7,6 +7,8 @@ android {
 	namespace = "com.kinegram.android.emrtdconnectorapp"
 	compileSdk = 35
 
+	packagingOptions.resources.excludes += "META-INF/versions/9/OSGI-INF/MANIFEST.MF"
+
 	defaultConfig {
 		applicationId = "com.kinegram.android.emrtdconnectorapp"
 		minSdk = 21

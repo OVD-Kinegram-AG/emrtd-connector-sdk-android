@@ -1,27 +1,20 @@
 package com.kinegram.android.emrtdconnector;
 
 import android.nfc.tech.IsoDep;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
+import com.kinegram.android.emrtdconnector.internal.protocol.WebsocketProtocol;
+import com.kinegram.android.emrtdconnector.internal.protocol.exception.NfcException;
+import com.kinegram.android.emrtdconnector.internal.protocol.exception.WebsocketClientException;
+
 import org.java_websocket.client.WebSocketClient;
-import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.ByteBuffer;
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLHandshakeException;
-import javax.net.ssl.SSLParameters;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.SSLSocket;
 
 /**
  * Connect an eMRTD NFC Chip with the Document Validation Server.
@@ -32,13 +25,15 @@ import javax.net.ssl.SSLSocket;
 public class EmrtdConnector {
 	private static final String TAG = "EmrtdConnector";
 	private static final String RET_QUERY = "return_result=true";
+
 	private final Handler handler = new Handler(Looper.getMainLooper());
 	private final String clientId;
 	private final URI webSocketUri;
 	private final ClosedListener closedListener;
 	private final StatusListener statusListener;
 	private final EmrtdPassportListener emrtdPassportListener;
-	private WebSocketClient webSocketClient;
+
+	private WebsocketProtocol protocol;
 
 	/**
 	 * Exception that occurred during {@link IsoDep#connect() IsoDep#connect()} or
@@ -160,6 +155,7 @@ public class EmrtdConnector {
 	 * connect(isoDep, options);}
 	 * </pre>
 	 */
+	@Deprecated
 	public void connect(
 			IsoDep isoDep,
 			String validationId,
@@ -210,166 +206,29 @@ public class EmrtdConnector {
 
 		String msg = "`isoDep`, `validationId` or `chipAccessKey` is null";
 		requireNonNull(msg, isoDep, validationId, chipAccessKey);
-
-		JSONObject accessKey = chipAccessKey.toJson();
-		String startMessageString;
-		try {
-			JSONObject startMessage = new JSONObject();
-			startMessage.put("client_id", clientId);
-			startMessage.put("validation_id", validationId);
-			startMessage.put("access_key", accessKey);
-			startMessage.put("platform", "android");
-			startMessage.put("nfc_adapter_supports_extended_length",
-					isoDep.isExtendedLengthApduSupported());
-			if (options.isDiagnosticsEnabled()) {
-				// Older versions of the DocVal server that do not support this
-				// field, will throw an error because they do not allow unknown
-				// fields. So we omit the field when diagnostics are disabled
-				// (instead of sending false).
-				startMessage.put("enable_diagnostics", true);
-			}
-			startMessageString = startMessage.toString();
-		} catch (JSONException e) {
-			String msg2 = "Failed to create StartMessage JSON";
-			throw new IllegalStateException(msg2, e);
-		}
-
 		cancel();
-		webSocketClient = new WebSocketClient(
-				webSocketUri, options.getHttpHeaders()) {
-			@Override
-			protected void onSetSSLParameters(SSLParameters sslParameters) {
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-					// Fix for Android SDK < 24
-					// https://github.com/TooTallNate/Java-WebSocket/wiki/No-such-method-error-setEndpointIdentificationAlgorithm
-					super.onSetSSLParameters(sslParameters);
-				}
-			}
 
-			@Override
-			public void onOpen(ServerHandshake handshake) {
-				if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N && !"ws".equals(webSocketUri.getScheme())) {
-					// Fix for Android SDK < 24
-					// https://github.com/TooTallNate/Java-WebSocket/wiki/No-such-method-error-setEndpointIdentificationAlgorithm
-					try {
-						HostnameVerifier hostnameVerifier;
-						hostnameVerifier = HttpsURLConnection.getDefaultHostnameVerifier();
-						SSLSession session = ((SSLSocket) getSocket()).getSession();
-						String expectedHostname = webSocketUri.getHost();
-						if (!hostnameVerifier.verify(expectedHostname, session)) {
-							String msg = "Invalid host" + session.getPeerPrincipal();
-							Log.e(TAG, msg);
-							throw new SSLHandshakeException((msg));
-						}
-						// All good. Continue
-					} catch (Exception e) {
-						closeBecauseOfWebSocketClientException(e);
-						return;
-					}
-				}
 
-				Log.d(TAG, "Connecting to NFC Tag");
-				try {
-					isoDep.setTimeout(1000);
-					isoDep.connect();
-				} catch (IOException e) {
-					closeBecauseOfIsoDepException(e);
-					return;
-				}
-
-				try {
-					Log.d(TAG, "Sending Start Message to Server");
-					send(startMessageString);
-				} catch (Exception e) {
-					closeBecauseOfWebSocketClientException(e);
-				}
-			}
-
-			@Override
-			public void onMessage(String message) {
-				JSONObject obj;
-				try {
-					obj = new JSONObject(message);
-				} catch (Exception e) {
-					String msg = "Failed to parse Text Message as JSON\n%s";
-					Log.e(TAG, String.format(msg, message), e);
-					return;
-				}
-
-				if (obj.has("status") || obj.has("emrtd_passport")) {
-					onStatusUpdate(obj.optString("status"));
-					onEmrtdPassport(obj.optJSONObject("emrtd_passport"));
-				} else if (obj.has("close_code")) {
-					// Message can be ignored with good conscience.
-					// The iOS native WebSocket implementation in iOS 13 and 14
-					// has an issue. Sometimes the delegate function for *close* is not called.
-					// That is why the server sends a close code as a text message.
+		protocol = new WebsocketProtocol(
+			isoDep,
+			options,
+			clientId,
+			webSocketUri,
+			status -> handler.post(() -> statusListener.handle(status)),
+			(int code, String reason, boolean remote) ->
+				handler.post(() -> closedListener.handle(code, reason, remote)),
+			emrtdPassportListener == null ? null : (passport) ->
+				handler.post(() -> emrtdPassportListener.handle(passport, null)),
+			e -> {
+				if (e instanceof NfcException) {
+					this.nfcException = (Exception) e.getCause();
+				} else if (e instanceof WebsocketClientException) {
+					this.webSocketClientException = (Exception) e.getCause();
 				} else {
-					String msg = "Unexpected Text Message received\n%s";
-					Log.w(TAG, String.format(msg, message));
+					throw new AssertionError("Unhandled error");
 				}
-			}
-
-			@Override
-			public void onMessage(ByteBuffer command) {
-				byte[] response;
-				try {
-					response = isoDep.transceive(command.array());
-				} catch (Exception e) {
-					closeBecauseOfIsoDepException(e);
-					return;
-				}
-				try {
-					send(response);
-				} catch (Exception e) {
-					closeBecauseOfWebSocketClientException(e);
-				}
-			}
-
-			@Override
-			public void onClose(int code, String reason, boolean remote) {
-				String msg = "Close Code %d - %s(Remote: %s)";
-				Log.d(TAG, String.format(msg, code, reason, remote));
-
-				if (isoDep.isConnected()) {
-					try {
-						isoDep.close();
-					} catch (IOException e) {
-						Log.e(TAG, "IsoDep close Error", e);
-					}
-				}
-				if (reason == null) {
-					reason = "";
-				}
-				onClosed(code, reason, remote);
-			}
-
-			@Override
-			public void onError(Exception e) {
-				closeBecauseOfWebSocketClientException(e);
-			}
-
-			private void closeBecauseOfIsoDepException(Exception e) {
-				Log.e(TAG, "NFC Chip Communication Failed", e);
-				nfcException = e;
-				if (isOpen()) {
-					close(1001, ClosedListener.NFC_CHIP_COMMUNICATION_FAILED);
-				}
-			}
-
-			private void closeBecauseOfWebSocketClientException(Exception e) {
-				Log.e(TAG, "WebServer Communication Failed", e);
-				webSocketClientException = e;
-				if (isOpen()) {
-					close(1001, ClosedListener.COMMUNICATION_FAILED);
-				}
-			}
-		};
-		Log.d(TAG, "Connecting to WebSocket Server");
-		onStatusUpdate(StatusListener.CONNECTING_TO_SERVER);
-		webSocketClient.setConnectionLostTimeout(2000);
-		webSocketClient.setTcpNoDelay(true);
-		webSocketClient.connect();
+			});
+		protocol.start();
 	}
 
 	/**
@@ -379,9 +238,8 @@ public class EmrtdConnector {
 	 * The Close Reason will be "CANCELLED_BY_USER".
 	 */
 	public void cancel() {
-		if (webSocketClient != null && webSocketClient.isOpen()) {
-			webSocketClient.close(
-					1001, ClosedListener.CANCELLED_BY_USER);
+		if (protocol != null) {
+			protocol.cancel();
 		}
 	}
 
@@ -389,7 +247,7 @@ public class EmrtdConnector {
 	 * @return true if session is open
 	 */
 	public boolean isOpen() {
-		return webSocketClient != null && webSocketClient.isOpen();
+		return protocol != null && protocol.isOpen();
 	}
 
 	private void onStatusUpdate(String status) {

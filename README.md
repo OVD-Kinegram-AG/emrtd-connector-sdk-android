@@ -41,6 +41,7 @@ This project contains an Example App to demonstrate usage and functionality.
 
 * [Android Studio][android]
 * Device running Android 5 (API level 21) or later with NFC capabilities
+* [Access to our Maven registry][registry-credentials]
 
 ### Running
 
@@ -100,6 +101,7 @@ JavaDoc style.
 [emrtd]: https://kta.pages.kurzdigital.com/kta-kinegram-document-validation-service/Security%20Mechanisms
 [docval]: https://kta.pages.kurzdigital.com/kta-kinegram-document-validation-service/
 [android]: https://developer.android.com/studio
+[registry-credentials]: https://kurzdigital.atlassian.net/wiki/spaces/KDS/pages/17829696/12.+KDS+Maven+Gradle+Setup+Amazon+S3+and+Gitlab+Registry
 [debugging]: https://developer.android.com/tools/help/adb.html#Enabling
 [emrtd-connector-releases]: https://github.com/OVD-Kinegram-AG/emrtd-connector-sdk-android/releases
 [add-dependencies]: https://developer.android.com/build/dependencies

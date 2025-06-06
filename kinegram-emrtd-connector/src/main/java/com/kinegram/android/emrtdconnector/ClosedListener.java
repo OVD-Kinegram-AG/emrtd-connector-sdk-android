@@ -26,8 +26,18 @@ public interface ClosedListener {
 
 	/**
 	 * Invalid Start Message.
+	 *
+	 * @deprecated No longer in use.
 	 */
+	@Deprecated
 	String INVALID_START_MESSAGE = "INVALID_START_MESSAGE";
+
+	/**
+	 * Violation of the protocol between server and client.
+	 * <p>
+	 * Should never happen and indicates an implementation bug.
+	 */
+	String PROTOCOL_ERROR = "PROTOCOL_ERROR";
 
 	/**
 	 * The provided Client ID is not correct.
@@ -52,7 +62,7 @@ public interface ClosedListener {
 	/**
 	 * WebSocket Communication with the Server failed.
 	 * Check the network connection and try again.
-	 * Query {@link EmrtdConnector#webSocketClientException EmrtdConnector#webSocketClientException} for details.
+	 * Query {@link EmrtdConnector#getWebSocketClientException()} for details.
 	 */
 	String COMMUNICATION_FAILED = "COMMUNICATION_FAILED";
 
@@ -62,7 +72,7 @@ public interface ClosedListener {
 	String FILE_READ_ERROR = "FILE_READ_ERROR";
 
 	/**
-	 * An Exception in the eMRTD Server implementation occurred.
+	 * An Exception in the eMRTD reader implementation occurred.
 	 */
 	String EMRTD_PASSPORT_READER_ERROR = "EMRTD_PASSPORT_READER_ERROR";
 
@@ -79,7 +89,7 @@ public interface ClosedListener {
 	/**
 	 * Communicating with the NFC Chip failed.
 	 * The most likely reason is that the passport was moved away from the phone.
-	 * Query {@link EmrtdConnector#nfcException EmrtdConnector#nfcException} for details.
+	 * Query {@link EmrtdConnector#getNfcException()} for details.
 	 */
 	String NFC_CHIP_COMMUNICATION_FAILED = "NFC_CHIP_COMMUNICATION_FAILED";
 
