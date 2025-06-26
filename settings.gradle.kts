@@ -8,6 +8,7 @@ pluginManagement {
 dependencyResolutionManagement {
 	repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
 	repositories {
+		mavenLocal()
 		google()
 		mavenCentral()
 		maven {
@@ -27,4 +28,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "Kinegram eMRTD Connector SDK Android"
 include(":kinegram-emrtd-connector", ":app")
- 

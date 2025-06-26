@@ -6,6 +6,8 @@ import org.json.JSONObject;
 public abstract class WebsocketMessage {
 	public static final String TYPE_START = "START";
 	public static final String TYPE_ACCEPT = "ACCEPT";
+	public static final String TYPE_CA_HANDOVER = "CA_HANDOVER";
+	public static final String TYPE_CA_HANDBACK = "CA_HANDBACK";
 	public static final String TYPE_FINISH = "FINISH";
 	public static final String TYPE_RESULT = "RESULT";
 	public static final String TYPE_CLOSE = "CLOSE";
@@ -26,6 +28,10 @@ public abstract class WebsocketMessage {
 				return WebsocketStartMessage.fromJson(json);
 			case TYPE_ACCEPT:
 				return WebsocketAcceptMessage.fromJson(json);
+			case TYPE_CA_HANDOVER:
+				return WebsocketChipAuthenticationHandoverMessage.fromJson(json);
+			case TYPE_CA_HANDBACK:
+				return WebsocketChipAuthenticationHandbackMessage.fromJson(json);
 			case TYPE_FINISH:
 				return WebsocketFinishMessage.fromJson(json);
 			case TYPE_CLOSE:

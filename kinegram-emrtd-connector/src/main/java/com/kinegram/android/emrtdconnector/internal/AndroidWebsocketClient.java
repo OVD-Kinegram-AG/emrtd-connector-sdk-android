@@ -20,7 +20,6 @@ import javax.net.ssl.SSLSocket;
  * Helper class that wraps {@link WebSocketClient} with some Android specific fixes.
  */
 public abstract class AndroidWebsocketClient extends WebSocketClient {
-
 	public AndroidWebsocketClient(URI serverUri, Map<String, String> httpHeaders) {
 		super(serverUri, httpHeaders);
 	}

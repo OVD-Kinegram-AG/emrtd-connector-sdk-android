@@ -1,5 +1,9 @@
 package com.kinegram.android.emrtdconnector;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Interface for listening to WebSocket Connection Closes.
  */
@@ -97,6 +101,30 @@ public interface ClosedListener {
 	 * The function `emrtdConnector.cancel()` was called.
 	 */
 	String CANCELLED_BY_USER = "CANCELLED_BY_USER";
+
+	/**
+	 * Map of all expected close reasons to their close code.
+	 */
+	Map<String, Integer> CLOSE_CODES = Collections.unmodifiableMap(new HashMap<String, Integer>() {
+		{
+			put(TIMEOUT_WHILE_WAITING_FOR_START_MESSAGE, 1001);
+			put(TIMEOUT_WHILE_WAITING_FOR_RESPONSE, 1001);
+			put(MAX_SESSION_TIME_EXCEEDED, 1011);
+			put(UNEXPECTED_MESSAGE, 1008);
+			put(INVALID_START_MESSAGE, 1008);
+			put(PROTOCOL_ERROR, 1008);
+			put(INVALID_CLIENT_ID, 4401);
+			put(INVALID_ACCESS_KEY_VALUES, 1008);
+			put(ACCESS_CONTROL_FAILED, 4403);
+			put(COMMUNICATION_FAILED, 1011);
+			put(FILE_READ_ERROR, 1011);
+			put(EMRTD_PASSPORT_READER_ERROR, 1011);
+			put(SERVER_ERROR, 1011);
+			put(POST_TO_RESULT_SERVER_FAILED, 1011);
+			put(NFC_CHIP_COMMUNICATION_FAILED, 1001);
+			put(CANCELLED_BY_USER, 1001);
+		}
+	});
 
 	/**
 	 * As a WebSocket Connection is closed, this method will be invoked.

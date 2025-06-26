@@ -3,15 +3,12 @@ package com.kinegram.android.emrtdconnector;
 import android.nfc.tech.IsoDep;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 
-import com.kinegram.android.emrtdconnector.internal.protocol.WebsocketProtocol;
+import com.kinegram.android.emrtdconnector.internal.protocol.WebsocketSessionCoordinator;
 import com.kinegram.android.emrtdconnector.internal.protocol.exception.NfcException;
 import com.kinegram.android.emrtdconnector.internal.protocol.exception.WebsocketClientException;
 
 import org.java_websocket.client.WebSocketClient;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -23,7 +20,6 @@ import java.net.URISyntaxException;
  * Will connect to the Document Validation Server using a {@link WebSocketClient org.java_websocket.client.WebSocketClient}.
  */
 public class EmrtdConnector {
-	private static final String TAG = "EmrtdConnector";
 	private static final String RET_QUERY = "return_result=true";
 
 	private final Handler handler = new Handler(Looper.getMainLooper());
@@ -33,27 +29,40 @@ public class EmrtdConnector {
 	private final StatusListener statusListener;
 	private final EmrtdPassportListener emrtdPassportListener;
 
-	private WebsocketProtocol protocol;
+	private WebsocketSessionCoordinator sessionCoordinator;
 
-	/**
-	 * Exception that occurred during {@link IsoDep#connect() IsoDep#connect()} or
-	 * {@link IsoDep#transceive(byte[]) IsoDep#transceive(byte[])}.
-	 * Value may be queried if close reason is {@link ClosedListener#NFC_CHIP_COMMUNICATION_FAILED}.
-	 * In all other cases this value will be null.
-	 */
+
 	private Exception nfcException;
 
-	/**
-	 * Exception that occurred during the {@link WebSocketClient} operations.
-	 **/
 	private Exception webSocketClientException;
 
+	private Exception exception;
+
+	/**
+	 * Get the exception that occurred during the {@link WebSocketClient} operations.
+	 **/
 	public Exception getWebSocketClientException() {
 		return webSocketClientException;
 	}
 
+	/**
+	 * Gets the exception that occurred during {@link IsoDep#connect() IsoDep#connect()} or
+	 * {@link IsoDep#transceive(byte[]) IsoDep#transceive(byte[])}.
+	 *
+	 * <p>Value may be queried if close reason is
+	 * {@link ClosedListener#NFC_CHIP_COMMUNICATION_FAILED}. In all other cases this value will be
+	 * {@code null}.
+	 */
 	public Exception getNfcException() {
 		return nfcException;
+	}
+
+	/**
+	 * Gets any other exception that occurred during the session and not fit the
+	 * {@link #getNfcException()} and {@link #getWebSocketClientException()}.
+	 */
+	public Exception getException() {
+		return exception;
 	}
 
 	/**
@@ -209,7 +218,7 @@ public class EmrtdConnector {
 		cancel();
 
 
-		protocol = new WebsocketProtocol(
+		sessionCoordinator = new WebsocketSessionCoordinator(
 			isoDep,
 			options,
 			clientId,
@@ -225,10 +234,10 @@ public class EmrtdConnector {
 				} else if (e instanceof WebsocketClientException) {
 					this.webSocketClientException = (Exception) e.getCause();
 				} else {
-					throw new AssertionError("Unhandled error");
+					this.exception = e;
 				}
 			});
-		protocol.start();
+		sessionCoordinator.start();
 	}
 
 	/**
@@ -238,8 +247,8 @@ public class EmrtdConnector {
 	 * The Close Reason will be "CANCELLED_BY_USER".
 	 */
 	public void cancel() {
-		if (protocol != null) {
-			protocol.cancel();
+		if (sessionCoordinator != null) {
+			sessionCoordinator.cancel();
 		}
 	}
 
@@ -247,29 +256,7 @@ public class EmrtdConnector {
 	 * @return true if session is open
 	 */
 	public boolean isOpen() {
-		return protocol != null && protocol.isOpen();
-	}
-
-	private void onStatusUpdate(String status) {
-		if (status != null && statusListener != null) {
-			handler.post(() -> statusListener.handle(status));
-		}
-	}
-
-	private void onEmrtdPassport(JSONObject emrtdPassportObject) {
-		if (emrtdPassportObject != null && emrtdPassportListener != null) {
-			try {
-				EmrtdPassport emrtdPassport = new EmrtdPassport(emrtdPassportObject);
-				handler.post(() -> emrtdPassportListener.handle(emrtdPassport, null));
-			} catch (JSONException e) {
-				Log.e(TAG, "Failed to decode EmrtdPassport JSON", e);
-				handler.post(() -> emrtdPassportListener.handle(null, e));
-			}
-		}
-	}
-
-	private void onClosed(int code, String reason, boolean remote) {
-		handler.post(() -> closedListener.handle(code, reason, remote));
+		return sessionCoordinator != null && sessionCoordinator.isOpen();
 	}
 
 	private static void requireNonNull(String msg, Object... objects) {

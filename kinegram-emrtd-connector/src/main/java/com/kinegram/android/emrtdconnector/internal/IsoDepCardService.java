@@ -196,8 +196,14 @@ public class IsoDepCardService extends CardService {
 	 */
 	@Override
 	public boolean isConnectionLost(Exception e) {
-		// TagLostException is usually wrapped in a CardServiceException
-		return e instanceof TagLostException
-			|| e.getCause() instanceof TagLostException;
+		// TagLostException is usually wrapped in a CardServiceException or deeper
+		Throwable t = e;
+		while (t != null) {
+			if (t instanceof TagLostException) {
+				return true;
+			}
+			t = t.getCause();
+		}
+		return false;
 	}
 }
