@@ -12,10 +12,9 @@ dependencyResolutionManagement {
 		google()
 		mavenCentral()
 		maven {
-			url = uri("https://git.kurzdigital.com/api/v4/projects/1739/packages/maven")
+			url = uri("https://git.kurzdigital.com/api/v4/groups/326/-/packages/maven")
 			name = "gitlab-maven"
 			credentials(HttpHeaderCredentials::class) {
-
 				name = providers.gradleProperty("gitLabUserName").orNull
 				value = providers.gradleProperty("gitLabPrivateToken").orNull
 			}

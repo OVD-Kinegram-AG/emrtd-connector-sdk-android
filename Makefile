@@ -18,7 +18,17 @@ start:
 uninstall:
 	adb $(TARGET) uninstall $(PACKAGE)
 
-update-license-report:
+license-report:
 	./gradlew :kinegram-emrtd-connector:generateLicenseReport
 	# Remove timestamp, trim empty lines and copy the file
-	grep -v "This report was generated at" kinegram-emrtd-connector/build/reports/dependency-license/THIRD-PARTY-NOTICES.txt | sed -e :a -e '/^\n*$$/{$$d;N;ba' -e '}' > ./THIRD-PARTY-NOTICES.txt
+	mkdir -p public
+	grep -v "This report was generated at" kinegram-emrtd-connector/build/reports/dependency-license/THIRD-PARTY-NOTICES.txt | sed -e :a -e '/^\n*$$/{$$d;N;ba' -e '}' > ./public/THIRD-PARTY-NOTICES.txt
+
+dokka:
+	./gradlew :kinegram-emrtd-connector:dokkaHtml :kinegram-emrtd-connector:dokkaJavaDoc
+	mkdir -p public
+	cp -r kinegram-emrtd-connector/build/dokka/html public/dokka
+	cp -r kinegram-emrtd-connector/build/dokka/javadoc public/javadoc
+
+pages: dokka license-report
+	tools/pages

@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+# Exit on error.
+set -e
+
+# Create output directory.
+mkdir -p public
+
+# MD to HTML.
+for F in documentation/*.md
+do
+	OF=${F##*/}
+	tools/md2html "$F" "public/${OF%.md}.html"
+done
+mv public/README.html public/index.html
+
+# Compose sed command.
+if [ "$(uname)" = Darwin ]; then
+	SED=(sed -i '')
+else
+	SED=(sed -i)
+fi
+
+
+# Copy resources.
+cp kinegram-emrtd-connector/logo-icon.svg public/favicon.svg
+
+# Fix links.
+"${SED[@]}" 's_.md#_.html#_g' public/*.html
+"${SED[@]}" 's_.md"_.html"_g' public/*.html

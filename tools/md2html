@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+(($# < 2)) && {
+	echo "usage: ${0##*/} MARKDOWN_FILE HTML_FILE"
+	exit
+}
+TITLE=${1##*/}
+TITLE=${TITLE%.*}
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+pandoc --template="$SCRIPT_DIR/pandoc.template.html" --metadata title="$TITLE" "$1" > "$2"
