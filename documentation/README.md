@@ -40,8 +40,8 @@ This project contains an Example App to demonstrate usage and functionality.
 ### Requirements
 
 * [Android Studio][android]
-* Device running Android 5 (API level 21) or later with NFC capabilities
-* [Access to our Maven registry][registry-credentials]
+* Device running Android 7 (API level 24) or later with NFC capabilities
+* Access to our private Maven repository
 
 ### Running
 
@@ -53,28 +53,71 @@ Open the project with [Android Studio][android] and click run.
 
 [Add the dependencies][add-dependencies] to your app's gradle build configuration.
 
-1. Configure your app-level build.gradle (`app/build.gradle`) file to include the `emrtdconnector`
+1. Configure your settings.gradle file to use our private Maven repository
+2. Configure your app-level build.gradle (`app/build.gradle`) file to include the `emrtdconnector`
    dependency.
-2. Replace `<version>` with the version you want to use. You can find the latest version in the
-   [releases][emrtd-connector-releases].
+3. Replace `<version>` with the version you want to use.
 
 <details open>
-<summary>Kotlin (app/build.gradle.kts)</summary>
+<summary>Kotlin</summary>
 
 ```kotlin
+// settings.gradle.kts
+dependencyResolutionManagement {
+	repositories {
+		...
+		maven {
+			url = uri("https://git.kurzdigital.com/api/v4/groups/326/-/packages/maven")
+			name = "kd-gitlab"
+			credentials(HttpHeaderCredentials::class) {
+				name = "your username"
+				value = "your token"
+			}
+			authentication {
+				create("header", HttpHeaderAuthentication::class)
+			}
+		}
+	}
+}
+```
+```kotlin
+// app/build.gradle.kts
 dependencies {
 	...
 	implementation("com.kinegram.android:emrtdconnector:<version>")
 }
 ```
 
+
 </details>
+
 
 <details>
 
-<summary>Groovy (app/build.gradle)</summary>
+<summary>Groovy</summary>
 
 ```groovy
+// settings.gradle
+dependencyResolutionManagement {
+    repositories {
+        ...
+        maven {
+            url "https://git.kurzdigital.com/api/v4/groups/326/-/packages/maven"
+            name "kd-gitlab"
+            credentials(PasswordCredentials) {
+                username = 'your username'
+                password = 'your token'
+            }
+            authentication {
+                basic(BasicAuthentication)
+            }
+        }
+    }
+}
+```
+
+```groovy
+// app/build.gradle
 dependencies {
 	...
 	implementation 'com.kinegram.android:emrtdconnector:<version>'
@@ -101,8 +144,6 @@ JavaDoc style.
 [emrtd]: https://kta.pages.kurzdigital.com/kta-kinegram-document-validation-service/Security%20Mechanisms
 [docval]: https://kta.pages.kurzdigital.com/kta-kinegram-document-validation-service/
 [android]: https://developer.android.com/studio
-[registry-credentials]: https://kurzdigital.atlassian.net/wiki/spaces/KDS/pages/17829696/12.+KDS+Maven+Gradle+Setup+Amazon+S3+and+Gitlab+Registry
 [debugging]: https://developer.android.com/tools/help/adb.html#Enabling
-[emrtd-connector-releases]: https://github.com/OVD-Kinegram-AG/emrtd-connector-sdk-android/releases
 [add-dependencies]: https://developer.android.com/build/dependencies
 [privacy-notice]: https://kinegram.digital/privacy-notice/
