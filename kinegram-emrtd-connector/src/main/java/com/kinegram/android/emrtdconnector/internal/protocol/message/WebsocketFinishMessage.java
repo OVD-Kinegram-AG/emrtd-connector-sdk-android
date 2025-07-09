@@ -1,5 +1,9 @@
 package com.kinegram.android.emrtdconnector.internal.protocol.message;
 
+import android.util.Base64;
+
+import androidx.annotation.Nullable;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -12,20 +16,30 @@ public class WebsocketFinishMessage extends WebsocketMessage {
 	 */
 	public final boolean sendResult;
 
-	public WebsocketFinishMessage(boolean sendResult) {
+	/**
+	 * The solved challenge from the ACCEPT message.
+	 */
+	@Nullable
+	public final byte[] activeAuthenticationSignature;
+
+	public WebsocketFinishMessage(
+		boolean sendResult,
+		@Nullable byte[] activeAuthenticationSignature) {
 		super(TYPE_FINISH);
 		this.sendResult = sendResult;
+		this.activeAuthenticationSignature = activeAuthenticationSignature;
 	}
 
 	@Override
 	public JSONObject toJson() throws JSONException {
-		JSONObject json = new JSONObject();
-		json.put("type", type);
-		json.put("sendResult", sendResult);
-		return json;
+		return new JSONObject()
+			.put("type", type)
+			.put("sendResult", sendResult)
+			.put("activeAuthenticationSignature", Base64.encodeToString(
+				activeAuthenticationSignature, Base64.NO_WRAP));
 	}
 
 	public static WebsocketFinishMessage fromJson(JSONObject json) throws JSONException {
-		return new WebsocketFinishMessage(json.getBoolean("sendResult"));
+		throw new UnsupportedOperationException("Not supported");
 	}
 }

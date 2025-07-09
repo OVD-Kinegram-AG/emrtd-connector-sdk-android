@@ -16,6 +16,8 @@ import com.kinegram.android.emrtdconnector.internal.AndroidWebsocketClient;
 import com.kinegram.android.emrtdconnector.internal.protocol.exception.NfcException;
 import com.kinegram.android.emrtdconnector.internal.protocol.exception.WebsocketClientException;
 import com.kinegram.android.emrtdconnector.internal.protocol.message.*;
+import com.kinegram.emrtd.EmrtdResult;
+import com.kinegram.emrtd.EmrtdStep;
 import com.kinegram.emrtd.RemoteChipAuthentication;
 
 import org.java_websocket.handshake.ServerHandshake;
@@ -28,6 +30,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -93,7 +96,7 @@ public class WebsocketSessionCoordinator {
 			executor.execute(() -> {
 				try {
 					chipSession = new EmrtdChipSession(isoDep, options, emrtdSessionListener);
-					chipSession.start();
+					chipSession.start(msg.activeAuthenticationChallenge);
 				} catch (Exception e) {
 					handleError(new NfcException("NFC Chip Communication Failed", e),
 						ClosedListener.NFC_CHIP_COMMUNICATION_FAILED);
@@ -172,7 +175,7 @@ public class WebsocketSessionCoordinator {
 
 	private final EmrtdChipSession.Listener emrtdSessionListener = new EmrtdChipSession.Listener() {
 		@Override
-		public void onEmrtdStep(com.kinegram.emrtd.EmrtdStep emrtdStep) {
+		public void onEmrtdStep(EmrtdStep emrtdStep) {
 			statusListener.handle(emrtdStep.name());
 		}
 
@@ -182,9 +185,9 @@ public class WebsocketSessionCoordinator {
 		}
 
 		@Override
-		public void onFinish(com.kinegram.emrtd.EmrtdResult result) {
+		public void onFinish(EmrtdResult result) {
 			// When done, send finish message to server
-			sendFinishMessage();
+			sendFinishMessage(result);
 			state = ProtocolState.FINISHED;
 		}
 
@@ -243,10 +246,11 @@ public class WebsocketSessionCoordinator {
 		}
 	}
 
-	private void sendFinishMessage() {
+	private void sendFinishMessage(EmrtdResult emrtdResult) {
 		try {
-			WebsocketFinishMessage finishMessage =
-				new WebsocketFinishMessage(emrtdPassportListener != null);
+			WebsocketFinishMessage finishMessage = new WebsocketFinishMessage(
+				emrtdPassportListener != null,
+				emrtdResult.activeAuthenticationResult.signature);
 			websocketClient.send(finishMessage.toJson().toString());
 		} catch (JSONException e) {
 			handleProtocolError("Failed to make finish message: " + e.getMessage());

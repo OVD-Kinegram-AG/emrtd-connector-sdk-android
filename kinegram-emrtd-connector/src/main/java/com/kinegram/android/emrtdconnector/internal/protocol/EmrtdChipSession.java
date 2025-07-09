@@ -62,7 +62,7 @@ public class EmrtdChipSession {
 		this.listener = listener;
 	}
 
-	public void start() {
+	public void start(byte[] activeAuthenticationChallenge) {
 		try {
 			isoDep.setTimeout(NFC_TIMEOUT_MS);
 			if (!isoDep.isConnected()) {
@@ -71,7 +71,7 @@ public class EmrtdChipSession {
 
 			CardService cardService = new IsoDepCardService(isoDep);
 			try {
-				EmrtdResult result = readEmrtdData(cardService);
+				EmrtdResult result = readEmrtdData(cardService, activeAuthenticationChallenge);
 				for (Map.Entry<Integer, byte[]> entry : result.dataGroupsRawBinary.entrySet()) {
 					String name = "dg" + entry.getKey();
 					listener.onFileReady(name, entry.getValue());
@@ -90,7 +90,7 @@ public class EmrtdChipSession {
 		}
 	}
 
-	private EmrtdResult readEmrtdData(CardService cardService)
+	private EmrtdResult readEmrtdData(CardService cardService, byte[] activeAuthenticationChallenge)
 		throws EmrtdReaderException, AccessControlProtocolException {
 		return emrtdReader.read(
 			cardService,
@@ -100,7 +100,8 @@ public class EmrtdChipSession {
 			null,
 			createProgressListener(),
 			TagLostException.class,
-			this::handleChipAuthentication
+			this::handleChipAuthentication,
+			activeAuthenticationChallenge
 		);
 	}
 
