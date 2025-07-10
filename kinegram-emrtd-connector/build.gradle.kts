@@ -66,6 +66,10 @@ tasks.withType<DokkaTask>().configureEach {
 			skipDeprecated.set(true)
 			suppressInheritedMembers.set(true)
 			includes.from("Module.md")
+			perPackageOption {
+				matchingRegex.set(".*\\.internal.*")
+				suppress.set(true)
+			}
 			externalDocumentationLink {
 				// Somehow there is an error (AccessDenied) if version is `1.5.5` or `latest`
 				// With version `1.5.3` everything works fine
