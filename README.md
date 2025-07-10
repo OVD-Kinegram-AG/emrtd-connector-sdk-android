@@ -97,7 +97,7 @@ JavaDoc style.
 
 ℹ️ [Privacy Notice][privacy-notice]
 
-[emrtd]: https://kta.pages.kurzdigital.com/kta-kinegram-document-validation-service/Security%20Mechanisms
+[emrtd]: https://kta.pages.kurzdigital.com/kta-kinegram-document-validation-service/SecurityMechanisms
 [docval]: https://kta.pages.kurzdigital.com/kta-kinegram-document-validation-service/
 [android]: https://developer.android.com/studio
 [debugging]: https://developer.android.com/tools/help/adb.html#Enabling
