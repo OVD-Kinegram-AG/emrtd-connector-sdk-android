@@ -1,5 +1,13 @@
 # Kinegram eMRTD Connector SDK Android - Changelog
 
+## 2.0.0
+* Migrate to the new DocVal v2 WebSocket API, which significantly improves reading speed on high-latency internet connections
+
+### Breaking Changes
+* The minimum Android API level is now 24 (was 21)
+* Requires a DocVal server with version `1.3.0` or newer
+* The Android eMRTD Connector SDK is no longer published to Maven Central
+
 ## 1.2.0
 * Add new `ConnectionOptions.Builder#setEnableDiagnostics(boolean)` method to enable diagnostics in the DocVal server.
 
