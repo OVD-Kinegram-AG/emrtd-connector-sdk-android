@@ -3,6 +3,7 @@ import org.jetbrains.dokka.base.DokkaBaseConfiguration
 import org.jetbrains.dokka.gradle.DokkaTask
 import java.net.URL
 import com.github.jk1.license.render.*
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
 	id("com.android.library")
@@ -11,6 +12,7 @@ plugins {
 	id("maven-publish")
 	id("signing")
 	id("com.github.jk1.dependency-license-report") version "2.9"
+	id("com.gradleup.shadow") version "9.0.0-rc1"
 }
 
 android {
@@ -35,6 +37,18 @@ android {
 	}
 }
 
+configurations {
+	create("internalize")
+	create("internalizeTransitive") // For extracting transitive deps only
+}
+
+val internalizeJar by tasks.registering(ShadowJar::class) {
+	archiveClassifier.set("intern")
+	configurations = listOf(project.configurations["internalize"])
+}
+
+val emrtdSdk = "com.kinegram.emrtd:emrtd-sdk-java:2.0.0"
+
 dependencies {
 	implementation("org.java-websocket:Java-WebSocket:1.5.5")
 	implementation("com.google.android.material:material:1.12.0")
@@ -45,7 +59,22 @@ dependencies {
 	implementation("com.google.android.material:material:1.12.0")
 	implementation("androidx.core:core:1.15.0")
 
-	implementation("com.kinegram.emrtd:emrtd-sdk-java:2.0.0")
+	// We "internalize" (i.e. include in the final artifact) our internal java
+	// sdk, because users of this Android library do not have access to the
+	// java-sdk.
+	"internalize"(emrtdSdk) { isTransitive = false }
+	implementation(tasks.named("internalizeJar").get().outputs.files)
+
+	// However, they still need the transitive dependencies that come from the
+	// java sdk, so we have to extract them and declare them directly.
+	"internalizeTransitive"(emrtdSdk)
+	configurations["internalizeTransitive"].resolvedConfiguration
+		.firstLevelModuleDependencies
+		.first()
+		.children
+		.forEach { transitiveDep ->
+			api("${transitiveDep.moduleGroup}:${transitiveDep.moduleName}:${transitiveDep.moduleVersion}")
+		}
 }
 
 buildscript {
