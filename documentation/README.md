@@ -86,6 +86,11 @@ dependencies {
 	...
 	implementation("com.kinegram.android:emrtdconnector:<version>")
 }
+
+android {
+	...
+	packagingOptions.resources.excludes += "META-INF/versions/9/OSGI-INF/MANIFEST.MF"
+}
 ```
 
 
@@ -99,20 +104,20 @@ dependencies {
 ```groovy
 // settings.gradle
 dependencyResolutionManagement {
-    repositories {
-        ...
-        maven {
-            url "https://git.kurzdigital.com/api/v4/groups/326/-/packages/maven"
-            name "kd-gitlab"
-            credentials(PasswordCredentials) {
-                username = 'your username'
-                password = 'your token'
-            }
-            authentication {
-                basic(BasicAuthentication)
-            }
-        }
-    }
+	repositories {
+		...
+		maven {
+			url "https://git.kurzdigital.com/api/v4/groups/326/-/packages/maven"
+			name "kd-gitlab"
+			credentials(PasswordCredentials) {
+				username = 'your username'
+				password = 'your token'
+			}
+			authentication {
+				basic(BasicAuthentication)
+			}
+		}
+	}
 }
 ```
 
@@ -121,6 +126,14 @@ dependencyResolutionManagement {
 dependencies {
 	...
 	implementation 'com.kinegram.android:emrtdconnector:<version>'
+}
+
+android {
+	packagingOptions {
+		resources {
+			excludes += 'META-INF/versions/9/OSGI-INF/MANIFEST.MF'
+		}
+	}
 }
 ```
 

@@ -4,6 +4,7 @@
 * Migrate to the new DocVal v2 WebSocket API, which significantly improves reading speed on high-latency internet connections
 
 ### Breaking Changes
+* You must add `android.packagingOptions.resources.excludes += "META-INF/versions/9/OSGI-INF/MANIFEST.MF"` to your app's `build.gradle.kts` file
 * The minimum Android API level is now 24 (was 21)
 * Requires a DocVal server with version `1.3.0` or newer
 * The Android eMRTD Connector SDK is no longer published to Maven Central
