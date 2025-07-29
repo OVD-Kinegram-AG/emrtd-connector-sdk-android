@@ -35,8 +35,9 @@ public class WebsocketFinishMessage extends WebsocketMessage {
 		return new JSONObject()
 			.put("type", type)
 			.put("sendResult", sendResult)
-			.put("activeAuthenticationSignature", Base64.encodeToString(
-				activeAuthenticationSignature, Base64.NO_WRAP));
+			.put("activeAuthenticationSignature", activeAuthenticationSignature == null
+				? null :
+				Base64.encodeToString(activeAuthenticationSignature, Base64.NO_WRAP));
 	}
 
 	public static WebsocketFinishMessage fromJson(JSONObject json) throws JSONException {

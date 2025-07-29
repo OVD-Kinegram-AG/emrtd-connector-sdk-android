@@ -250,7 +250,9 @@ public class WebsocketSessionCoordinator {
 		try {
 			WebsocketFinishMessage finishMessage = new WebsocketFinishMessage(
 				emrtdPassportListener != null,
-				emrtdResult.activeAuthenticationResult.signature);
+				emrtdResult.activeAuthenticationResult == null
+					? null
+					: emrtdResult.activeAuthenticationResult.signature);
 			websocketClient.send(finishMessage.toJson().toString());
 		} catch (JSONException e) {
 			handleProtocolError("Failed to make finish message: " + e.getMessage());
