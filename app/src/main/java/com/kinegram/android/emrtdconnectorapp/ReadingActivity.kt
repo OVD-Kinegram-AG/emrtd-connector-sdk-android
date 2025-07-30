@@ -228,7 +228,7 @@ class ReadingActivity : AppCompatActivity() {
 
 	companion object {
 		private const val TECH_ISO_DEP = "android.nfc.tech.IsoDep"
-		private const val URL = "wss://kinegramdocval.lkis.de/ws2/validate"
+		private const val URL = "wss://docval.kurzdigital.com/ws2/validate"
 		private const val CLIENT_ID = "example_client"
 
 		const val VALIDATION_ID_KEY = "VALIDATION_ID"

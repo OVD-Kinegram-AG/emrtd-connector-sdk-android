@@ -33,7 +33,7 @@ Activity to receive the [ACTION_TECH_DISCOVERED][action_tech_discovered] intent.
 val clientId = "example_client"
 
 // URL of the DocVal Service API Endpoint.
-val serverUrl = "wss://docval.kurzdigital.com/ws1/validate"
+val serverUrl = "wss://docval.kurzdigital.com/ws2/validate"
 
 val emrtdConnector = EmrtdConnector(
 	clientId, serverUrl, ::closedListener, ::statusListener, ::emrtdPassportListener
