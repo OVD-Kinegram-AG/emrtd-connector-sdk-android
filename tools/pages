@@ -7,7 +7,7 @@ set -e
 mkdir -p public
 
 # MD to HTML.
-for F in documentation/*.md
+for F in distribution/*.md
 do
 	OF=${F##*/}
 	tools/md2html "$F" "public/${OF%.md}.html"

@@ -1,7 +1,7 @@
 # Kinegram eMRTD Connector SDK Android
 
-The Kinegram eMRTD Connector enables your Android app to read and verify electronic passports / id
-cards ([eMRTDs][emrtd]).
+The Kinegram eMRTD Connector enables your Android app to read and verify
+electronic passports / id cards ([eMRTDs][emrtd]).
 
 ```
     ┌───────────────┐     Results     ┌─────────────────┐
@@ -30,96 +30,60 @@ cards ([eMRTDs][emrtd]).
     └──────────────┘
 ```
 
-The *Kinegram eMRTD Connector* enables the [Document Validation Server (DocVal)][docval] to
-communicate with the eMRTD through a secure WebSocket connection.
+The *Kinegram eMRTD Connector* enables the
+[Document Validation Server (DocVal)][docval] to communicate with the eMRTD
+through a secure WebSocket connection.
 
 ## Example App
 
-This project contains an Example App to demonstrate usage and functionality.
+This project contains a minimal fully functional demo app, that shows the
+usage of the SDK.
 
-### Requirements
+[Download Example App](distribution.zip)
+
+### System Requirements
 
 * [Android Studio][android]
 * Device running Android 7 (API level 24) or later with NFC capabilities
-* Access to our private Maven repository
 
 ### Running
 
-[Enable adb debugging][debugging] on your device and connect it with USB.
+First enable [adb debugging][debugging] on the mobile device and plug it in.
 
-Open the project with [Android Studio][android] and click run.
+On a system with a Unix shell and [make][make] run:
 
-## Include the Kinegram eMRTD Connector in your app
+	$ make
 
-[Add the dependencies][add-dependencies] to your app's gradle build configuration.
+The (short and very readable) [Makefile](Makefile) covers building, running
+and more.
 
-1. Configure your settings.gradle file to use our private Maven repository
-2. Configure your app-level build.gradle (`app/build.gradle`) file to include the `emrtdconnector`
-   dependency.
-3. Replace `<version>` with the version you want to use.
+Alternatively just open the project with [Android Studio][android] and click
+run.
 
-<details open>
-<summary>Kotlin</summary>
+## Dependencies
 
-```kotlin
-// settings.gradle.kts
-dependencyResolutionManagement {
-	repositories {
-		...
-		maven {
-			url = uri("https://git.kurzdigital.com/api/v4/groups/326/-/packages/maven")
-			name = "kd-gitlab"
-			credentials(HttpHeaderCredentials::class) {
-				name = "your username"
-				value = "your token"
-			}
-			authentication {
-				create("header", HttpHeaderAuthentication::class)
-			}
-		}
-	}
-}
-```
-```kotlin
-// app/build.gradle.kts
+Make sure to configure your app-level build.gradle.kts (`app/build.gradle.kts`)
+file to include the connector:
+
+```kts
 dependencies {
-	...
 	implementation("com.kinegram.android:emrtdconnector:<version>")
 }
+```
 
+You will also need to resolve all conflicts of duplicated files in the
+dependencies by excluding them in your build.gradle.kts:
+
+```kts
 android {
-	...
 	packagingOptions.resources.excludes += "META-INF/versions/9/OSGI-INF/MANIFEST.MF"
 }
 ```
 
 
-</details>
-
-
 <details>
 
 <summary>Groovy</summary>
-
-```groovy
-// settings.gradle
-dependencyResolutionManagement {
-	repositories {
-		...
-		maven {
-			url "https://git.kurzdigital.com/api/v4/groups/326/-/packages/maven"
-			name "kd-gitlab"
-			credentials(PasswordCredentials) {
-				username = 'your username'
-				password = 'your token'
-			}
-			authentication {
-				basic(BasicAuthentication)
-			}
-		}
-	}
-}
-```
 
 ```groovy
 // app/build.gradle
@@ -150,13 +114,10 @@ JavaDoc style.
 
 [Changelog](CHANGELOG.md)
 
-## Privacy Notice
-
-ℹ️ [Privacy Notice][privacy-notice]
-
 [emrtd]: https://kta.pages.kurzdigital.com/kta-kinegram-document-validation-service/Security%20Mechanisms
 [docval]: https://kta.pages.kurzdigital.com/kta-kinegram-document-validation-service/
 [android]: https://developer.android.com/studio
 [debugging]: https://developer.android.com/tools/help/adb.html#Enabling
 [add-dependencies]: https://developer.android.com/build/dependencies
 [privacy-notice]: https://kinegram.digital/privacy-notice/
+

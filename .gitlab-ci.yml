@@ -43,5 +43,4 @@ publish:
   tags:
     - docker
   script:
-    - echo -e "\nversion=$CI_COMMIT_REF_NAME" >> gradle.properties
     - ./gradlew --no-daemon publish
