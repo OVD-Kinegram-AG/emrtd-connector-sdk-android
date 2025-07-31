@@ -25,10 +25,10 @@ import java.net.URISyntaxException;
 import java.util.Arrays;
 
 public class EmrtdConnectorActivity extends AppCompatActivity implements ClosedListener, StatusListener, EmrtdPassportListener {
-	private final static String CLIENT_ID = "example_client";
-	private final static String URL = "wss://docval.kurzdigital.com/ws2/validate";
 	private final static String TECH_ISO_DEP = "android.nfc.tech.IsoDep";
 
+	private final static String CLIENT_ID = "CLIENT_ID";
+	private final static String VALIDATION_URI = "VALIDATION_URI";
 	private final static String VALIDATION_ID_KEY = "VALIDATION_ID";
 	private final static String CAN_KEY = "CAN";
 	private final static String DOCUMENT_NUMBER_KEY = "DOCUMENT_NUMBER";
@@ -60,6 +60,8 @@ public class EmrtdConnectorActivity extends AppCompatActivity implements ClosedL
 		_statusTextView = findViewById(R.id.status_textview);
 		_progressIndicator = findViewById(R.id.progress_indicator);
 
+		String clientId = getIntent().getStringExtra(CLIENT_ID);
+		String validationUri = getIntent().getStringExtra(VALIDATION_URI);
 		_validationId = getIntent().getStringExtra(VALIDATION_ID_KEY);
 
 		_can = getIntent().getStringExtra(CAN_KEY);
@@ -85,7 +87,7 @@ public class EmrtdConnectorActivity extends AppCompatActivity implements ClosedL
 		_nfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
 		try {
-			_emrtdConnector = new EmrtdConnector(CLIENT_ID, URL, this, this, this);
+			_emrtdConnector = new EmrtdConnector(clientId, validationUri, this, this, this);
 		} catch (URISyntaxException e) {
 			_statusTextView.setText(e.getLocalizedMessage());
 		}
