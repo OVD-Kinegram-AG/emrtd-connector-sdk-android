@@ -14,7 +14,8 @@ pluginManagement {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
-		mavenLocal()
+        mavenLocal()
+        maven("https://git.kurzdigital.com/api/v4/projects/1884/packages/maven")
         google()
         mavenCentral()
     }
