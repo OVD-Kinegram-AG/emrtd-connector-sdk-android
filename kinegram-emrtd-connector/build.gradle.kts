@@ -37,6 +37,10 @@ android {
 			withSourcesJar()
 		}
 	}
+
+	defaultConfig {
+		consumerProguardFiles("consumer-proguard-rules.pro")
+	}
 }
 
 configurations {
