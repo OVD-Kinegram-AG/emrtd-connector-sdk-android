@@ -137,13 +137,13 @@ public class EmrtdConnectorActivity extends AppCompatActivity implements ClosedL
 			chipAccessKey = new ChipAccessKey.FromCan(_can);
 		} else {
 			chipAccessKey = new ChipAccessKey.FromMrz(
-					_documentNumber, _dateOfBirth, _dateOfExpiry);
+				_documentNumber, _dateOfBirth, _dateOfExpiry);
 		}
 
 		ConnectionOptions options = new ConnectionOptions.Builder()
-				.setChipAccessKey(chipAccessKey)
-				.setValidationId(_validationId)
-				.build();
+			.setChipAccessKey(chipAccessKey)
+			.setValidationId(_validationId)
+			.build();
 
 		_progressIndicator.setVisibility(View.VISIBLE);
 		_emrtdConnector.connect(isoDep, options);

@@ -75,10 +75,15 @@ public class WebsocketMessageDispatcher {
 
 	public interface WebsocketMessageHandler {
 		void onAccept(WebsocketAcceptMessage msg);
+
 		void onChipAuthenticationHandback(WebsocketChipAuthenticationHandbackMessage msg);
+
 		void onResult(WebsocketResultMessage msg);
+
 		void onApduCommand(BinaryMessageProtocol.ApduMessage msg);
+
 		void onFileReceived(BinaryMessageProtocol.FileMessage msg);
+
 		void onUnknownMessage(Object msg, Exception parseException);
 	}
 }

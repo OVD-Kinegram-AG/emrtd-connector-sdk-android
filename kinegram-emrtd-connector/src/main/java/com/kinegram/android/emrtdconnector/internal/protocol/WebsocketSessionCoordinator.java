@@ -86,92 +86,92 @@ public class WebsocketSessionCoordinator {
 	private final WebsocketMessageDispatcher.WebsocketMessageHandler messageHandler =
 		new WebsocketMessageDispatcher.WebsocketMessageHandler() {
 
-		@Override
-		public void onAccept(WebsocketAcceptMessage msg) {
-			if (state != ProtocolState.WAITING_FOR_ACCEPT) {
-				handleProtocolError("Received Accept message in illegal state: " + state);
-				return;
+			@Override
+			public void onAccept(WebsocketAcceptMessage msg) {
+				if (state != ProtocolState.WAITING_FOR_ACCEPT) {
+					handleProtocolError("Received Accept message in illegal state: " + state);
+					return;
+				}
+				state = ProtocolState.READING_CHIP;
+				executor.execute(() -> {
+					try {
+						chipSession = new EmrtdChipSession(isoDep, options, emrtdSessionListener);
+						chipSession.start(msg.activeAuthenticationChallenge);
+					} catch (Exception e) {
+						handleError(new NfcException("NFC Chip Communication Failed", e),
+							ClosedListener.NFC_CHIP_COMMUNICATION_FAILED);
+					}
+				});
 			}
-			state = ProtocolState.READING_CHIP;
-			executor.execute(() -> {
+
+			@Override
+			public void onChipAuthenticationHandback(WebsocketChipAuthenticationHandbackMessage msg) {
+				if (state != ProtocolState.WAITING_FOR_CA_HANDBACK) {
+					handleProtocolError("Received CA_HAND_BACK in illegal state: " + state);
+					return;
+				}
+				Optional<byte[]> dg1Bytes = fileManager.getReceivedFile("dg1");
+				if (!dg1Bytes.isPresent()) {
+					handleProtocolError("Did not receive DG1 before CA_HANDBACK message");
+					return;
+				}
+
+				DG1File dg1File;
 				try {
-					chipSession = new EmrtdChipSession(isoDep, options, emrtdSessionListener);
-					chipSession.start(msg.activeAuthenticationChallenge);
+					dg1File = new DG1File(new ByteArrayInputStream(dg1Bytes.get()));
+				} catch (IOException e) {
+					// Should never happen with a ByteArrayInputStream from a byte[]
+					throw new AssertionError(e);
+				}
+
+				try {
+					caHandbackFuture.complete(new RemoteChipAuthentication.Result(
+						msg.secureMessagingInfo.toWrapper(),
+						msg.checkResult,
+						dg1File,
+						null // Not sent by the server
+					));
+				} catch (GeneralSecurityException e) {
+					handleError(e, ClosedListener.EMRTD_PASSPORT_READER_ERROR);
+					return;
+				}
+				state = ProtocolState.READING_CHIP;
+			}
+
+			@Override
+			public void onResult(WebsocketResultMessage msg) {
+				if (emrtdPassportListener != null) {
+					emrtdPassportListener.accept(msg.passport);
+				} else {
+					Log.w(TAG, "Received result message but no EmrtdPassportListener set");
+				}
+			}
+
+			@Override
+			public void onApduCommand(BinaryMessageProtocol.ApduMessage apduMessage) {
+				try {
+					byte[] responseBytes = isoDep.transceive(apduMessage.getData());
+					if (responseBytes == null || responseBytes.length < 2) {
+						throw new TagLostException("No Response from NFC chip");
+					}
+					websocketClient.send(BinaryMessageProtocol.ApduMessage.encode(responseBytes));
 				} catch (Exception e) {
-					handleError(new NfcException("NFC Chip Communication Failed", e),
+					handleError(new NfcException("NFC communication failed", e),
 						ClosedListener.NFC_CHIP_COMMUNICATION_FAILED);
 				}
-			});
-		}
-
-		@Override
-		public void onChipAuthenticationHandback(WebsocketChipAuthenticationHandbackMessage msg) {
-			if (state != ProtocolState.WAITING_FOR_CA_HANDBACK) {
-				handleProtocolError("Received CA_HAND_BACK in illegal state: " + state);
-				return;
-			}
-			Optional<byte[]> dg1Bytes = fileManager.getReceivedFile("dg1");
-			if (!dg1Bytes.isPresent()) {
-				handleProtocolError("Did not receive DG1 before CA_HANDBACK message");
-				return;
 			}
 
-			DG1File dg1File;
-			try {
-				dg1File = new DG1File(new ByteArrayInputStream(dg1Bytes.get()));
-			} catch (IOException e) {
-				// Should never happen with a ByteArrayInputStream from a byte[]
-				throw new AssertionError(e);
+			@Override
+			public void onFileReceived(BinaryMessageProtocol.FileMessage fileMessage) {
+				fileManager.receiveFile(fileMessage.getName(), fileMessage.getData());
 			}
 
-			try {
-				caHandbackFuture.complete(new RemoteChipAuthentication.Result(
-					msg.secureMessagingInfo.toWrapper(),
-					msg.checkResult,
-					dg1File,
-					null // Not sent by the server
-				));
-			} catch (GeneralSecurityException e) {
-				handleError(e, ClosedListener.EMRTD_PASSPORT_READER_ERROR);
-				return;
+			@Override
+			public void onUnknownMessage(Object msg, Exception parseEx) {
+				Log.w(TAG, "Received unknown or unexpected protocol message: " + msg, parseEx);
+				handleProtocolError("Unknown/invalid protocol message: " + msg);
 			}
-			state = ProtocolState.READING_CHIP;
-		}
-
-		@Override
-		public void onResult(WebsocketResultMessage msg) {
-			if (emrtdPassportListener != null) {
-				emrtdPassportListener.accept(msg.passport);
-			} else {
-				Log.w(TAG, "Received result message but no EmrtdPassportListener set");
-			}
-		}
-
-		@Override
-		public void onApduCommand(BinaryMessageProtocol.ApduMessage apduMessage) {
-			try {
-				byte[] responseBytes = isoDep.transceive(apduMessage.getData());
-				if (responseBytes == null || responseBytes.length < 2) {
-					throw new TagLostException("No Response from NFC chip");
-				}
-				websocketClient.send(BinaryMessageProtocol.ApduMessage.encode(responseBytes));
-			} catch (Exception e) {
-				handleError(new NfcException("NFC communication failed", e),
-					ClosedListener.NFC_CHIP_COMMUNICATION_FAILED);
-			}
-		}
-
-		@Override
-		public void onFileReceived(BinaryMessageProtocol.FileMessage fileMessage) {
-			fileManager.receiveFile(fileMessage.getName(), fileMessage.getData());
-		}
-
-		@Override
-		public void onUnknownMessage(Object msg, Exception parseEx) {
-			Log.w(TAG, "Received unknown or unexpected protocol message: " + msg, parseEx);
-			handleProtocolError("Unknown/invalid protocol message: " + msg);
-		}
-	};
+		};
 
 	private final EmrtdChipSession.Listener emrtdSessionListener = new EmrtdChipSession.Listener() {
 		@Override

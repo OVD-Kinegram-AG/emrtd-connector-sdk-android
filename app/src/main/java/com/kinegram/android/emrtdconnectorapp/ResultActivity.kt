@@ -23,13 +23,14 @@ class ResultActivity : AppCompatActivity() {
 			R.string.passive_authentication_failed
 		}
 
-		val cloneDescriptionResId = listOf(emrtd.activeAuthenticationResult, emrtd.chipAuthenticationResult).let {
-			when {
-				EmrtdPassport.CheckResult.FAILED in it -> R.string.chip_is_cloned
-				EmrtdPassport.CheckResult.SUCCESS in it -> R.string.chip_is_not_cloned
-				else -> 0
+		val cloneDescriptionResId =
+			listOf(emrtd.activeAuthenticationResult, emrtd.chipAuthenticationResult).let {
+				when {
+					EmrtdPassport.CheckResult.FAILED in it -> R.string.chip_is_cloned
+					EmrtdPassport.CheckResult.SUCCESS in it -> R.string.chip_is_not_cloned
+					else -> 0
+				}
 			}
-		}
 
 		BitmapDrawable(resources, emrtd.facePhoto.inputStream()).takeIf { it.bitmap != null }?.let {
 			// Display the face photo

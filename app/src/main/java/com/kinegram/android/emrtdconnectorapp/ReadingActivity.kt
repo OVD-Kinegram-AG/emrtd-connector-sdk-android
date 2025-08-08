@@ -187,7 +187,7 @@ class ReadingActivity : AppCompatActivity() {
 				ClosedListener.TIMEOUT_WHILE_WAITING_FOR_RESPONSE -> {}
 				ClosedListener.MAX_SESSION_TIME_EXCEEDED -> {}
 				ClosedListener.UNEXPECTED_MESSAGE -> {}
-                ClosedListener.PROTOCOL_ERROR -> {}
+				ClosedListener.PROTOCOL_ERROR -> {}
 				ClosedListener.INVALID_CLIENT_ID -> {}
 				ClosedListener.INVALID_ACCESS_KEY_VALUES,
 				ClosedListener.ACCESS_CONTROL_FAILED -> {
