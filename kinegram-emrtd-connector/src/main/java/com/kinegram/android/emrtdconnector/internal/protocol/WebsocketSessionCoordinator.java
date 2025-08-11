@@ -177,6 +177,7 @@ public class WebsocketSessionCoordinator {
 		@Override
 		public void onEmrtdStep(EmrtdStep emrtdStep) {
 			statusListener.handle(emrtdStep.name());
+			sendMonitoringMessage(new WebsocketMonitoringMessage("Step: " + emrtdStep.name()));
 		}
 
 		@Override
@@ -229,6 +230,19 @@ public class WebsocketSessionCoordinator {
 		state = ProtocolState.CLOSED;
 		executor.shutdown();
 		closedListener.handle(code, reason != null ? reason : "", remote);
+	}
+
+	private void sendMonitoringMessage(WebsocketMonitoringMessage message) {
+		if (!options.isDiagnosticsEnabled()) {
+			// We only send monitoring messages during diagnostic sessions. Sending them all the
+			// time could delay passport reading by introducing unnecessary traffic.
+			return;
+		}
+		try {
+			websocketClient.send(message.toJson().toString());
+		} catch (JSONException e) {
+			throw new AssertionError("Failed to create monitoring message", e);
+		}
 	}
 
 	private void sendStartMessage() {

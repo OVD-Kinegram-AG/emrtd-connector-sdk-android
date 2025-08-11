@@ -11,6 +11,7 @@ public abstract class WebsocketMessage {
 	public static final String TYPE_FINISH = "FINISH";
 	public static final String TYPE_RESULT = "RESULT";
 	public static final String TYPE_CLOSE = "CLOSE";
+	public static final String TYPE_MONITORING = "MONITORING";
 
 	public final String type;
 
@@ -38,6 +39,8 @@ public abstract class WebsocketMessage {
 				return WebsocketCloseMessage.fromJson(json);
 			case TYPE_RESULT:
 				return WebsocketResultMessage.fromJson(json);
+			case TYPE_MONITORING:
+				return WebsocketMonitoringMessage.fromJson(json);
 			default:
 				return new WebsocketUnknownMessage(type, json);
 		}
