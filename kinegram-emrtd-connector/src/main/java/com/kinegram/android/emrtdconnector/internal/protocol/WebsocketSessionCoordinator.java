@@ -238,7 +238,7 @@ public class WebsocketSessionCoordinator {
 				clientId,
 				"android",
 				isoDep.isExtendedLengthApduSupported(),
-				false
+				options.isDiagnosticsEnabled()
 			);
 			websocketClient.send(startMessage.toJson().toString());
 		} catch (JSONException e) {
