@@ -7,11 +7,14 @@ import android.os.Looper;
 import com.kinegram.android.emrtdconnector.internal.protocol.WebsocketSessionCoordinator;
 import com.kinegram.android.emrtdconnector.internal.protocol.exception.NfcException;
 import com.kinegram.android.emrtdconnector.internal.protocol.exception.WebsocketClientException;
+import com.kinegram.emrtd.EmrtdReader;
 
 import org.java_websocket.client.WebSocketClient;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+
+import io.opentelemetry.api.trace.*;
 
 /**
  * Connect an eMRTD NFC Chip with the Document Validation Server.
@@ -22,6 +25,10 @@ import java.net.URISyntaxException;
 public class EmrtdConnector {
 	private static final String RET_QUERY = "return_result=true";
 
+	// We start with a no-op implementation. If they want to, the users of this library can then
+	// provide their own tracer.
+	private static Tracer tracer = getTracer(TracerProvider.noop());
+
 	private final Handler handler = new Handler(Looper.getMainLooper());
 	private final String clientId;
 	private final URI webSocketUri;
@@ -31,12 +38,36 @@ public class EmrtdConnector {
 
 	private WebsocketSessionCoordinator sessionCoordinator;
 
-
 	private Exception nfcException;
 
 	private Exception webSocketClientException;
 
 	private Exception exception;
+
+	/**
+	 * Sets a OpenTelemetry tracer provider that is used to provide traces. If none is set, a no-op
+	 * implementation is used.
+	 *
+	 * @param tracerProvider The provider to set.
+	 */
+	public static void setTracerProvider(TracerProvider tracerProvider) {
+		tracer = getTracer(tracerProvider);
+		EmrtdReader.setTracerProvider(tracerProvider);
+	}
+
+	private static Tracer getTracer(TracerProvider tracerProvider) {
+		return tracerProvider.get(
+			"com.kinegram.android.emrtdconnector", BuildConfig.LIBRARY_VERSION);
+	}
+
+	/**
+	 * Gets the currently used OpenTelemetry tracer.
+	 *
+	 * @return The tracer.
+	 */
+	public static Tracer getTracer() {
+		return tracer;
+	}
 
 	/**
 	 * Get the exception that occurred during the {@link WebSocketClient} operations.

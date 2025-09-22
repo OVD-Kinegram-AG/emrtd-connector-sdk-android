@@ -30,7 +30,7 @@ import android.nfc.TagLostException;
 import android.nfc.tech.IsoDep;
 import android.nfc.tech.NfcB;
 
-import com.kinegram.emrtd.EmrtdReader;
+import com.kinegram.android.emrtdconnector.EmrtdConnector;
 
 import net.sf.scuba.smartcards.APDUEvent;
 import net.sf.scuba.smartcards.CardService;
@@ -115,7 +115,7 @@ public class IsoDepCardService extends CardService {
 	 */
 	@Override
 	public ResponseAPDU transmit(CommandAPDU ourCommandAPDU) throws CardServiceException {
-		Span span = EmrtdReader.getTracer().spanBuilder("iso_dep_transmit")
+		Span span = EmrtdConnector.getTracer().spanBuilder("iso_dep_transmit")
 			.startSpan();
 		try (Scope ignored = span.makeCurrent()) {
 			if (!isOpen()) {

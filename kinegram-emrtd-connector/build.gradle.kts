@@ -40,6 +40,12 @@ android {
 
 	defaultConfig {
 		consumerProguardFiles("consumer-proguard-rules.pro")
+		// Expose the library version as a string resource
+		buildConfigField("String", "LIBRARY_VERSION", "\"${project.version}\"")
+	}
+
+	buildFeatures {
+		buildConfig = true
 	}
 }
 
