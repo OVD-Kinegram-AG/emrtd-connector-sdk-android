@@ -34,6 +34,10 @@ The *Kinegram eMRTD Connector* enables the
 [Document Validation Server (DocVal)][docval] to communicate with the eMRTD
 through a secure WebSocket connection.
 
+## Versioning
+
+This library follows [Semantic Versioning 2.0.0][semver]
+
 ## Example App
 
 This project contains a minimal fully functional demo app, that shows the
@@ -156,3 +160,4 @@ JavaDoc style.
 [make]: https://www.gnu.org/software/make/
 [add-dependencies]: https://developer.android.com/build/dependencies
 [privacy-notice]: https://kinegram.digital/privacy-notice/
+[semver]: https://semver.org/spec/v2.0.0.html

@@ -1,5 +1,10 @@
 # Kinegram eMRTD Connector SDK Android - Changelog
 
+## 2.1.0
+* Requires a DocVal server with version `1.9.0` or newer
+* Add support for monitoring messages during diagnostic sessions
+* Add support for OpenTelemetry using `EmrtdConnector#setTracerProvider(...)`
+
 ## 2.0.0
 * Migrate to the new DocVal v2 WebSocket API, which significantly improves reading speed on high-latency internet connections
 
