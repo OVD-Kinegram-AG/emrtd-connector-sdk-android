@@ -41,3 +41,6 @@ distribution:
 
 pages: dokka license-report distribution
 	tools/pages
+
+publish-to-maven-local:
+	./gradlew :kinegram-emrtd-connector:publishToMavenLocal
