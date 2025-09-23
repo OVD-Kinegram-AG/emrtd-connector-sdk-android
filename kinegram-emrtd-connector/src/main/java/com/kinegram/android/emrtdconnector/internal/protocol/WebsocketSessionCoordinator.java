@@ -10,9 +10,10 @@ import androidx.core.util.Consumer;
 
 import com.kinegram.android.emrtdconnector.ClosedListener;
 import com.kinegram.android.emrtdconnector.ConnectionOptions;
+import com.kinegram.android.emrtdconnector.EmrtdConnector;
 import com.kinegram.android.emrtdconnector.EmrtdPassport;
 import com.kinegram.android.emrtdconnector.StatusListener;
-import com.kinegram.android.emrtdconnector.internal.AndroidWebsocketClient;
+import com.kinegram.android.emrtdconnector.internal.TracedAndroidWebSocketClient;
 import com.kinegram.android.emrtdconnector.internal.protocol.exception.NfcException;
 import com.kinegram.android.emrtdconnector.internal.protocol.exception.WebsocketClientException;
 import com.kinegram.android.emrtdconnector.internal.protocol.message.*;
@@ -20,6 +21,7 @@ import com.kinegram.emrtd.EmrtdResult;
 import com.kinegram.emrtd.EmrtdStep;
 import com.kinegram.emrtd.RemoteChipAuthentication;
 
+import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 import org.jmrtd.lds.icao.DG1File;
 import org.jmrtd.protocol.SecureMessagingWrapper;
@@ -30,12 +32,16 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import io.opentelemetry.api.common.Attributes;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.StatusCode;
+import io.opentelemetry.context.Scope;
 
 public class WebsocketSessionCoordinator {
 	private static final String TAG = WebsocketSessionCoordinator.class.getSimpleName();
@@ -51,13 +57,17 @@ public class WebsocketSessionCoordinator {
 	private final Consumer<Exception> errorListener;
 	private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
-	private final AndroidWebsocketClient websocketClient;
+	private final WebSocketClient websocketClient;
 	private final BinaryFileManager fileManager;
 	private EmrtdChipSession chipSession;
 	private final WebsocketMessageDispatcher dispatcher;
 	private final String clientId;
+	private final URI webSocketUri;
 
 	private final CompletableFuture<RemoteChipAuthentication.Result> caHandbackFuture = new CompletableFuture<>();
+
+	private Span sessionSpan;
+	private Span connectSpan;
 
 
 	public WebsocketSessionCoordinator(
@@ -77,6 +87,7 @@ public class WebsocketSessionCoordinator {
 		this.emrtdPassportListener = emrtdPassportListener;
 		this.errorListener = errorListener;
 		this.clientId = clientId;
+		this.webSocketUri = webSocketUri;
 
 		this.websocketClient = new WebsocketClientHandler(webSocketUri, options.getHttpHeaders());
 		this.fileManager = new BinaryFileManager(websocketClient);
@@ -92,14 +103,26 @@ public class WebsocketSessionCoordinator {
 					handleProtocolError("Received Accept message in illegal state: " + state);
 					return;
 				}
-				state = ProtocolState.READING_CHIP;
+
+				transitionState(ProtocolState.READING_CHIP);
+
+				if (sessionSpan != null) {
+					sessionSpan.addEvent("accept_message_received",
+						Attributes.builder()
+							.put("has_active_auth_challenge", msg.activeAuthenticationChallenge != null)
+							.build());
+				}
+
 				executor.execute(() -> {
-					try {
-						chipSession = new EmrtdChipSession(isoDep, options, emrtdSessionListener);
-						chipSession.start(msg.activeAuthenticationChallenge);
-					} catch (Exception e) {
-						handleError(new NfcException("NFC Chip Communication Failed", e),
-							ClosedListener.NFC_CHIP_COMMUNICATION_FAILED);
+					// Propagate span context to executor thread
+					try (Scope ignored = sessionSpan != null ? sessionSpan.makeCurrent() : null) {
+						try {
+							chipSession = new EmrtdChipSession(isoDep, options, emrtdSessionListener);
+							chipSession.start(msg.activeAuthenticationChallenge);
+						} catch (Exception e) {
+							handleError(new NfcException("NFC Chip Communication Failed", e),
+								ClosedListener.NFC_CHIP_COMMUNICATION_FAILED);
+						}
 					}
 				});
 			}
@@ -110,10 +133,19 @@ public class WebsocketSessionCoordinator {
 					handleProtocolError("Received CA_HAND_BACK in illegal state: " + state);
 					return;
 				}
+
 				Optional<byte[]> dg1Bytes = fileManager.getReceivedFile("dg1");
 				if (!dg1Bytes.isPresent()) {
 					handleProtocolError("Did not receive DG1 before CA_HANDBACK message");
 					return;
+				}
+
+				if (sessionSpan != null) {
+					sessionSpan.addEvent("chip_auth_handback_received",
+						Attributes.builder()
+							.put("check_result", msg.checkResult.toString())
+							.put("dg1_size", dg1Bytes.get().length)
+							.build());
 				}
 
 				DG1File dg1File;
@@ -135,7 +167,8 @@ public class WebsocketSessionCoordinator {
 					handleError(e, ClosedListener.EMRTD_PASSPORT_READER_ERROR);
 					return;
 				}
-				state = ProtocolState.READING_CHIP;
+
+				transitionState(ProtocolState.READING_CHIP);
 			}
 
 			@Override
@@ -189,14 +222,14 @@ public class WebsocketSessionCoordinator {
 		public void onFinish(EmrtdResult result) {
 			// When done, send finish message to server
 			sendFinishMessage(result);
-			state = ProtocolState.FINISHED;
+			transitionState(ProtocolState.FINISHED);
 		}
 
 		@Override
 		public CompletableFuture<RemoteChipAuthentication.Result> onChipAuthenticationHandover(
 			int maxTransceiveLength, int maxBlockSize, SecureMessagingWrapper wrapper) {
 			sendChipAuthHandoverMessage(maxTransceiveLength, maxBlockSize, wrapper);
-			state = ProtocolState.WAITING_FOR_CA_HANDBACK;
+			transitionState(ProtocolState.WAITING_FOR_CA_HANDBACK);
 			return caHandbackFuture;
 		}
 
@@ -209,14 +242,36 @@ public class WebsocketSessionCoordinator {
 
 
 	public void start() {
-		Log.d(TAG, "Connecting to WebSocket Server");
-		statusListener.handle(StatusListener.CONNECTING_TO_SERVER);
-		websocketClient.setConnectionLostTimeout(WEBSOCKET_TIMEOUT_SECONDS);
-		websocketClient.setTcpNoDelay(true);
-		websocketClient.connect();
+		sessionSpan = EmrtdConnector.getTracer().spanBuilder("emrtd_session")
+			.setAttribute("emrtd_connector.validation_id", options.getValidationId())
+			.setAttribute("emrtd_connector.client_id", clientId)
+			.setAttribute("url.full", webSocketUri.toString())
+			.setAttribute("server.address", webSocketUri.getHost())
+			.setAttribute("server.port", webSocketUri.getPort())
+			.setAttribute("emrtd_connector.diagnostics_enabled", options.isDiagnosticsEnabled())
+			.startSpan();
+
+		try (Scope ignored = sessionSpan.makeCurrent()) {
+			Log.d(TAG, "Connecting to WebSocket Server");
+			statusListener.handle(StatusListener.CONNECTING_TO_SERVER);
+
+			connectSpan = EmrtdConnector.getTracer().spanBuilder("websocket_connect")
+				.setAttribute("url.full", webSocketUri.toString())
+				.setAttribute("server.address", webSocketUri.getHost())
+				.setAttribute("server.port", webSocketUri.getPort())
+				.setAttribute("websocket.timeout_seconds", WEBSOCKET_TIMEOUT_SECONDS)
+				.startSpan();
+
+			websocketClient.setConnectionLostTimeout(WEBSOCKET_TIMEOUT_SECONDS);
+			websocketClient.setTcpNoDelay(true);
+			websocketClient.connect();
+		}
 	}
 
 	public void cancel() {
+		if (sessionSpan != null) {
+			sessionSpan.addEvent("session_cancelled");
+		}
 		closeConnection(ClosedListener.CANCELLED_BY_USER);
 		executor.shutdown();
 	}
@@ -227,7 +282,28 @@ public class WebsocketSessionCoordinator {
 
 	public void onClose(int code, String reason, boolean remote) {
 		Log.d(TAG, "Websocket closed: " + code + " " + reason);
-		state = ProtocolState.CLOSED;
+
+		if (connectSpan != null) {
+			connectSpan.addEvent("websocket_closed",
+				Attributes.builder()
+					.put("close_code", code)
+					.put("close_reason", reason != null ? reason : "")
+					.put("remote_initiated", remote)
+					.build());
+			connectSpan.end();
+		}
+
+		if (sessionSpan != null) {
+			sessionSpan.addEvent("session_closed",
+				Attributes.builder()
+					.put("close_code", code)
+					.put("close_reason", reason != null ? reason : "")
+					.put("remote_initiated", remote)
+					.build());
+			sessionSpan.end();
+		}
+
+		transitionState(ProtocolState.CLOSED);
 		executor.shutdown();
 		closedListener.handle(code, reason != null ? reason : "", remote);
 	}
@@ -293,10 +369,26 @@ public class WebsocketSessionCoordinator {
 
 	private void handleError(Exception e, String reason) {
 		Log.e(TAG, "Protocol error: " + reason, e);
+
+		if (sessionSpan != null) {
+			sessionSpan.recordException(e);
+			sessionSpan.setStatus(StatusCode.ERROR, reason);
+		}
+
 		errorListener.accept(e);
 		closeConnection(reason);
 	}
 
+	private void transitionState(ProtocolState newState) {
+		if (sessionSpan != null) {
+			sessionSpan.addEvent("protocol_state_transition",
+				Attributes.builder()
+					.put("from_state", state.name())
+					.put("to_state", newState.name())
+					.build());
+		}
+		state = newState;
+	}
 
 	private void closeConnection(String reason) {
 		if (websocketClient.isOpen()) {
@@ -305,7 +397,7 @@ public class WebsocketSessionCoordinator {
 				reason
 			);
 		}
-		state = ProtocolState.CLOSED;
+		transitionState(ProtocolState.CLOSED);
 		closeNfcConnection();
 	}
 
@@ -319,24 +411,32 @@ public class WebsocketSessionCoordinator {
 		}
 	}
 
-	private class WebsocketClientHandler extends AndroidWebsocketClient {
+	private class WebsocketClientHandler extends TracedAndroidWebSocketClient {
 		public WebsocketClientHandler(URI uri, Map<String, String> headers) {
-			super(uri, headers);
+			super(uri, headers, () -> sessionSpan, options.isDiagnosticsEnabled());
 		}
 
 		@Override
 		public void onWebsocketOpen(ServerHandshake handshake) {
-			state = ProtocolState.WAITING_FOR_ACCEPT;
+			if (connectSpan != null) {
+				connectSpan.addEvent("websocket_opened",
+					Attributes.builder()
+						.put("http.response.status_code", handshake.getHttpStatus())
+						.put("http.response.status_message", handshake.getHttpStatusMessage())
+						.build());
+			}
+
+			transitionState(ProtocolState.WAITING_FOR_ACCEPT);
 			sendStartMessage();
 		}
 
 		@Override
-		public void onMessage(String message) {
+		public void handleIncomingMessage(String message) {
 			dispatcher.handleTextMessage(message);
 		}
 
 		@Override
-		public void onMessage(ByteBuffer binary) {
+		public void handleIncomingMessage(ByteBuffer binary) {
 			dispatcher.handleBinaryMessage(binary);
 		}
 
