@@ -1,5 +1,8 @@
 # Kinegram eMRTD Connector SDK Android - Changelog
 
+## 2.1.2
+* Fix missing APDU response data in traces
+
 ## 2.1.1
 * Also include raw IsoDep data in OpenTelemetry traces during diagnostic sessions
 
