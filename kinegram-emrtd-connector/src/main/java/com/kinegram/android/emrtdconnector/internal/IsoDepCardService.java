@@ -144,7 +144,7 @@ public class IsoDepCardService extends CardService {
 			AttributesBuilder responseAttributes = Attributes.builder()
 				.put("apdu_response.length", responseBytes.length);
 			if (enableDiagnostics) {
-				requestAttributes.put(
+				responseAttributes.put(
 					"apdu_response.bytes_hex", toHex(responseBytes));
 			}
 			span.addEvent("received_apdu_response", responseAttributes.build());
