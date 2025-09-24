@@ -43,6 +43,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import io.opentelemetry.api.common.Attributes;
+import io.opentelemetry.api.common.AttributesBuilder;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.context.Scope;
@@ -60,6 +61,7 @@ import io.opentelemetry.context.Scope;
 public class IsoDepCardService extends CardService {
 	private static final Logger LOGGER = Logger.getLogger("net.sf.scuba");
 	private final IsoDep isoDep;
+	private final boolean enableDiagnostics;
 	private int apduCount;
 
 	/**
@@ -67,8 +69,9 @@ public class IsoDepCardService extends CardService {
 	 *
 	 * @param isoDep the card terminal to connect to
 	 */
-	public IsoDepCardService(IsoDep isoDep) {
+	public IsoDepCardService(IsoDep isoDep, boolean enableDiagnostics) {
 		this.isoDep = isoDep;
+		this.enableDiagnostics = enableDiagnostics;
 		apduCount = 0;
 	}
 
@@ -121,31 +124,30 @@ public class IsoDepCardService extends CardService {
 			if (!isOpen()) {
 				throw new TagLostException("Not Connected");
 			}
+			AttributesBuilder requestAttributes = Attributes.builder()
+				.put("command_apdu.cla", ourCommandAPDU.getCLA())
+				.put("command_apdu.ins", ourCommandAPDU.getINS())
+				.put("command_apdu.p1", ourCommandAPDU.getP1())
+				.put("command_apdu.p2", ourCommandAPDU.getP2())
+				.put("command_apdu.nc", ourCommandAPDU.getNc())
+				.put("command_apdu.ne", ourCommandAPDU.getNe());
+			if (enableDiagnostics) {
+				requestAttributes.put("command_apdu.bytes_hex", toHex(ourCommandAPDU.getBytes()));
+			}
 			span.addEvent(
 				"transmit_apdu_command",
-				Attributes.builder()
-					.put("command_apdu.cla", ourCommandAPDU.getCLA())
-					.put("command_apdu.ins", ourCommandAPDU.getINS())
-					.put("command_apdu.p1", ourCommandAPDU.getP1())
-					.put("command_apdu.p2", ourCommandAPDU.getP2())
-					.put("command_apdu.nc", ourCommandAPDU.getNc())
-					.put("command_apdu.ne", ourCommandAPDU.getNe())
-					// TODO Disabled for privacy reasons. Should only be enabled on user consent.
-					// .put("command_apdu.bytes_base64",
-					// Base64.getEncoder().encodeToString(commandAPDU.getBytes()))
-					.build());
+				requestAttributes.build());
 			byte[] responseBytes = isoDep.transceive(ourCommandAPDU.getBytes());
 			if (responseBytes == null || responseBytes.length < 2) {
 				throw new TagLostException("No Response");
 			}
-			span.addEvent(
-				"received_apdu_response",
-				Attributes.builder()
-					.put("apdu_response.length", responseBytes.length)
-					// TODO Disabled for privacy reasons. Should only be enabled on user consent.
-					// .put("apdu_response.bytes_base64",
-					// Base64.getEncoder().encodeToString(responseBytes))
-					.build());
+			AttributesBuilder responseAttributes = Attributes.builder()
+				.put("apdu_response.length", responseBytes.length);
+			if (enableDiagnostics) {
+				requestAttributes.put(
+					"apdu_response.bytes_hex", toHex(responseBytes));
+			}
+			span.addEvent("received_apdu_response", responseAttributes.build());
 			ResponseAPDU ourResponseAPDU = new ResponseAPDU(responseBytes);
 			APDUEvent event = new APDUEvent(
 				this, "ISODep", ++apduCount, ourCommandAPDU, ourResponseAPDU
@@ -205,5 +207,16 @@ public class IsoDepCardService extends CardService {
 			t = t.getCause();
 		}
 		return false;
+	}
+
+	private static String toHex(byte[] bytes) {
+		char[] hex = "0123456789ABCDEF".toCharArray();
+		char[] out = new char[bytes.length * 2];
+		for (int i = 0, j = 0; i < bytes.length; i++) {
+			int v = bytes[i] & 0xFF;
+			out[j++] = hex[v >>> 4];
+			out[j++] = hex[v & 0x0F];
+		}
+		return new String(out);
 	}
 }

@@ -89,7 +89,7 @@ public class EmrtdChipSession {
 					.put("nfc.extended_length_supported", isoDep.isExtendedLengthApduSupported())
 					.build());
 
-			CardService cardService = new IsoDepCardService(isoDep);
+			CardService cardService = new IsoDepCardService(isoDep, options.isDiagnosticsEnabled());
 			try {
 				EmrtdResult result = readEmrtdData(cardService, activeAuthenticationChallenge);
 
