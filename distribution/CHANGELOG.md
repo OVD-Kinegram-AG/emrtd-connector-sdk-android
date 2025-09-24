@@ -1,5 +1,8 @@
 # Kinegram eMRTD Connector SDK Android - Changelog
 
+## 2.1.1
+* Also include raw IsoDep data in OpenTelemetry traces during diagnostic sessions
+
 ## 2.1.0
 * Requires a DocVal server with version `1.9.0` or newer
 * Add support for monitoring messages during diagnostic sessions
