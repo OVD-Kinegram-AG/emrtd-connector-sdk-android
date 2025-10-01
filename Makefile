@@ -30,16 +30,7 @@ dokka:
 	cp -r kinegram-emrtd-connector/build/dokka/html public/dokka
 	cp -r kinegram-emrtd-connector/build/dokka/javadoc public/javadoc
 
-distribution:
-	VERSION="$$(grep -m1 '^version[[:space:]]*=' gradle.properties | cut -d= -f2 | tr -d '[:space:]')"; \
-	echo "Building distribution for version $$VERSION"; \
-	sed -i'' -e "s/emrtdconnector = \".*\"/emrtdconnector = \"$$VERSION\"/" \
-		distribution/gradle/libs.versions.toml;
-	mkdir -p public
-	rm -f public/distribution.zip
-	(cd distribution && zip -r ../public/distribution.zip .)
-
-pages: dokka license-report distribution
+pages: dokka license-report
 	tools/pages
 
 publish-to-maven-local:
