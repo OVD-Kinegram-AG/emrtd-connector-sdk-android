@@ -1,6 +1,3 @@
-
-Dependency License Report for kinegram-emrtd-connector 2.1.2
-
 1. Group: androidx.activity  Name: activity  Version: 1.9.3
 
 POM Project URL: https://developer.android.com/jetpack/androidx/releases/activity#1.9.3
