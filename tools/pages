@@ -4,15 +4,15 @@
 set -e
 
 # Create output directory.
-mkdir -p public
+mkdir -p _site
 
 # MD to HTML.
-for F in distribution/*.md
+for F in ./*.md
 do
 	OF=${F##*/}
-	tools/md2html "$F" "public/${OF%.md}.html"
+	tools/md2html "$F" "_site/${OF%.md}.html"
 done
-mv public/README.html public/index.html
+mv _site/README.html _site/index.html
 
 # Compose sed command.
 if [ "$(uname)" = Darwin ]; then
@@ -23,8 +23,8 @@ fi
 
 
 # Copy resources.
-cp kinegram-emrtd-connector/logo-icon.svg public/favicon.svg
+cp kinegram-emrtd-connector/logo-icon.svg _site/favicon.svg
 
 # Fix links.
-"${SED[@]}" 's_.md#_.html#_g' public/*.html
-"${SED[@]}" 's_.md"_.html"_g' public/*.html
+"${SED[@]}" 's_.md#_.html#_g' _site/*.html
+"${SED[@]}" 's_.md"_.html"_g' _site/*.html

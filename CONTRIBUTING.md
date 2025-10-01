@@ -19,4 +19,14 @@ To publish a new version
 Please follow the [Semantic Versioning 2.0.0][semconv] convention when choosing
 the next version number.
 
+## Third Party Notices
+
+Whenever you make changes to one of the dependency, run the following Makefile
+target to also update the [THIRD-PARTY-NOTICES.txt](./THIRD-PARTY-NOTICES.txt)
+file.
+
+```bash
+make update-license-report
+```
+
 [semconv]: https://semver.org/spec/v2.0.0.html
