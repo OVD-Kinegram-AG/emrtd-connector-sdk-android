@@ -1,5 +1,8 @@
 # Kinegram eMRTD Connector SDK Android - Changelog
 
+## 2.1.3
+* Fix PACE/BAC order
+
 ## 2.1.2
 * Fix missing APDU response data in traces
 

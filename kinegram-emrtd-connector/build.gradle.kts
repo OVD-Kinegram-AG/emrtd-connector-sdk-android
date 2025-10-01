@@ -62,7 +62,7 @@ val internalizeJar by tasks.registering(ShadowJar::class) {
 val internalizeTransitive by configurations.creating
 
 
-val emrtdSdk = "com.kinegram.emrtd:emrtd-sdk-java:2.0.0"
+val emrtdSdk = "com.kinegram.emrtd:emrtd-sdk-java:2.0.2"
 
 dependencies {
 	implementation("org.java-websocket:Java-WebSocket:1.5.5")
