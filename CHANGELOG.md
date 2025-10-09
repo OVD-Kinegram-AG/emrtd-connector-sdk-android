@@ -1,5 +1,8 @@
 # Kinegram eMRTD Connector SDK Android - Changelog
 
+## 2.1.4
+* Fix bug when reading passports that do not support PACE
+
 ## 2.1.3
 * Fix PACE/BAC order
 
