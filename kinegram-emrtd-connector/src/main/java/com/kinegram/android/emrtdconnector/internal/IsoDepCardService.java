@@ -138,8 +138,9 @@ public class IsoDepCardService extends CardService {
 				"transmit_apdu_command",
 				requestAttributes.build());
 			byte[] responseBytes = isoDep.transceive(ourCommandAPDU.getBytes());
-			if (responseBytes == null || responseBytes.length < 2) {
-				throw new TagLostException("No Response");
+			if (responseBytes == null) {
+				// MUST NOT happen according to the IsoDep docs
+				throw new AssertionError("Unexpected IsoDep null response");
 			}
 			AttributesBuilder responseAttributes = Attributes.builder()
 				.put("apdu_response.length", responseBytes.length);
@@ -148,6 +149,10 @@ public class IsoDepCardService extends CardService {
 					"apdu_response.bytes_hex", toHex(responseBytes));
 			}
 			span.addEvent("received_apdu_response", responseAttributes.build());
+			if (responseBytes.length < 2) {
+				throw new TagLostException(
+					"Received APDU response with less than 2 bytes (" + responseBytes.length + ")");
+			}
 			ResponseAPDU ourResponseAPDU = new ResponseAPDU(responseBytes);
 			APDUEvent event = new APDUEvent(
 				this, "ISODep", ++apduCount, ourCommandAPDU, ourResponseAPDU
