@@ -156,7 +156,7 @@ public class EmrtdChipSession {
 	}
 
 	private RemoteChipAuthentication.Result handleChipAuthentication(
-		DG14File dg14File,
+		byte[] dg14Raw,
 		int maxTransceiveLengthForSecureMessaging,
 		int maxBlockSize,
 		SecureMessagingWrapper secureMessagingWrapper) {
@@ -164,11 +164,11 @@ public class EmrtdChipSession {
 		Span authSpan = EmrtdConnector.getTracer().spanBuilder("chip_authentication")
 			.setAttribute("nfc.max_transceive_length", maxTransceiveLengthForSecureMessaging)
 			.setAttribute("nfc.max_block_size", maxBlockSize)
-			.setAttribute("file.size", dg14File.getEncoded().length)
+			.setAttribute("file.size", dg14Raw.length)
 			.startSpan();
 
 		try (Scope ignored = authSpan.makeCurrent()) {
-			listener.onFileReady("dg14", dg14File.getEncoded());
+			listener.onFileReady("dg14", dg14Raw);
 
 			authSpan.addEvent("chip_auth_handover_started");
 			CompletableFuture<RemoteChipAuthentication.Result> future = listener.onChipAuthenticationHandover(

@@ -1,5 +1,8 @@
 # Kinegram eMRTD Connector SDK Android - Changelog
 
+## 2.1.5
+* Fix bug in Passive Authentication for some passports (e.g. French ID)
+
 ## 2.1.4
 * Fix bug when reading passports that do not support PACE
 
