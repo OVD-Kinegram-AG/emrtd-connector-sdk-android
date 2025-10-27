@@ -1,5 +1,8 @@
 # Kinegram eMRTD Connector SDK Android - Changelog
 
+## 2.1.6
+* Continue access control on failed master file selection
+
 ## 2.1.5
 * Fix bug in Passive Authentication for some passports (e.g. French ID)
 
