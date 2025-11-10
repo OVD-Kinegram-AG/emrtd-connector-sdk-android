@@ -1,5 +1,8 @@
 # Kinegram eMRTD Connector SDK Android - Changelog
 
+## 2.1.7
+* Make names of intent extras public
+
 ## 2.1.6
 * Continue access control on failed master file selection
 
