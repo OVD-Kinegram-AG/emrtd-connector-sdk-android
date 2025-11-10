@@ -25,18 +25,17 @@ import java.net.URISyntaxException;
 import java.util.Arrays;
 
 public class EmrtdConnectorActivity extends AppCompatActivity implements ClosedListener, StatusListener, EmrtdPassportListener {
+	public final static String CLIENT_ID = "CLIENT_ID";
+	public final static String VALIDATION_URI = "VALIDATION_URI";
+	public final static String VALIDATION_ID_KEY = "VALIDATION_ID";
+	public final static String CAN_KEY = "CAN";
+	public final static String DOCUMENT_NUMBER_KEY = "DOCUMENT_NUMBER";
+	public final static String DATE_OF_BIRTH_KEY = "DATE_OF_BIRTH";
+	public final static String DATE_OF_EXPIRY_KEY = "DATE_OF_EXPIRY";
+	public final static String RETURN_DATA = "PASSPORT_DATA";
+	public final static String RETURN_ERROR = "JSON_ERROR";
+
 	private final static String TECH_ISO_DEP = "android.nfc.tech.IsoDep";
-
-	private final static String CLIENT_ID = "CLIENT_ID";
-	private final static String VALIDATION_URI = "VALIDATION_URI";
-	private final static String VALIDATION_ID_KEY = "VALIDATION_ID";
-	private final static String CAN_KEY = "CAN";
-	private final static String DOCUMENT_NUMBER_KEY = "DOCUMENT_NUMBER";
-	private final static String DATE_OF_BIRTH_KEY = "DATE_OF_BIRTH";
-	private final static String DATE_OF_EXPIRY_KEY = "DATE_OF_EXPIRY";
-
-	private final static String RETURN_DATA = "PASSPORT_DATA";
-	private final static String RETURN_ERROR = "JSON_ERROR";
 
 	private EmrtdConnector _emrtdConnector;
 	private NfcAdapter _nfcAdapter;
