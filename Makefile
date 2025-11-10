@@ -7,6 +7,12 @@ all: debug install start
 debug:
 	./gradlew assembleDebug
 
+lint:
+	./gradlew :kinegram-emrtd-connector:lintDebug
+
+aar: lint
+	./gradlew :kinegram-emrtd-connector:assembleRelease
+
 install:
 	adb $(TARGET) install -r \
 		app/build/outputs/apk/debug/app-debug.apk
