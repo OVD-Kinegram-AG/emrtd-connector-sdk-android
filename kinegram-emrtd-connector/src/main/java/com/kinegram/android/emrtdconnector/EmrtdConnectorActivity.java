@@ -59,21 +59,22 @@ public class EmrtdConnectorActivity extends AppCompatActivity implements ClosedL
 		_statusTextView = findViewById(R.id.status_textview);
 		_progressIndicator = findViewById(R.id.progress_indicator);
 
-		String clientId = getIntent().getStringExtra(CLIENT_ID);
-		String validationUri = getIntent().getStringExtra(VALIDATION_URI);
-		_validationId = getIntent().getStringExtra(VALIDATION_ID_KEY);
+		Intent intent = getIntent();
+		String clientId = intent.getStringExtra(CLIENT_ID);
+		String validationUri = intent.getStringExtra(VALIDATION_URI);
+		_validationId = intent.getStringExtra(VALIDATION_ID_KEY);
 
-		_can = getIntent().getStringExtra(CAN_KEY);
+		_can = intent.getStringExtra(CAN_KEY);
 
-		_documentNumber = getIntent().getStringExtra(DOCUMENT_NUMBER_KEY);
-		_dateOfBirth = getIntent().getStringExtra(DATE_OF_BIRTH_KEY);
-		_dateOfExpiry = getIntent().getStringExtra(DATE_OF_EXPIRY_KEY);
+		_documentNumber = intent.getStringExtra(DOCUMENT_NUMBER_KEY);
+		_dateOfBirth = intent.getStringExtra(DATE_OF_BIRTH_KEY);
+		_dateOfExpiry = intent.getStringExtra(DATE_OF_EXPIRY_KEY);
 
 		Button cancelButton = findViewById(R.id.cancel_button);
 		cancelButton.setOnClickListener(v -> finish());
 
-		Intent intent = new Intent(this, getClass());
-		intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		Intent newIntent = new Intent(this, getClass());
+		newIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
 		int flags;
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -82,7 +83,7 @@ public class EmrtdConnectorActivity extends AppCompatActivity implements ClosedL
 			flags = PendingIntent.FLAG_UPDATE_CURRENT;
 		}
 
-		_pendingIntent = PendingIntent.getActivity(this, 50, intent, flags);
+		_pendingIntent = PendingIntent.getActivity(this, 50, newIntent, flags);
 		_nfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
 		try {
