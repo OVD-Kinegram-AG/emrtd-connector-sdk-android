@@ -1,6 +1,7 @@
-import org.jetbrains.dokka.base.DokkaBase
-import org.jetbrains.dokka.base.DokkaBaseConfiguration
-import org.jetbrains.dokka.gradle.DokkaTask
+import org.gradle.kotlin.dsl.configure
+import org.gradle.kotlin.dsl.withType
+import org.jetbrains.dokka.gradle.DokkaExtension
+import org.jetbrains.dokka.gradle.engine.plugins.DokkaHtmlPluginParameters
 import com.github.jk1.license.render.*
 import java.net.URI
 
@@ -8,6 +9,7 @@ plugins {
 	id("com.android.library")
 	id("kotlin-android") // Needed for Dokka to document anything
 	id("org.jetbrains.dokka") version "2.1.0"
+	id("org.jetbrains.dokka-javadoc") version "2.1.0"
 	id("maven-publish")
 	id("signing")
 	id("com.github.jk1.dependency-license-report") version "3.0.1"
@@ -62,30 +64,30 @@ buildscript {
 	}
 }
 
-tasks.withType<DokkaTask>().configureEach {
-	pluginConfiguration<DokkaBase, DokkaBaseConfiguration> {
-		customAssets = listOf(file("logo-icon.svg"))
-		footerMessage = "© 2024 OVD Kinegram AG"
-	}
+extensions.configure<DokkaExtension>("dokka") {
 	moduleName.set("Kinegram eMRTD Connector")
-	dokkaSourceSets {
-		configureEach {
-			displayName.set("Android")
-			skipDeprecated.set(true)
-			suppressInheritedMembers.set(true)
-			includes.from("Module.md")
-			perPackageOption {
-				matchingRegex.set(".*\\.internal.*")
-				suppress.set(true)
-			}
-			externalDocumentationLink {
-				// Somehow there is an error (AccessDenied) if version is `1.5.5` or `latest`
-				// With version `1.5.3` everything works fine
-				url.set(
-					URI("https://javadoc.io/doc/org.java-websocket/Java-WebSocket/1.5.3/")
-						.toURL()
-				)
-			}
+
+	dokkaPublications.configureEach {
+		suppressInheritedMembers.set(true)
+	}
+
+	pluginsConfiguration.withType<DokkaHtmlPluginParameters>().configureEach {
+		customAssets.from(project.file("logo-icon.svg"))
+		footerMessage.set("© 2024 OVD Kinegram AG")
+	}
+
+	dokkaSourceSets.configureEach {
+		displayName.set("Android")
+		skipDeprecated.set(true)
+		includes.from(project.file("Module.md"))
+		perPackageOption {
+			matchingRegex.set(".*\\.internal.*")
+			suppress.set(true)
+		}
+		externalDocumentationLinks.register("${name}-javaWebSocket") {
+			// Somehow there is an error (AccessDenied) if version is `1.5.5` or `latest`
+			// With version `1.5.3` everything works fine
+			url.set(URI("https://javadoc.io/doc/org.java-websocket/Java-WebSocket/1.5.3/"))
 		}
 	}
 }

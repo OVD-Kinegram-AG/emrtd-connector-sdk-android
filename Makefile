@@ -33,7 +33,7 @@ update-license-report:
 	> ./THIRD-PARTY-NOTICES.txt
 
 dokka:
-	./gradlew :kinegram-emrtd-connector:dokkaHtml :kinegram-emrtd-connector:dokkaJavaDoc
+	./gradlew :kinegram-emrtd-connector:dokkaGenerateHtml :kinegram-emrtd-connector:dokkaGenerateJavadoc
 	mkdir -p _site
 	cp -r kinegram-emrtd-connector/build/dokka/html _site/dokka
 	cp -r kinegram-emrtd-connector/build/dokka/javadoc _site/javadoc
