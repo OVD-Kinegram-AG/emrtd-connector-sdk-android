@@ -1,6 +1,7 @@
 <resources>
 	<string name="app_name">eMRTD Connector Example</string>
 
+	<string name="return_result_only">Only return read result</string>
 	<string name="instructions">Insert the 6 digit CAN or the info from the MRZ.</string>
 	<string name="can">CAN</string>
 	<string name="can_hint">123456</string>

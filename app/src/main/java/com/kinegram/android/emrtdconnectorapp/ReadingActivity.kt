@@ -19,6 +19,7 @@ import com.kinegram.android.emrtdconnector.ChipAccessKey
 import com.kinegram.android.emrtdconnector.ClosedListener
 import com.kinegram.android.emrtdconnector.ConnectionOptions
 import com.kinegram.android.emrtdconnector.EmrtdConnector
+import com.kinegram.android.emrtdconnector.EmrtdConnectorActivity
 import com.kinegram.android.emrtdconnector.EmrtdPassport
 import com.kinegram.android.emrtdconnector.StatusListener
 import org.json.JSONException
@@ -54,14 +55,20 @@ class ReadingActivity : AppCompatActivity() {
 		showResultButton = findViewById(R.id.show_result_button)
 		doneButton = findViewById(R.id.done_button)
 
-		validationId = intent.getStringExtra(VALIDATION_ID_KEY) ?: ""
-		can = intent.getStringExtra(CAN_KEY) ?: ""
-		documentNumber = intent.getStringExtra(DOCUMENT_NUMBER_KEY) ?: ""
-		dateOfBirth = intent.getStringExtra(DATE_OF_BIRTH_KEY) ?: ""
-		dateOfExpiry = intent.getStringExtra(DATE_OF_EXPIRY_KEY) ?: ""
+		val clientId = intent.getStringExtra(EmrtdConnectorActivity.CLIENT_ID) ?: ""
+		val validationUri = intent.getStringExtra(EmrtdConnectorActivity.VALIDATION_URI) ?: ""
+		validationId = intent.getStringExtra(EmrtdConnectorActivity.VALIDATION_ID_KEY) ?: ""
+		can = intent.getStringExtra(EmrtdConnectorActivity.CAN_KEY) ?: ""
+		documentNumber = intent.getStringExtra(EmrtdConnectorActivity.DOCUMENT_NUMBER_KEY) ?: ""
+		dateOfBirth = intent.getStringExtra(EmrtdConnectorActivity.DATE_OF_BIRTH_KEY) ?: ""
+		dateOfExpiry = intent.getStringExtra(EmrtdConnectorActivity.DATE_OF_EXPIRY_KEY) ?: ""
 
 		emrtdConnector = EmrtdConnector(
-			CLIENT_ID, URL, ::closedListener, ::statusListener, ::emrtdPassportListener
+			clientId,
+			validationUri,
+			::closedListener,
+			::statusListener,
+			::emrtdPassportListener
 		)
 		val intent = Intent(this, javaClass).apply {
 			addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
@@ -233,13 +240,5 @@ class ReadingActivity : AppCompatActivity() {
 
 	companion object {
 		private const val TECH_ISO_DEP = "android.nfc.tech.IsoDep"
-		private const val URL = "wss://docval.kurzdigital.com/ws2/validate"
-		private const val CLIENT_ID = "example_client"
-
-		const val VALIDATION_ID_KEY = "VALIDATION_ID"
-		const val CAN_KEY = "CAN"
-		const val DOCUMENT_NUMBER_KEY = "DOCUMENT_NUMBER"
-		const val DATE_OF_BIRTH_KEY = "DATE_OF_BIRTH"
-		const val DATE_OF_EXPIRY_KEY = "DATE_OF_EXPIRY"
 	}
 }

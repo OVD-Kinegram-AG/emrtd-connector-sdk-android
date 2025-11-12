@@ -24,7 +24,7 @@ import org.json.JSONException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 
-public class EmrtdConnectorActivity extends AppCompatActivity implements ClosedListener, StatusListener, EmrtdPassportListener {
+public class EmrtdConnectorActivity extends AppCompatActivity {
 	public final static String CLIENT_ID = "CLIENT_ID";
 	public final static String VALIDATION_URI = "VALIDATION_URI";
 	public final static String VALIDATION_ID_KEY = "VALIDATION_ID";
@@ -36,6 +36,28 @@ public class EmrtdConnectorActivity extends AppCompatActivity implements ClosedL
 	public final static String RETURN_ERROR = "JSON_ERROR";
 
 	private final static String TECH_ISO_DEP = "android.nfc.tech.IsoDep";
+
+	private final ClosedListener closedListener = (code, reason, remote) -> finish();
+	private final StatusListener statusListener = new StatusListener() {
+		@Override
+		public void handle(String status) {
+			statusTextView.setText(status);
+		}
+	};
+	private final EmrtdPassportListener passportListener = new EmrtdPassportListener() {
+		@Override
+		public void handle(EmrtdPassport emrtdPassport, JSONException exception) {
+			statusTextView.setText(emrtdPassport.toString());
+
+			Intent intent = new Intent();
+			intent.putExtra(RETURN_DATA, emrtdPassport);
+			if (exception != null) {
+				intent.putExtra(RETURN_ERROR, exception);
+			}
+			setResult(Activity.RESULT_OK, intent);
+			finish();
+		}
+	};
 
 	private EmrtdConnector emrtdConnector;
 	private NfcAdapter nfcAdapter;
@@ -76,18 +98,21 @@ public class EmrtdConnectorActivity extends AppCompatActivity implements ClosedL
 		Intent newIntent = new Intent(this, getClass());
 		newIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
-		int flags;
+		int flags = PendingIntent.FLAG_UPDATE_CURRENT;
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-			flags = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE;
-		} else {
-			flags = PendingIntent.FLAG_UPDATE_CURRENT;
+			flags |= PendingIntent.FLAG_MUTABLE;
 		}
 
 		pendingIntent = PendingIntent.getActivity(this, 50, newIntent, flags);
 		nfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
 		try {
-			emrtdConnector = new EmrtdConnector(clientId, validationUri, this, this, this);
+			emrtdConnector = new EmrtdConnector(
+				clientId,
+				validationUri,
+				closedListener,
+				statusListener,
+				passportListener);
 		} catch (URISyntaxException e) {
 			statusTextView.setText(e.getLocalizedMessage());
 		}
@@ -147,31 +172,5 @@ public class EmrtdConnectorActivity extends AppCompatActivity implements ClosedL
 
 		progressIndicator.setVisibility(View.VISIBLE);
 		emrtdConnector.connect(isoDep, options);
-	}
-
-	// ClosedListener
-	@Override
-	public void handle(int code, String reason, boolean remote) {
-		finish();
-	}
-
-	// EmrtdPassportListener
-	@Override
-	public void handle(EmrtdPassport emrtdPassport, JSONException exception) {
-		statusTextView.setText(emrtdPassport.toString());
-
-		Intent intent = new Intent();
-		intent.putExtra(RETURN_DATA, emrtdPassport);
-		if (exception != null) {
-			intent.putExtra(RETURN_ERROR, exception);
-		}
-		setResult(Activity.RESULT_OK, intent);
-		finish();
-	}
-
-	// StatusListener
-	@Override
-	public void handle(String status) {
-		statusTextView.setText(status);
 	}
 }
