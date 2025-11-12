@@ -5,14 +5,15 @@ plugins {
 
 android {
 	namespace = "com.kinegram.android.emrtdconnectorapp"
-	compileSdk = 35
+	compileSdk = 36
 
 	packagingOptions.resources.excludes += "META-INF/versions/9/OSGI-INF/MANIFEST.MF"
 
 	defaultConfig {
 		applicationId = "com.kinegram.android.emrtdconnectorapp"
 		minSdk = 24
-		targetSdk = 35
+		targetSdk = compileSdk
+
 		versionCode = 16
 		versionName = "1.0.0"
 	}
