@@ -1,5 +1,8 @@
 # Kinegram eMRTD Connector SDK Android - Changelog
 
+## 2.1.9
+* Migrate Dokka from V1 to V2
+
 ## 2.1.8
 * Add a check box to use EmrtdConnectorActivity in the example app
 
