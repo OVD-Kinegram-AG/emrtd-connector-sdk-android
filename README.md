@@ -31,8 +31,8 @@ electronic passports / id cards ([eMRTDs][emrtd]).
 ```
 
 The *Kinegram eMRTD Connector* enables the
-[Document Validation Server (DocVal)][docval] to communicate with the eMRTD
-through a secure WebSocket connection.
+[Document Validation Server (DocVal)][docval]
+to communicate with the eMRTD through a secure WebSocket connection.
 
 ## Versioning
 
@@ -57,17 +57,19 @@ On a system with a Unix shell and [make][make] run:
 make
 ```
 
-The (short and very readable) [Makefile](Makefile) covers building, running and more.
+The (short and very readable) [Makefile](Makefile) covers building, running
+and more.
 
 Alternatively just open the project with [Android Studio][android] and click
 run.
 
 ## Include the Kinegram eMRTD Connector in your app
 
-[Add the dependencies][add-dependencies] to your app's gradle build configuration.
+[Add the dependencies][add-dependencies] to your app's gradle build
+configuration.
 
-1. Configure your app-level build.gradle (`app/build.gradle`) file to include the `emrtdconnector`
-   dependency.
+1. Configure your app-level build.gradle (`app/build.gradle`) file to
+	include the `emrtdconnector` dependency.
 2. Replace `<version>` with the version you want to use.
 3. Resolve file-duplication conflicts like shown below
 
@@ -85,7 +87,7 @@ dependencies {
 // build.gradle.kts
 android {
 	...
-    // Resolve all conflicts of duplicated files in dependencies
+	// Resolve all conflicts of duplicated files in dependencies
 	packagingOptions.resources.excludes += "META-INF/versions/9/OSGI-INF/MANIFEST.MF"
 }
 ```
@@ -97,13 +99,13 @@ android {
 <summary>Groovy</summary>
 
 ```groovy
-
 // app/build.gradle
 dependencies {
 	...
 	implementation 'com.kinegram.android:emrtdconnector:<version>'
 }
 ```
+
 ```groovy
 // build.gradle
 android {
@@ -122,8 +124,8 @@ android {
 
 Open the [Dokka Documentation](dokka) in your preferred browser.
 
-There is also a [JavaDoc Documentation](javadoc) available if you prefer the old
-JavaDoc style.
+There is also a [JavaDoc Documentation](javadoc) available if you prefer the
+old JavaDoc style.
 
 ## Changelog
 
