@@ -1,5 +1,8 @@
 # Kinegram eMRTD Connector SDK Android - Changelog
 
+## 2.1.8
+* Add a check box to use EmrtdConnectorActivity in the example app
+
 ## 2.1.7
 * Make names of intent extras public
 
