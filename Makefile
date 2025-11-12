@@ -43,3 +43,6 @@ pages: dokka
 
 publish-to-maven-local:
 	./gradlew :kinegram-emrtd-connector:publishToMavenLocal
+
+clean:
+	./gradlew clean
