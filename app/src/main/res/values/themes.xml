@@ -1,5 +1,4 @@
 <resources>
-
 	<style name="AppTheme" parent="Theme.AppCompat.DayNight.DarkActionBar">
 		<item name="colorPrimary">@color/primary</item>
 		<item name="colorPrimaryDark">@color/primaryDark</item>
