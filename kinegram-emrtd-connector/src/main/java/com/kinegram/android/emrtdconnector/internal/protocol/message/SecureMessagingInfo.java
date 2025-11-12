@@ -6,21 +6,21 @@ import androidx.annotation.NonNull;
 
 import com.kinegram.android.emrtdconnector.EmrtdConnector;
 
-import io.opentelemetry.api.common.Attributes;
-import io.opentelemetry.api.trace.Span;
-import io.opentelemetry.api.trace.StatusCode;
-import io.opentelemetry.context.Scope;
-
 import org.jmrtd.protocol.AESSecureMessagingWrapper;
 import org.jmrtd.protocol.DESedeSecureMessagingWrapper;
 import org.jmrtd.protocol.SecureMessagingWrapper;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.security.GeneralSecurityException;
+
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import java.security.GeneralSecurityException;
+import io.opentelemetry.api.common.Attributes;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.StatusCode;
+import io.opentelemetry.context.Scope;
 
 /**
  * Information needed for secure messaging.

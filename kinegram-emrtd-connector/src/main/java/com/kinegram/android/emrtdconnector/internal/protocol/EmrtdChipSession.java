@@ -18,7 +18,6 @@ import com.kinegram.emrtd.protocols.AccessControlProtocolException;
 
 import net.sf.scuba.smartcards.CardService;
 
-import org.jmrtd.lds.icao.DG14File;
 import org.jmrtd.protocol.SecureMessagingWrapper;
 
 import java.io.IOException;

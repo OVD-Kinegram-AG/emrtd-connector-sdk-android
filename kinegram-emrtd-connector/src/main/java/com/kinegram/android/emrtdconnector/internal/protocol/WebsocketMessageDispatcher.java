@@ -2,7 +2,10 @@ package com.kinegram.android.emrtdconnector.internal.protocol;
 
 import android.util.Log;
 
-import com.kinegram.android.emrtdconnector.internal.protocol.message.*;
+import com.kinegram.android.emrtdconnector.internal.protocol.message.WebsocketAcceptMessage;
+import com.kinegram.android.emrtdconnector.internal.protocol.message.WebsocketChipAuthenticationHandbackMessage;
+import com.kinegram.android.emrtdconnector.internal.protocol.message.WebsocketMessage;
+import com.kinegram.android.emrtdconnector.internal.protocol.message.WebsocketResultMessage;
 
 import org.json.JSONException;
 import org.json.JSONObject;

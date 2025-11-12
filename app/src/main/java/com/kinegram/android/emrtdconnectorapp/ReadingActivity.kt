@@ -15,7 +15,12 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.IntentCompat
-import com.kinegram.android.emrtdconnector.*
+import com.kinegram.android.emrtdconnector.ChipAccessKey
+import com.kinegram.android.emrtdconnector.ClosedListener
+import com.kinegram.android.emrtdconnector.ConnectionOptions
+import com.kinegram.android.emrtdconnector.EmrtdConnector
+import com.kinegram.android.emrtdconnector.EmrtdPassport
+import com.kinegram.android.emrtdconnector.StatusListener
 import org.json.JSONException
 
 class ReadingActivity : AppCompatActivity() {

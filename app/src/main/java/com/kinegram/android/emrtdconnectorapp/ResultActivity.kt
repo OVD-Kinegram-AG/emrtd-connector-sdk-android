@@ -7,7 +7,9 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.kinegram.android.emrtdconnector.EmrtdPassport
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 class ResultActivity : AppCompatActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {

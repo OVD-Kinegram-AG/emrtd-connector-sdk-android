@@ -14,7 +14,8 @@ import org.java_websocket.client.WebSocketClient;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import io.opentelemetry.api.trace.*;
+import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.api.trace.TracerProvider;
 
 /**
  * Connect an eMRTD NFC Chip with the Document Validation Server.

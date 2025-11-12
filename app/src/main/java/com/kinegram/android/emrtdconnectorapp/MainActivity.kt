@@ -3,13 +3,13 @@ package com.kinegram.android.emrtdconnectorapp
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.InputFilter
 import android.widget.Button
 import android.widget.EditText
-import java.util.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
+import java.util.UUID
 
 class MainActivity : AppCompatActivity() {
 	private lateinit var prefs: SharedPreferences
