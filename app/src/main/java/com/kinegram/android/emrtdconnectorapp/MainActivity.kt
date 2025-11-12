@@ -9,6 +9,7 @@ import android.text.InputFilter
 import android.widget.Button
 import android.widget.EditText
 import java.util.*
+import androidx.core.content.edit
 
 class MainActivity : AppCompatActivity() {
 	private lateinit var prefs: SharedPreferences
@@ -56,12 +57,12 @@ class MainActivity : AppCompatActivity() {
 	}
 
 	private fun storePreferredValues() {
-		prefs.edit().apply {
+		prefs.edit {
 			putString(CAN_KEY, canEditText.text.toString())
 			putString(DOCUMENT_NUMBER_KEY, documentNumberEditText.text.toString())
 			putString(DATE_OF_BIRTH_KEY, dateOfBirthEditText.text.toString())
 			putString(DATE_OF_EXPIRY_KEY, dateOfExpiryEditText.text.toString())
-		}.apply()
+		}
 	}
 
 	private fun startReadingUsingCAN() {

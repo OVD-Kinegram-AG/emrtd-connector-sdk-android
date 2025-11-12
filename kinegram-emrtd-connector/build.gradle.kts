@@ -7,10 +7,10 @@ import java.net.URI
 plugins {
 	id("com.android.library")
 	id("kotlin-android") // Needed for Dokka to document anything
-	id("org.jetbrains.dokka") version "1.9.10"
+	id("org.jetbrains.dokka") version "2.1.0"
 	id("maven-publish")
 	id("signing")
-	id("com.github.jk1.dependency-license-report") version "2.9"
+	id("com.github.jk1.dependency-license-report") version "3.0.1"
 }
 
 android {
@@ -46,20 +46,19 @@ android {
 }
 
 dependencies {
-	implementation("org.java-websocket:Java-WebSocket:1.5.5")
-	implementation("com.google.android.material:material:1.12.0")
-	implementation("androidx.appcompat:appcompat:1.7.0")
-	implementation("androidx.activity:activity:1.9.3")
-	implementation("androidx.constraintlayout:constraintlayout:2.2.0")
-	implementation("androidx.coordinatorlayout:coordinatorlayout:1.2.0")
-	implementation("com.google.android.material:material:1.12.0")
-	implementation("androidx.core:core:1.15.0")
+	implementation("org.java-websocket:Java-WebSocket:1.6.0")
+	implementation("androidx.appcompat:appcompat:1.7.1")
+	implementation("androidx.activity:activity:1.11.0")
+	implementation("androidx.constraintlayout:constraintlayout:2.2.1")
+	implementation("androidx.coordinatorlayout:coordinatorlayout:1.3.0")
+	implementation("com.google.android.material:material:1.13.0")
+	implementation("androidx.core:core:1.17.0")
 	implementation("com.kinegram.emrtd:emrtd-sdk-java:3.0.1")
 }
 
 buildscript {
 	dependencies {
-		classpath("org.jetbrains.dokka:dokka-base:1.9.10")
+		classpath("org.jetbrains.dokka:dokka-base:2.1.0")
 	}
 }
 
