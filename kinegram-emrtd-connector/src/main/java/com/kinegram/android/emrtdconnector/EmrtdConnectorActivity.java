@@ -37,38 +37,38 @@ public class EmrtdConnectorActivity extends AppCompatActivity implements ClosedL
 
 	private final static String TECH_ISO_DEP = "android.nfc.tech.IsoDep";
 
-	private EmrtdConnector _emrtdConnector;
-	private NfcAdapter _nfcAdapter;
-	private boolean _nfcChipConnected;
-	private PendingIntent _pendingIntent;
+	private EmrtdConnector emrtdConnector;
+	private NfcAdapter nfcAdapter;
+	private boolean nfcChipConnected;
+	private PendingIntent pendingIntent;
 
-	private String _validationId;
-	private String _can;
-	private String _documentNumber;
-	private String _dateOfBirth;
-	private String _dateOfExpiry;
+	private String validationId;
+	private String can;
+	private String documentNumber;
+	private String dateOfBirth;
+	private String dateOfExpiry;
 
-	private TextView _statusTextView;
-	private CircularProgressIndicator _progressIndicator;
+	private TextView statusTextView;
+	private CircularProgressIndicator progressIndicator;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_emrtd_connector);
 
-		_statusTextView = findViewById(R.id.status_textview);
-		_progressIndicator = findViewById(R.id.progress_indicator);
+		statusTextView = findViewById(R.id.status_textview);
+		progressIndicator = findViewById(R.id.progress_indicator);
 
 		Intent intent = getIntent();
 		String clientId = intent.getStringExtra(CLIENT_ID);
 		String validationUri = intent.getStringExtra(VALIDATION_URI);
-		_validationId = intent.getStringExtra(VALIDATION_ID_KEY);
+		validationId = intent.getStringExtra(VALIDATION_ID_KEY);
 
-		_can = intent.getStringExtra(CAN_KEY);
+		can = intent.getStringExtra(CAN_KEY);
 
-		_documentNumber = intent.getStringExtra(DOCUMENT_NUMBER_KEY);
-		_dateOfBirth = intent.getStringExtra(DATE_OF_BIRTH_KEY);
-		_dateOfExpiry = intent.getStringExtra(DATE_OF_EXPIRY_KEY);
+		documentNumber = intent.getStringExtra(DOCUMENT_NUMBER_KEY);
+		dateOfBirth = intent.getStringExtra(DATE_OF_BIRTH_KEY);
+		dateOfExpiry = intent.getStringExtra(DATE_OF_EXPIRY_KEY);
 
 		Button cancelButton = findViewById(R.id.cancel_button);
 		cancelButton.setOnClickListener(v -> finish());
@@ -83,27 +83,27 @@ public class EmrtdConnectorActivity extends AppCompatActivity implements ClosedL
 			flags = PendingIntent.FLAG_UPDATE_CURRENT;
 		}
 
-		_pendingIntent = PendingIntent.getActivity(this, 50, newIntent, flags);
-		_nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+		pendingIntent = PendingIntent.getActivity(this, 50, newIntent, flags);
+		nfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
 		try {
-			_emrtdConnector = new EmrtdConnector(clientId, validationUri, this, this, this);
+			emrtdConnector = new EmrtdConnector(clientId, validationUri, this, this, this);
 		} catch (URISyntaxException e) {
-			_statusTextView.setText(e.getLocalizedMessage());
+			statusTextView.setText(e.getLocalizedMessage());
 		}
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		if (!_nfcAdapter.isEnabled()) {
+		if (!nfcAdapter.isEnabled()) {
 			Toast.makeText(this, R.string.nfc_unavailable, Toast.LENGTH_LONG).show();
 			finish();
 			return;
 		}
 
-		if (_nfcAdapter != null) {
-			_nfcAdapter.enableForegroundDispatch(this, _pendingIntent, null, new String[][]{
+		if (nfcAdapter != null) {
+			nfcAdapter.enableForegroundDispatch(this, pendingIntent, null, new String[][]{
 				new String[]{TECH_ISO_DEP}
 			});
 		}
@@ -114,39 +114,39 @@ public class EmrtdConnectorActivity extends AppCompatActivity implements ClosedL
 		super.onNewIntent(intent);
 
 		if (!NfcAdapter.ACTION_TECH_DISCOVERED.equals(intent.getAction())) {
-			_statusTextView.setText(String.format(getString(R.string.unexpected_intent_action), intent.getAction()));
+			statusTextView.setText(String.format(getString(R.string.unexpected_intent_action), intent.getAction()));
 			return;
 		}
 
 		Tag tag = IntentCompat.getParcelableExtra(intent, NfcAdapter.EXTRA_TAG, Tag.class);
 		if (tag == null || !Arrays.asList(tag.getTechList()).contains(TECH_ISO_DEP)) {
-			_statusTextView.setText(String.format(getString(R.string.unexpected_tag), tag));
+			statusTextView.setText(String.format(getString(R.string.unexpected_tag), tag));
 			return;
 		}
 
-		if (_nfcChipConnected) {
-			_statusTextView.setText(getString(R.string.already_connected));
+		if (nfcChipConnected) {
+			statusTextView.setText(getString(R.string.already_connected));
 			return;
 		}
 
 		IsoDep isoDep = IsoDep.get(tag);
-		_nfcChipConnected = true;
+		nfcChipConnected = true;
 
 		ChipAccessKey chipAccessKey;
-		if (_can != null && !_can.isEmpty()) {
-			chipAccessKey = new ChipAccessKey.FromCan(_can);
+		if (can != null && !can.isEmpty()) {
+			chipAccessKey = new ChipAccessKey.FromCan(can);
 		} else {
 			chipAccessKey = new ChipAccessKey.FromMrz(
-				_documentNumber, _dateOfBirth, _dateOfExpiry);
+				documentNumber, dateOfBirth, dateOfExpiry);
 		}
 
 		ConnectionOptions options = new ConnectionOptions.Builder()
 			.setChipAccessKey(chipAccessKey)
-			.setValidationId(_validationId)
+			.setValidationId(validationId)
 			.build();
 
-		_progressIndicator.setVisibility(View.VISIBLE);
-		_emrtdConnector.connect(isoDep, options);
+		progressIndicator.setVisibility(View.VISIBLE);
+		emrtdConnector.connect(isoDep, options);
 	}
 
 	// ClosedListener
@@ -158,7 +158,7 @@ public class EmrtdConnectorActivity extends AppCompatActivity implements ClosedL
 	// EmrtdPassportListener
 	@Override
 	public void handle(EmrtdPassport emrtdPassport, JSONException exception) {
-		_statusTextView.setText(emrtdPassport.toString());
+		statusTextView.setText(emrtdPassport.toString());
 
 		Intent intent = new Intent();
 		intent.putExtra(RETURN_DATA, emrtdPassport);
@@ -172,6 +172,6 @@ public class EmrtdConnectorActivity extends AppCompatActivity implements ClosedL
 	// StatusListener
 	@Override
 	public void handle(String status) {
-		_statusTextView.setText(status);
+		statusTextView.setText(status);
 	}
 }
