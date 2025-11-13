@@ -1,5 +1,8 @@
 # Kinegram eMRTD Connector SDK Android - Changelog
 
+## 2.1.10
+* Improve messages in EmrtdConnectorActivity
+
 ## 2.1.9
 * Migrate Dokka from V1 to V2
 
