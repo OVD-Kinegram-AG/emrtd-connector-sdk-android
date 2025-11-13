@@ -17,4 +17,21 @@
     <string name="unexpected_tag">Unexpected Tag: %s</string>
     <string name="already_connected">Already connected to an NFC chip</string>
     <string name="button_cancel">Cancel</string>
+
+    <!-- States -->
+    <string name="state_connecting_to_server">Connecting…</string>
+    <string name="state_read_atr_info">Reading Atr/Info</string>
+    <string name="state_access_control">Performing Access Control</string>
+    <string name="state_read_sod">Reading SOD</string>
+    <string name="state_read_dg1">Reading Data Group 1</string>
+    <string name="state_read_dg2">Reading Data Group 2</string>
+    <string name="state_read_dg7">Reading Data Group 7</string>
+    <string name="state_read_dg11">Reading Data Group 11</string>
+    <string name="state_read_dg12">Reading Data Group 12</string>
+    <string name="state_read_dg14">Reading Data Group 14</string>
+    <string name="state_read_dg15">Reading Data Group 15</string>
+    <string name="state_chip_authentication">Performing Chip Authentication</string>
+    <string name="state_active_authentication">Performing Active Authentication</string>
+    <string name="state_passive_authentication">Performing Passive Authentication</string>
+    <string name="state_done">Document read</string>
 </resources>

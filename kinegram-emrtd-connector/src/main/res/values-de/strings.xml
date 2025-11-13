@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- NFC Session Bottom Sheet -->
     <string name="title_read_document_chip">Dokumentenchip auslesen</string>
     <string name="status_place_phone_on_document">Platzieren Sie die Mitte Ihres Telefons auf dem Dokument.</string>
     <string name="status_connecting_to_server">Halten Sie Telefon und Dokument still</string>
@@ -16,4 +17,21 @@
     <string name="unexpected_tag">Unerwarteter Tag: %s</string>
     <string name="already_connected">Bereits mit NFC chip verbunden</string>
     <string name="button_cancel">Abbrechen</string>
+
+    <!-- States -->
+    <string name="state_connecting_to_server">Verbinde…</string>
+    <string name="state_read_atr_info">Lese Chipparameter</string>
+    <string name="state_access_control">Zugangskontrolle</string>
+    <string name="state_read_sod">Lese SOD</string>
+    <string name="state_read_dg1">Lese Data Group 1</string>
+    <string name="state_read_dg2">Lese Data Group 2</string>
+    <string name="state_read_dg7">Lese Data Group 7</string>
+    <string name="state_read_dg11">Lese Data Group 11</string>
+    <string name="state_read_dg12">Lese Data Group 12</string>
+    <string name="state_read_dg14">Lese Data Group 14</string>
+    <string name="state_read_dg15">Lese Data Group 15</string>
+    <string name="state_chip_authentication">Chip Authentication</string>
+    <string name="state_active_authentication">Active Authentication</string>
+    <string name="state_passive_authentication">Passive Authentication</string>
+    <string name="state_done">Dokument gelesen</string>
 </resources>

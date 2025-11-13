@@ -41,7 +41,7 @@ public class EmrtdConnectorActivity extends AppCompatActivity {
 	private final StatusListener statusListener = new StatusListener() {
 		@Override
 		public void handle(String status) {
-			statusTextView.setText(status);
+			statusTextView.setText(getStatusText(status));
 		}
 	};
 	private final EmrtdPassportListener passportListener = new EmrtdPassportListener() {
@@ -172,5 +172,40 @@ public class EmrtdConnectorActivity extends AppCompatActivity {
 
 		progressIndicator.setVisibility(View.VISIBLE);
 		emrtdConnector.connect(isoDep, options);
+	}
+
+	private int getStatusText(String status) {
+		switch (status) {
+			case StatusListener.READ_ATR_INFO:
+				return R.string.state_read_atr_info;
+			case StatusListener.ACCESS_CONTROL:
+				return R.string.state_access_control;
+			case StatusListener.READ_SOD:
+				return R.string.state_read_sod;
+			case StatusListener.READ_DG1:
+				return R.string.state_read_dg1;
+			case StatusListener.READ_DG2:
+				return R.string.state_read_dg2;
+			case StatusListener.READ_DG7:
+				return R.string.state_read_dg7;
+			case StatusListener.READ_DG11:
+				return R.string.state_read_dg11;
+			case StatusListener.READ_DG12:
+				return R.string.state_read_dg12;
+			case StatusListener.READ_DG14:
+				return R.string.state_read_dg14;
+			case StatusListener.READ_DG15:
+				return R.string.state_read_dg15;
+			case StatusListener.CHIP_AUTHENTICATION:
+				return R.string.state_chip_authentication;
+			case StatusListener.ACTIVE_AUTHENTICATION:
+				return R.string.state_active_authentication;
+			case StatusListener.PASSIVE_AUTHENTICATION:
+				return R.string.state_passive_authentication;
+			case StatusListener.DONE:
+				return R.string.state_done;
+			default:
+				return R.string.state_connecting_to_server;
+		}
 	}
 }
