@@ -1,9 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<attr name="nfcActive" type="color" />
-	<declare-styleable name="OverlayWithROIView">
-		<attr name="cornerRadius" format="dimension" />
-		<attr name="clipInset" format="dimension" />
-		<attr name="backgroundColor" format="color" />
-	</declare-styleable>
 </resources>
