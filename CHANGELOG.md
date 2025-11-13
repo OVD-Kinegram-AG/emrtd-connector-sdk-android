@@ -1,5 +1,8 @@
 # Kinegram eMRTD Connector SDK Android - Changelog
 
+## 2.1.11
+* Improve design of EmrtdConnectorActivity
+
 ## 2.1.10
 * Improve messages in EmrtdConnectorActivity
 
