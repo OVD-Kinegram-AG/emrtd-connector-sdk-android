@@ -9,23 +9,23 @@ import org.json.JSONObject;
  * Message sent from client to server used for monitoring.
  */
 public class WebsocketMonitoringMessage extends WebsocketMessage {
-	@NonNull
-	public final String message;
+    @NonNull
+    public final String message;
 
-	public WebsocketMonitoringMessage(@NonNull String message) {
-		super(TYPE_MONITORING);
-		this.message = message;
-	}
+    public WebsocketMonitoringMessage(@NonNull String message) {
+        super(TYPE_MONITORING);
+        this.message = message;
+    }
 
-	@Override
-	public JSONObject toJson() throws JSONException {
-		JSONObject json = new JSONObject();
-		json.put("type", type);
-		json.put("message", message);
-		return json;
-	}
+    @Override
+    public JSONObject toJson() throws JSONException {
+        JSONObject json = new JSONObject();
+        json.put("type", type);
+        json.put("message", message);
+        return json;
+    }
 
-	public static WebsocketMonitoringMessage fromJson(JSONObject json) throws JSONException {
-		return new WebsocketMonitoringMessage(json.getString("message"));
-	}
+    public static WebsocketMonitoringMessage fromJson(JSONObject json) throws JSONException {
+        return new WebsocketMonitoringMessage(json.getString("message"));
+    }
 }

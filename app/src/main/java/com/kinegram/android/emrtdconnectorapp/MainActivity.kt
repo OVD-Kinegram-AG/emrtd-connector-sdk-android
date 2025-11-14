@@ -15,140 +15,140 @@ import com.kinegram.android.emrtdconnector.EmrtdPassport
 import java.util.UUID
 
 class MainActivity : AppCompatActivity() {
-	private val resultLauncher = registerForActivityResult(
-		ActivityResultContracts.StartActivityForResult()
-	) { result ->
-		if (result.resultCode != RESULT_OK) {
-			return@registerForActivityResult
-		}
-		val passport = result.data?.getParcelableExtra<EmrtdPassport>(
-			EmrtdConnectorActivity.RETURN_DATA
-		) ?: return@registerForActivityResult
-		startActivity(Intent(this, ResultActivity::class.java).apply {
-			putExtra(ResultActivity.RESULT_KEY, passport)
-		})
-	}
+    private val resultLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode != RESULT_OK) {
+            return@registerForActivityResult
+        }
+        val passport = result.data?.getParcelableExtra<EmrtdPassport>(
+            EmrtdConnectorActivity.RETURN_DATA
+        ) ?: return@registerForActivityResult
+        startActivity(Intent(this, ResultActivity::class.java).apply {
+            putExtra(ResultActivity.RESULT_KEY, passport)
+        })
+    }
 
-	private lateinit var prefs: SharedPreferences
-	private lateinit var returnResultCheckbox: CheckBox
-	private lateinit var canEditText: EditText
-	private lateinit var documentNumberEditText: EditText
-	private lateinit var dateOfBirthEditText: EditText
-	private lateinit var dateOfExpiryEditText: EditText
+    private lateinit var prefs: SharedPreferences
+    private lateinit var returnResultCheckbox: CheckBox
+    private lateinit var canEditText: EditText
+    private lateinit var documentNumberEditText: EditText
+    private lateinit var dateOfBirthEditText: EditText
+    private lateinit var dateOfExpiryEditText: EditText
 
-	override fun onCreate(savedInstanceState: Bundle?) {
-		super.onCreate(savedInstanceState)
-		setContentView(R.layout.activity_main)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
 
-		prefs = getPreferences(MODE_PRIVATE)
+        prefs = getPreferences(MODE_PRIVATE)
 
-		returnResultCheckbox = findViewById<CheckBox>(R.id.return_result_only)
-		canEditText = findViewById(R.id.can)
-		documentNumberEditText = findViewById(R.id.document_number)
-		dateOfBirthEditText = findViewById(R.id.date_of_birth)
-		dateOfExpiryEditText = findViewById(R.id.date_of_expiry)
-		documentNumberEditText.filters = arrayOf(InputFilter.AllCaps())
+        returnResultCheckbox = findViewById<CheckBox>(R.id.return_result_only)
+        canEditText = findViewById(R.id.can)
+        documentNumberEditText = findViewById(R.id.document_number)
+        dateOfBirthEditText = findViewById(R.id.date_of_birth)
+        dateOfExpiryEditText = findViewById(R.id.date_of_expiry)
+        documentNumberEditText.filters = arrayOf(InputFilter.AllCaps())
 
-		restorePreferredValues()
+        restorePreferredValues()
 
-		findViewById<Button>(R.id.start_reading_using_can_button)
-			.setOnClickListener {
-				startReadingUsingCAN()
-			}
+        findViewById<Button>(R.id.start_reading_using_can_button)
+            .setOnClickListener {
+                startReadingUsingCAN()
+            }
 
-		findViewById<Button>(R.id.start_reading_using_mrz_button)
-			.setOnClickListener {
-				startReadingUsingMRZInfo()
-			}
-	}
+        findViewById<Button>(R.id.start_reading_using_mrz_button)
+            .setOnClickListener {
+                startReadingUsingMRZInfo()
+            }
+    }
 
-	override fun onPause() {
-		super.onPause()
-		storePreferredValues()
-	}
+    override fun onPause() {
+        super.onPause()
+        storePreferredValues()
+    }
 
-	private fun restorePreferredValues() {
-		fun get(key: String): String {
-			return prefs.getString(key, "") ?: ""
-		}
+    private fun restorePreferredValues() {
+        fun get(key: String): String {
+            return prefs.getString(key, "") ?: ""
+        }
 
-		returnResultCheckbox.isChecked = prefs.getBoolean(RETURN_RESULT_KEY, false)
-		canEditText.setText(get(EmrtdConnectorActivity.CAN_KEY))
-		documentNumberEditText.setText(get(EmrtdConnectorActivity.DOCUMENT_NUMBER_KEY))
-		dateOfBirthEditText.setText(get(EmrtdConnectorActivity.DATE_OF_BIRTH_KEY))
-		dateOfExpiryEditText.setText(get(EmrtdConnectorActivity.DATE_OF_EXPIRY_KEY))
-	}
+        returnResultCheckbox.isChecked = prefs.getBoolean(RETURN_RESULT_KEY, false)
+        canEditText.setText(get(EmrtdConnectorActivity.CAN_KEY))
+        documentNumberEditText.setText(get(EmrtdConnectorActivity.DOCUMENT_NUMBER_KEY))
+        dateOfBirthEditText.setText(get(EmrtdConnectorActivity.DATE_OF_BIRTH_KEY))
+        dateOfExpiryEditText.setText(get(EmrtdConnectorActivity.DATE_OF_EXPIRY_KEY))
+    }
 
-	private fun storePreferredValues() {
-		prefs.edit {
-			putBoolean(RETURN_RESULT_KEY, returnResultCheckbox.isChecked)
-			putString(EmrtdConnectorActivity.CAN_KEY, canEditText.text.toString())
-			putString(
-				EmrtdConnectorActivity.DOCUMENT_NUMBER_KEY,
-				documentNumberEditText.text.toString()
-			)
-			putString(EmrtdConnectorActivity.DATE_OF_BIRTH_KEY, dateOfBirthEditText.text.toString())
-			putString(
-				EmrtdConnectorActivity.DATE_OF_EXPIRY_KEY,
-				dateOfExpiryEditText.text.toString()
-			)
-		}
-	}
+    private fun storePreferredValues() {
+        prefs.edit {
+            putBoolean(RETURN_RESULT_KEY, returnResultCheckbox.isChecked)
+            putString(EmrtdConnectorActivity.CAN_KEY, canEditText.text.toString())
+            putString(
+                EmrtdConnectorActivity.DOCUMENT_NUMBER_KEY,
+                documentNumberEditText.text.toString()
+            )
+            putString(EmrtdConnectorActivity.DATE_OF_BIRTH_KEY, dateOfBirthEditText.text.toString())
+            putString(
+                EmrtdConnectorActivity.DATE_OF_EXPIRY_KEY,
+                dateOfExpiryEditText.text.toString()
+            )
+        }
+    }
 
-	private fun startReadingUsingCAN() {
-		getTargetIntent().apply {
-			putExtra(EmrtdConnectorActivity.VALIDATION_ID_KEY, getUUIDString())
-			putExtra(EmrtdConnectorActivity.CAN_KEY, canEditText.text.toString())
-		}.start()
-	}
+    private fun startReadingUsingCAN() {
+        getTargetIntent().apply {
+            putExtra(EmrtdConnectorActivity.VALIDATION_ID_KEY, getUUIDString())
+            putExtra(EmrtdConnectorActivity.CAN_KEY, canEditText.text.toString())
+        }.start()
+    }
 
-	private fun startReadingUsingMRZInfo() {
-		getTargetIntent().apply {
-			putExtra(EmrtdConnectorActivity.VALIDATION_ID_KEY, getUUIDString())
-			putExtra(
-				EmrtdConnectorActivity.DOCUMENT_NUMBER_KEY,
-				documentNumberEditText.text.toString()
-			)
-			putExtra(
-				EmrtdConnectorActivity.DATE_OF_BIRTH_KEY,
-				dateOfBirthEditText.text.toString()
-			)
-			putExtra(
-				EmrtdConnectorActivity.DATE_OF_EXPIRY_KEY,
-				dateOfExpiryEditText.text.toString()
-			)
-		}.start()
-	}
+    private fun startReadingUsingMRZInfo() {
+        getTargetIntent().apply {
+            putExtra(EmrtdConnectorActivity.VALIDATION_ID_KEY, getUUIDString())
+            putExtra(
+                EmrtdConnectorActivity.DOCUMENT_NUMBER_KEY,
+                documentNumberEditText.text.toString()
+            )
+            putExtra(
+                EmrtdConnectorActivity.DATE_OF_BIRTH_KEY,
+                dateOfBirthEditText.text.toString()
+            )
+            putExtra(
+                EmrtdConnectorActivity.DATE_OF_EXPIRY_KEY,
+                dateOfExpiryEditText.text.toString()
+            )
+        }.start()
+    }
 
-	private fun Intent.start() {
-		if (returnResultCheckbox.isChecked) {
-			resultLauncher.launch(this)
-		} else {
-			startActivity(this)
-		}
-	}
+    private fun Intent.start() {
+        if (returnResultCheckbox.isChecked) {
+            resultLauncher.launch(this)
+        } else {
+            startActivity(this)
+        }
+    }
 
-	private fun getTargetIntent() = Intent(
-		this,
-		if (returnResultCheckbox.isChecked) {
-			EmrtdConnectorActivity::class.java
-		} else {
-			ReadingActivity::class.java
-		}
-	).apply {
-		putExtra(
-			EmrtdConnectorActivity.CLIENT_ID,
-			"example_client"
-		)
-		putExtra(
-			EmrtdConnectorActivity.VALIDATION_URI,
-			"wss://docval.kurzdigital.com/ws2/validate"
-		)
-	}
+    private fun getTargetIntent() = Intent(
+        this,
+        if (returnResultCheckbox.isChecked) {
+            EmrtdConnectorActivity::class.java
+        } else {
+            ReadingActivity::class.java
+        }
+    ).apply {
+        putExtra(
+            EmrtdConnectorActivity.CLIENT_ID,
+            "example_client"
+        )
+        putExtra(
+            EmrtdConnectorActivity.VALIDATION_URI,
+            "wss://docval.kurzdigital.com/ws2/validate"
+        )
+    }
 
-	private fun getUUIDString() = UUID.randomUUID().toString()
+    private fun getUUIDString() = UUID.randomUUID().toString()
 
-	companion object {
-		private const val RETURN_RESULT_KEY = "return_result_key"
-	}
+    companion object {
+        private const val RETURN_RESULT_KEY = "return_result_key"
+    }
 }

@@ -12,23 +12,23 @@ import org.json.JSONObject;
  * Only relevant for iOS and can be ignored on Android.
  */
 public class WebsocketCloseMessage extends WebsocketMessage {
-	public final int code;
+    public final int code;
 
-	@NonNull
-	public final String reason;
+    @NonNull
+    public final String reason;
 
-	public WebsocketCloseMessage(int code, @NonNull String reason) {
-		super(TYPE_CLOSE);
-		this.code = code;
-		this.reason = reason;
-	}
+    public WebsocketCloseMessage(int code, @NonNull String reason) {
+        super(TYPE_CLOSE);
+        this.code = code;
+        this.reason = reason;
+    }
 
-	@Override
-	public JSONObject toJson() {
-		throw new UnsupportedOperationException("Not supported");
-	}
+    @Override
+    public JSONObject toJson() {
+        throw new UnsupportedOperationException("Not supported");
+    }
 
-	public static WebsocketCloseMessage fromJson(JSONObject json) throws JSONException {
-		return new WebsocketCloseMessage(json.getInt("code"), json.getString("reason"));
-	}
+    public static WebsocketCloseMessage fromJson(JSONObject json) throws JSONException {
+        return new WebsocketCloseMessage(json.getInt("code"), json.getString("reason"));
+    }
 }

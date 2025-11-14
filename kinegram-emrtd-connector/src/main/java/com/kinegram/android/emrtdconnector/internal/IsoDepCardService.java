@@ -59,169 +59,169 @@ import io.opentelemetry.context.Scope;
 // TODO This file is copied from the android-sdk. Do we want to use the SDK instead?
 //  Probably not, it would be overkill to add a whole library just for a single class.
 public class IsoDepCardService extends CardService {
-	private static final Logger LOGGER = Logger.getLogger("net.sf.scuba");
-	private final IsoDep isoDep;
-	private final boolean enableDiagnostics;
-	private int apduCount;
+    private static final Logger LOGGER = Logger.getLogger("net.sf.scuba");
+    private final IsoDep isoDep;
+    private final boolean enableDiagnostics;
+    private int apduCount;
 
-	/**
-	 * Constructs a new card service.
-	 *
-	 * @param isoDep the card terminal to connect to
-	 */
-	public IsoDepCardService(IsoDep isoDep, boolean enableDiagnostics) {
-		this.isoDep = isoDep;
-		this.enableDiagnostics = enableDiagnostics;
-		apduCount = 0;
-	}
+    /**
+     * Constructs a new card service.
+     *
+     * @param isoDep the card terminal to connect to
+     */
+    public IsoDepCardService(IsoDep isoDep, boolean enableDiagnostics) {
+        this.isoDep = isoDep;
+        this.enableDiagnostics = enableDiagnostics;
+        apduCount = 0;
+    }
 
-	/**
-	 * Opens a session with the card.
-	 */
-	@Override
-	public void open() throws CardServiceException {
-		if (isOpen()) {
-			return;
-		}
-		try {
-			isoDep.connect();
-			if (!isoDep.isConnected()) {
-				throw new CardServiceException("Failed to connect");
-			}
-			state = SESSION_STARTED_STATE;
-		} catch (IOException e) {
-			LOGGER.log(Level.WARNING, "Failed to connect", e);
-			throw new CardServiceException(e.toString());
-		}
-	}
+    /**
+     * Opens a session with the card.
+     */
+    @Override
+    public void open() throws CardServiceException {
+        if (isOpen()) {
+            return;
+        }
+        try {
+            isoDep.connect();
+            if (!isoDep.isConnected()) {
+                throw new CardServiceException("Failed to connect");
+            }
+            state = SESSION_STARTED_STATE;
+        } catch (IOException e) {
+            LOGGER.log(Level.WARNING, "Failed to connect", e);
+            throw new CardServiceException(e.toString());
+        }
+    }
 
-	/**
-	 * Whether there is an open session with the card.
-	 */
-	@Override
-	public boolean isOpen() {
-		if (isoDep.isConnected()) {
-			state = SESSION_STARTED_STATE;
-			return true;
-		} else {
-			state = SESSION_STOPPED_STATE;
-			return false;
-		}
-	}
+    /**
+     * Whether there is an open session with the card.
+     */
+    @Override
+    public boolean isOpen() {
+        if (isoDep.isConnected()) {
+            state = SESSION_STARTED_STATE;
+            return true;
+        } else {
+            state = SESSION_STOPPED_STATE;
+            return false;
+        }
+    }
 
-	/**
-	 * Sends an APDU to the card.
-	 *
-	 * @param ourCommandAPDU the command apdu to send
-	 * @return the response from the card, including the status word
-	 * @throws CardServiceException - if the card operation failed
-	 */
-	@Override
-	public ResponseAPDU transmit(CommandAPDU ourCommandAPDU) throws CardServiceException {
-		Span span = EmrtdConnector.getTracer().spanBuilder("iso_dep_transmit")
-			.startSpan();
-		try (Scope ignored = span.makeCurrent()) {
-			if (!isOpen()) {
-				throw new TagLostException("Not Connected");
-			}
-			AttributesBuilder requestAttributes = Attributes.builder()
-				.put("command_apdu.cla", ourCommandAPDU.getCLA())
-				.put("command_apdu.ins", ourCommandAPDU.getINS())
-				.put("command_apdu.p1", ourCommandAPDU.getP1())
-				.put("command_apdu.p2", ourCommandAPDU.getP2())
-				.put("command_apdu.nc", ourCommandAPDU.getNc())
-				.put("command_apdu.ne", ourCommandAPDU.getNe());
-			if (enableDiagnostics) {
-				requestAttributes.put("command_apdu.bytes_hex", toHex(ourCommandAPDU.getBytes()));
-			}
-			span.addEvent(
-				"transmit_apdu_command",
-				requestAttributes.build());
-			byte[] responseBytes = isoDep.transceive(ourCommandAPDU.getBytes());
-			if (responseBytes == null) {
-				// MUST NOT happen according to the IsoDep docs
-				throw new AssertionError("Unexpected IsoDep null response");
-			}
-			AttributesBuilder responseAttributes = Attributes.builder()
-				.put("apdu_response.length", responseBytes.length);
-			if (enableDiagnostics) {
-				responseAttributes.put(
-					"apdu_response.bytes_hex", toHex(responseBytes));
-			}
-			span.addEvent("received_apdu_response", responseAttributes.build());
-			if (responseBytes.length < 2) {
-				throw new TagLostException(
-					"Received APDU response with less than 2 bytes (" + responseBytes.length + ")");
-			}
-			ResponseAPDU ourResponseAPDU = new ResponseAPDU(responseBytes);
-			APDUEvent event = new APDUEvent(
-				this, "ISODep", ++apduCount, ourCommandAPDU, ourResponseAPDU
-			);
-			notifyExchangedAPDU(event);
-			return ourResponseAPDU;
-		} catch (Exception e) {
-			span.recordException(e);
-			span.setStatus(StatusCode.ERROR);
-			throw new CardServiceException(e.getMessage(), e);
-		} finally {
-			span.end();
-		}
-	}
+    /**
+     * Sends an APDU to the card.
+     *
+     * @param ourCommandAPDU the command apdu to send
+     * @return the response from the card, including the status word
+     * @throws CardServiceException - if the card operation failed
+     */
+    @Override
+    public ResponseAPDU transmit(CommandAPDU ourCommandAPDU) throws CardServiceException {
+        Span span = EmrtdConnector.getTracer().spanBuilder("iso_dep_transmit")
+            .startSpan();
+        try (Scope ignored = span.makeCurrent()) {
+            if (!isOpen()) {
+                throw new TagLostException("Not Connected");
+            }
+            AttributesBuilder requestAttributes = Attributes.builder()
+                .put("command_apdu.cla", ourCommandAPDU.getCLA())
+                .put("command_apdu.ins", ourCommandAPDU.getINS())
+                .put("command_apdu.p1", ourCommandAPDU.getP1())
+                .put("command_apdu.p2", ourCommandAPDU.getP2())
+                .put("command_apdu.nc", ourCommandAPDU.getNc())
+                .put("command_apdu.ne", ourCommandAPDU.getNe());
+            if (enableDiagnostics) {
+                requestAttributes.put("command_apdu.bytes_hex", toHex(ourCommandAPDU.getBytes()));
+            }
+            span.addEvent(
+                "transmit_apdu_command",
+                requestAttributes.build());
+            byte[] responseBytes = isoDep.transceive(ourCommandAPDU.getBytes());
+            if (responseBytes == null) {
+                // MUST NOT happen according to the IsoDep docs
+                throw new AssertionError("Unexpected IsoDep null response");
+            }
+            AttributesBuilder responseAttributes = Attributes.builder()
+                .put("apdu_response.length", responseBytes.length);
+            if (enableDiagnostics) {
+                responseAttributes.put(
+                    "apdu_response.bytes_hex", toHex(responseBytes));
+            }
+            span.addEvent("received_apdu_response", responseAttributes.build());
+            if (responseBytes.length < 2) {
+                throw new TagLostException(
+                    "Received APDU response with less than 2 bytes (" + responseBytes.length + ")");
+            }
+            ResponseAPDU ourResponseAPDU = new ResponseAPDU(responseBytes);
+            APDUEvent event = new APDUEvent(
+                this, "ISODep", ++apduCount, ourCommandAPDU, ourResponseAPDU
+            );
+            notifyExchangedAPDU(event);
+            return ourResponseAPDU;
+        } catch (Exception e) {
+            span.recordException(e);
+            span.setStatus(StatusCode.ERROR);
+            throw new CardServiceException(e.getMessage(), e);
+        } finally {
+            span.end();
+        }
+    }
 
-	@Override
-	public byte[] getATR() {
-		Tag tag;
-		if (isoDep == null || (tag = isoDep.getTag()) == null) {
-			return null;
-		}
-		return NfcB.get(tag) != null ? isoDep.getHiLayerResponse() : isoDep.getHistoricalBytes();
-	}
+    @Override
+    public byte[] getATR() {
+        Tag tag;
+        if (isoDep == null || (tag = isoDep.getTag()) == null) {
+            return null;
+        }
+        return NfcB.get(tag) != null ? isoDep.getHiLayerResponse() : isoDep.getHistoricalBytes();
+    }
 
-	@Override
-	public boolean isExtendedAPDULengthSupported() {
-		return isoDep.isExtendedLengthApduSupported();
-	}
+    @Override
+    public boolean isExtendedAPDULengthSupported() {
+        return isoDep.isExtendedLengthApduSupported();
+    }
 
-	/**
-	 * Closes the session with the card.
-	 */
-	@Override
-	public void close() {
-		try {
-			isoDep.close();
-			state = SESSION_STOPPED_STATE;
-		} catch (Exception e) {
-			/* Disconnect failed? Fine... */
-		}
-	}
+    /**
+     * Closes the session with the card.
+     */
+    @Override
+    public void close() {
+        try {
+            isoDep.close();
+            state = SESSION_STOPPED_STATE;
+        } catch (Exception e) {
+            /* Disconnect failed? Fine... */
+        }
+    }
 
-	/**
-	 * Determines whether an exception indicates a tag is lost event.
-	 *
-	 * @param e an exception
-	 * @return whether the exception indicates a tag is lost event
-	 */
-	@Override
-	public boolean isConnectionLost(Exception e) {
-		// TagLostException is usually wrapped in a CardServiceException or deeper
-		Throwable t = e;
-		while (t != null) {
-			if (t instanceof TagLostException) {
-				return true;
-			}
-			t = t.getCause();
-		}
-		return false;
-	}
+    /**
+     * Determines whether an exception indicates a tag is lost event.
+     *
+     * @param e an exception
+     * @return whether the exception indicates a tag is lost event
+     */
+    @Override
+    public boolean isConnectionLost(Exception e) {
+        // TagLostException is usually wrapped in a CardServiceException or deeper
+        Throwable t = e;
+        while (t != null) {
+            if (t instanceof TagLostException) {
+                return true;
+            }
+            t = t.getCause();
+        }
+        return false;
+    }
 
-	private static String toHex(byte[] bytes) {
-		char[] hex = "0123456789ABCDEF".toCharArray();
-		char[] out = new char[bytes.length * 2];
-		for (int i = 0, j = 0; i < bytes.length; i++) {
-			int v = bytes[i] & 0xFF;
-			out[j++] = hex[v >>> 4];
-			out[j++] = hex[v & 0x0F];
-		}
-		return new String(out);
-	}
+    private static String toHex(byte[] bytes) {
+        char[] hex = "0123456789ABCDEF".toCharArray();
+        char[] out = new char[bytes.length * 2];
+        for (int i = 0, j = 0; i < bytes.length; i++) {
+            int v = bytes[i] & 0xFF;
+            out[j++] = hex[v >>> 4];
+            out[j++] = hex[v & 0x0F];
+        }
+        return new String(out);
+    }
 }
