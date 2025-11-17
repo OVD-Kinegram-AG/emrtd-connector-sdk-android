@@ -1,5 +1,8 @@
 # Kinegram eMRTD Connector SDK Android - Changelog
 
+## 2.1.12
+* Disable foreground dispatch in onPause()
+
 ## 2.1.11
 * Improve design of EmrtdConnectorActivity
 
