@@ -135,6 +135,14 @@ public class EmrtdConnectorActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+        if (nfcAdapter != null) {
+            nfcAdapter.disableForegroundDispatch(this);
+        }
+        super.onPause();
+    }
+
+    @Override
     protected void onNewIntent(@NonNull Intent intent) {
         super.onNewIntent(intent);
 
