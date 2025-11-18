@@ -58,7 +58,7 @@ class ReadingActivity : AppCompatActivity() {
         val clientId = intent.getStringExtra(EmrtdConnectorActivity.CLIENT_ID) ?: ""
         val validationUri = intent.getStringExtra(EmrtdConnectorActivity.VALIDATION_URI) ?: ""
         validationId = intent.getStringExtra(EmrtdConnectorActivity.VALIDATION_ID) ?: ""
-        can = intent.getStringExtra(EmrtdConnectorActivity.CAN_KEY) ?: ""
+        can = intent.getStringExtra(EmrtdConnectorActivity.CAN) ?: ""
         documentNumber = intent.getStringExtra(EmrtdConnectorActivity.DOCUMENT_NUMBER) ?: ""
         dateOfBirth = intent.getStringExtra(EmrtdConnectorActivity.DATE_OF_BIRTH) ?: ""
         dateOfExpiry = intent.getStringExtra(EmrtdConnectorActivity.DATE_OF_EXPIRY) ?: ""

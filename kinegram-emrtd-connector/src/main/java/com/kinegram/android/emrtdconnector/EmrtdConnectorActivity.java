@@ -24,7 +24,7 @@ public class EmrtdConnectorActivity extends AppCompatActivity {
 	public final static String CLIENT_ID = "CLIENT_ID";
 	public final static String VALIDATION_URI = "VALIDATION_URI";
 	public final static String VALIDATION_ID = "VALIDATION_ID";
-	public final static String CAN_KEY = "CAN";
+	public final static String CAN = "CAN";
 	public final static String DOCUMENT_NUMBER = "DOCUMENT_NUMBER";
 	public final static String DATE_OF_BIRTH = "DATE_OF_BIRTH";
 	public final static String DATE_OF_EXPIRY = "DATE_OF_EXPIRY";
@@ -90,7 +90,7 @@ public class EmrtdConnectorActivity extends AppCompatActivity {
 			return;
 		}
 
-		can = intent.getStringExtra(CAN_KEY);
+		can = intent.getStringExtra(CAN);
 
 		documentNumber = intent.getStringExtra(DOCUMENT_NUMBER);
 		dateOfBirth = intent.getStringExtra(DATE_OF_BIRTH);

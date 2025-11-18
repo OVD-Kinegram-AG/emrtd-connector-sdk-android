@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         returnResultCheckbox.isChecked = prefs.getBoolean(RETURN_RESULT, false)
-        canEditText.setText(get(EmrtdConnectorActivity.CAN_KEY))
+        canEditText.setText(get(EmrtdConnectorActivity.CAN))
         documentNumberEditText.setText(get(EmrtdConnectorActivity.DOCUMENT_NUMBER))
         dateOfBirthEditText.setText(get(EmrtdConnectorActivity.DATE_OF_BIRTH))
         dateOfExpiryEditText.setText(get(EmrtdConnectorActivity.DATE_OF_EXPIRY))
@@ -82,7 +82,7 @@ class MainActivity : AppCompatActivity() {
     private fun storePreferredValues() {
         prefs.edit {
             putBoolean(RETURN_RESULT, returnResultCheckbox.isChecked)
-            putString(EmrtdConnectorActivity.CAN_KEY, canEditText.text.toString())
+            putString(EmrtdConnectorActivity.CAN, canEditText.text.toString())
             putString(
                 EmrtdConnectorActivity.DOCUMENT_NUMBER,
                 documentNumberEditText.text.toString()
@@ -98,7 +98,7 @@ class MainActivity : AppCompatActivity() {
     private fun startReadingUsingCAN() {
         getTargetIntent().apply {
             putExtra(EmrtdConnectorActivity.VALIDATION_ID, getUUIDString())
-            putExtra(EmrtdConnectorActivity.CAN_KEY, canEditText.text.toString())
+            putExtra(EmrtdConnectorActivity.CAN, canEditText.text.toString())
         }.start()
     }
 
