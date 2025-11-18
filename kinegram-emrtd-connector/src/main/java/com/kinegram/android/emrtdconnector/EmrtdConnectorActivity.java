@@ -28,8 +28,8 @@ public class EmrtdConnectorActivity extends AppCompatActivity {
 	public final static String DOCUMENT_NUMBER = "DOCUMENT_NUMBER";
 	public final static String DATE_OF_BIRTH = "DATE_OF_BIRTH";
 	public final static String DATE_OF_EXPIRY = "DATE_OF_EXPIRY";
-	public final static String RETURN_DATA = "PASSPORT_DATA";
-	public final static String RETURN_ERROR = "JSON_ERROR";
+	public final static String RETURN_DATA = "DATA";
+	public final static String RETURN_ERROR = "ERROR";
 
 	private final static String TECH_ISO_DEP = "android.nfc.tech.IsoDep";
 
