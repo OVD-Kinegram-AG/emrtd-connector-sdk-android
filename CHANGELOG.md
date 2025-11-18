@@ -1,5 +1,8 @@
 # Kinegram eMRTD Connector SDK Android - Changelog
 
+## 2.1.13
+* Migrate to NfcAdapter.enableReaderMode()
+
 ## 2.1.12
 * Disable foreground dispatch in onPause()
 
