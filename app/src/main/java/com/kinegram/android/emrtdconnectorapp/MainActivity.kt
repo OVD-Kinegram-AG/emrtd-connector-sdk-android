@@ -7,6 +7,7 @@ import android.text.InputFilter
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
@@ -21,12 +22,23 @@ class MainActivity : AppCompatActivity() {
         if (result.resultCode != RESULT_OK) {
             return@registerForActivityResult
         }
-        val passport = result.data?.getParcelableExtra<EmrtdPassport>(
+        val passportData = result.data?.getParcelableExtra<EmrtdPassport>(
             EmrtdConnectorActivity.RETURN_DATA
-        ) ?: return@registerForActivityResult
-        startActivity(Intent(this, ResultActivity::class.java).apply {
-            putExtra(ResultActivity.RESULT_KEY, passport)
-        })
+        )
+        if (passportData == null) {
+            val error = result.data?.getStringExtra(
+                EmrtdConnectorActivity.RETURN_ERROR
+            ) ?: "Unknown error"
+            Toast.makeText(
+                this,
+                error,
+                Toast.LENGTH_LONG
+            ).show()
+        } else {
+            startActivity(Intent(this, ResultActivity::class.java).apply {
+                putExtra(ResultActivity.RESULT_KEY, passportData)
+            })
+        }
     }
 
     private lateinit var prefs: SharedPreferences
