@@ -1,5 +1,8 @@
 # Kinegram eMRTD Connector SDK Android - Changelog
 
+## 2.1.16
+* Streamline EmrtdConnectorActivity API
+
 ## 2.1.15
 * Streamline EmrtdConnectorActivity API
 
