@@ -41,9 +41,6 @@ public class EmrtdPassport implements Parcelable {
 
     private final JSONObject jsonObject;
 
-    /**
-     * Internal.
-     */
     public EmrtdPassport(JSONObject obj) throws JSONException {
         this.jsonObject = obj;
         sodInfo = SODInfo.opt(obj);
@@ -117,6 +114,10 @@ public class EmrtdPassport implements Parcelable {
         }
         description += "\n}";
         return description;
+    }
+
+    public JSONObject toJSON() throws JSONException {
+        return new JSONObject(jsonObject.toString());
     }
 
     /**
