@@ -74,9 +74,9 @@ class MainActivity : AppCompatActivity() {
 
         returnResultCheckbox.isChecked = prefs.getBoolean(RETURN_RESULT_KEY, false)
         canEditText.setText(get(EmrtdConnectorActivity.CAN_KEY))
-        documentNumberEditText.setText(get(EmrtdConnectorActivity.DOCUMENT_NUMBER_KEY))
-        dateOfBirthEditText.setText(get(EmrtdConnectorActivity.DATE_OF_BIRTH_KEY))
-        dateOfExpiryEditText.setText(get(EmrtdConnectorActivity.DATE_OF_EXPIRY_KEY))
+        documentNumberEditText.setText(get(EmrtdConnectorActivity.DOCUMENT_NUMBER))
+        dateOfBirthEditText.setText(get(EmrtdConnectorActivity.DATE_OF_BIRTH))
+        dateOfExpiryEditText.setText(get(EmrtdConnectorActivity.DATE_OF_EXPIRY))
     }
 
     private fun storePreferredValues() {
@@ -84,12 +84,12 @@ class MainActivity : AppCompatActivity() {
             putBoolean(RETURN_RESULT_KEY, returnResultCheckbox.isChecked)
             putString(EmrtdConnectorActivity.CAN_KEY, canEditText.text.toString())
             putString(
-                EmrtdConnectorActivity.DOCUMENT_NUMBER_KEY,
+                EmrtdConnectorActivity.DOCUMENT_NUMBER,
                 documentNumberEditText.text.toString()
             )
-            putString(EmrtdConnectorActivity.DATE_OF_BIRTH_KEY, dateOfBirthEditText.text.toString())
+            putString(EmrtdConnectorActivity.DATE_OF_BIRTH, dateOfBirthEditText.text.toString())
             putString(
-                EmrtdConnectorActivity.DATE_OF_EXPIRY_KEY,
+                EmrtdConnectorActivity.DATE_OF_EXPIRY,
                 dateOfExpiryEditText.text.toString()
             )
         }
@@ -97,24 +97,24 @@ class MainActivity : AppCompatActivity() {
 
     private fun startReadingUsingCAN() {
         getTargetIntent().apply {
-            putExtra(EmrtdConnectorActivity.VALIDATION_ID_KEY, getUUIDString())
+            putExtra(EmrtdConnectorActivity.VALIDATION_ID, getUUIDString())
             putExtra(EmrtdConnectorActivity.CAN_KEY, canEditText.text.toString())
         }.start()
     }
 
     private fun startReadingUsingMRZInfo() {
         getTargetIntent().apply {
-            putExtra(EmrtdConnectorActivity.VALIDATION_ID_KEY, getUUIDString())
+            putExtra(EmrtdConnectorActivity.VALIDATION_ID, getUUIDString())
             putExtra(
-                EmrtdConnectorActivity.DOCUMENT_NUMBER_KEY,
+                EmrtdConnectorActivity.DOCUMENT_NUMBER,
                 documentNumberEditText.text.toString()
             )
             putExtra(
-                EmrtdConnectorActivity.DATE_OF_BIRTH_KEY,
+                EmrtdConnectorActivity.DATE_OF_BIRTH,
                 dateOfBirthEditText.text.toString()
             )
             putExtra(
-                EmrtdConnectorActivity.DATE_OF_EXPIRY_KEY,
+                EmrtdConnectorActivity.DATE_OF_EXPIRY,
                 dateOfExpiryEditText.text.toString()
             )
         }.start()

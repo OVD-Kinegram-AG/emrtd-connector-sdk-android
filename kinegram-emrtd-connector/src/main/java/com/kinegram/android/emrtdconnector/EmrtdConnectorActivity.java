@@ -23,11 +23,11 @@ import java.util.Arrays;
 public class EmrtdConnectorActivity extends AppCompatActivity {
 	public final static String CLIENT_ID = "CLIENT_ID";
 	public final static String VALIDATION_URI = "VALIDATION_URI";
-	public final static String VALIDATION_ID_KEY = "VALIDATION_ID";
+	public final static String VALIDATION_ID = "VALIDATION_ID";
 	public final static String CAN_KEY = "CAN";
-	public final static String DOCUMENT_NUMBER_KEY = "DOCUMENT_NUMBER";
-	public final static String DATE_OF_BIRTH_KEY = "DATE_OF_BIRTH";
-	public final static String DATE_OF_EXPIRY_KEY = "DATE_OF_EXPIRY";
+	public final static String DOCUMENT_NUMBER = "DOCUMENT_NUMBER";
+	public final static String DATE_OF_BIRTH = "DATE_OF_BIRTH";
+	public final static String DATE_OF_EXPIRY = "DATE_OF_EXPIRY";
 	public final static String RETURN_DATA = "PASSPORT_DATA";
 	public final static String RETURN_ERROR = "JSON_ERROR";
 
@@ -77,13 +77,13 @@ public class EmrtdConnectorActivity extends AppCompatActivity {
 		Intent intent = getIntent();
 		String clientId = intent.getStringExtra(CLIENT_ID);
 		String validationUri = intent.getStringExtra(VALIDATION_URI);
-		validationId = intent.getStringExtra(VALIDATION_ID_KEY);
+		validationId = intent.getStringExtra(VALIDATION_ID);
 
 		can = intent.getStringExtra(CAN_KEY);
 
-		documentNumber = intent.getStringExtra(DOCUMENT_NUMBER_KEY);
-		dateOfBirth = intent.getStringExtra(DATE_OF_BIRTH_KEY);
-		dateOfExpiry = intent.getStringExtra(DATE_OF_EXPIRY_KEY);
+		documentNumber = intent.getStringExtra(DOCUMENT_NUMBER);
+		dateOfBirth = intent.getStringExtra(DATE_OF_BIRTH);
+		dateOfExpiry = intent.getStringExtra(DATE_OF_EXPIRY);
 
 		Button cancelButton = findViewById(R.id.cancel_button);
 		cancelButton.setOnClickListener(v -> finish());
