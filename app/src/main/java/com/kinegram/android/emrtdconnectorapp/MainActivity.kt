@@ -72,7 +72,7 @@ class MainActivity : AppCompatActivity() {
             return prefs.getString(key, "") ?: ""
         }
 
-        returnResultCheckbox.isChecked = prefs.getBoolean(RETURN_RESULT_KEY, false)
+        returnResultCheckbox.isChecked = prefs.getBoolean(RETURN_RESULT, false)
         canEditText.setText(get(EmrtdConnectorActivity.CAN_KEY))
         documentNumberEditText.setText(get(EmrtdConnectorActivity.DOCUMENT_NUMBER))
         dateOfBirthEditText.setText(get(EmrtdConnectorActivity.DATE_OF_BIRTH))
@@ -81,7 +81,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun storePreferredValues() {
         prefs.edit {
-            putBoolean(RETURN_RESULT_KEY, returnResultCheckbox.isChecked)
+            putBoolean(RETURN_RESULT, returnResultCheckbox.isChecked)
             putString(EmrtdConnectorActivity.CAN_KEY, canEditText.text.toString())
             putString(
                 EmrtdConnectorActivity.DOCUMENT_NUMBER,
@@ -149,6 +149,6 @@ class MainActivity : AppCompatActivity() {
     private fun getUUIDString() = UUID.randomUUID().toString()
 
     companion object {
-        private const val RETURN_RESULT_KEY = "return_result_key"
+        private const val RETURN_RESULT = "return_result"
     }
 }
