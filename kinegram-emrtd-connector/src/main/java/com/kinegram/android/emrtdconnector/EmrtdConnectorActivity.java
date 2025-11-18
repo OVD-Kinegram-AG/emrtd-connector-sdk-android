@@ -75,9 +75,20 @@ public class EmrtdConnectorActivity extends AppCompatActivity {
 		progressIndicator = findViewById(R.id.progress_indicator);
 
 		Intent intent = getIntent();
+		if (intent == null) {
+			finish();
+			return;
+		}
+
 		String clientId = intent.getStringExtra(CLIENT_ID);
 		String validationUri = intent.getStringExtra(VALIDATION_URI);
 		validationId = intent.getStringExtra(VALIDATION_ID);
+		if (clientId == null || clientId.isEmpty() ||
+			validationUri == null || validationUri.isEmpty()
+		) {
+			finish();
+			return;
+		}
 
 		can = intent.getStringExtra(CAN_KEY);
 
