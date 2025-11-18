@@ -179,7 +179,14 @@ public class EmrtdConnectorActivity extends AppCompatActivity {
 			.build();
 
 		progressIndicator.setVisibility(View.VISIBLE);
-		emrtdConnector.connect(isoDep, options);
+		try {
+			emrtdConnector.connect(isoDep, options);
+		} catch (Exception e) {
+			Intent intent = new Intent();
+			intent.putExtra(RETURN_ERROR, e.getLocalizedMessage());
+			setResult(Activity.RESULT_OK, intent);
+			finish();
+		}
 	}
 
 	private int getStatusText(String status) {
