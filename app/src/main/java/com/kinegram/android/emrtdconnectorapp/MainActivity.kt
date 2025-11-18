@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
 
         prefs = getPreferences(MODE_PRIVATE)
 
-        returnResultCheckbox = findViewById<CheckBox>(R.id.return_result_only)
+        returnResultCheckbox = findViewById(R.id.return_result_only)
         canEditText = findViewById(R.id.can)
         documentNumberEditText = findViewById(R.id.document_number)
         dateOfBirthEditText = findViewById(R.id.date_of_birth)
