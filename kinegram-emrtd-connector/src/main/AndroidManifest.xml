@@ -10,11 +10,6 @@
             android:name="com.kinegram.android.emrtdconnector.EmrtdConnectorActivity"
             android:exported="true"
             android:label="@string/ready_to_scan"
-            android:launchMode="singleTop"
-            android:theme="@style/Theme.AppCompat.Translucent">
-            <intent-filter>
-                <action android:name="android.nfc.action.TECH_DISCOVERED" />
-            </intent-filter>
-        </activity>
+            android:theme="@style/Theme.AppCompat.Translucent"/>
     </application>
 </manifest>

@@ -249,7 +249,6 @@ public class EmrtdConnector {
         requireNonNull(msg, isoDep, validationId, chipAccessKey);
         cancel();
 
-
         sessionCoordinator = new WebsocketSessionCoordinator(
             isoDep,
             options,
