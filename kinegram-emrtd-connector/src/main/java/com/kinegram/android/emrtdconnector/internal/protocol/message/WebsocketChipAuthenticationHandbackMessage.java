@@ -18,8 +18,8 @@ public class WebsocketChipAuthenticationHandbackMessage extends WebsocketMessage
     public CheckResult checkResult;
 
     public WebsocketChipAuthenticationHandbackMessage(
-        @NonNull SecureMessagingInfo secureMessagingInfo,
-        @NonNull CheckResult checkResult
+            @NonNull SecureMessagingInfo secureMessagingInfo,
+            @NonNull CheckResult checkResult
     ) {
         super(TYPE_CA_HANDBACK);
         this.secureMessagingInfo = secureMessagingInfo;
@@ -32,10 +32,10 @@ public class WebsocketChipAuthenticationHandbackMessage extends WebsocketMessage
     }
 
     public static WebsocketChipAuthenticationHandbackMessage fromJson(
-        JSONObject json) throws JSONException {
+            JSONObject json) throws JSONException {
         return new WebsocketChipAuthenticationHandbackMessage(
-            SecureMessagingInfo.fromJson(json.getJSONObject("secureMessagingInfo")),
-            CheckResult.valueOf(json.getString("checkResult"))
+                SecureMessagingInfo.fromJson(json.getJSONObject("secureMessagingInfo")),
+                CheckResult.valueOf(json.getString("checkResult"))
         );
     }
 }

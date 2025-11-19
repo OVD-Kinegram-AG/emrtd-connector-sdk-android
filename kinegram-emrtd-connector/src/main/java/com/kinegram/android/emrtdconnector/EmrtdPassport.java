@@ -52,9 +52,9 @@ public class EmrtdPassport implements Parcelable {
         passiveAuthentication = obj.getBoolean("passiveAuthentication");
         passiveAuthenticationDetails = PassiveAuthenticationDetails.opt(obj);
         activeAuthenticationResult = CheckResult.valueOf(
-            obj.getString("activeAuthenticationResult"));
+                obj.getString("activeAuthenticationResult"));
         chipAuthenticationResult = CheckResult.valueOf(
-            obj.getString("chipAuthenticationResult"));
+                obj.getString("chipAuthenticationResult"));
         errors = JSONUtils.optStringArray(obj, "errors");
 
         JSONObject filesBinaryObj = obj.optJSONObject("filesBinary");
@@ -98,17 +98,17 @@ public class EmrtdPassport implements Parcelable {
     @Override
     public String toString() {
         String description = "EmrtdPassport{" +
-            "\nsodInfo=" + sodInfo +
-            ",\nmrzInfo=" + mrzInfo +
-            ",\nfacePhoto=" + shorten(facePhoto, 32) +
-            ",\nsignaturePhotos=" + shorten(signaturePhotos, 32) +
-            ",\nadditionalPersonalDetails=" + additionalPersonalDetails +
-            ",\nadditionalDocumentDetails=" + additionalDocumentDetails +
-            ",\npassiveAuthentication=" + passiveAuthentication +
-            ",\npassiveAuthenticationDetails=" + passiveAuthenticationDetails +
-            ",\nactiveAuthenticationResult=" + activeAuthenticationResult +
-            ",\nchipAuthenticationResult=" + chipAuthenticationResult +
-            ",\nerrors=" + TextUtils.join(", ", errors);
+                "\nsodInfo=" + sodInfo +
+                ",\nmrzInfo=" + mrzInfo +
+                ",\nfacePhoto=" + shorten(facePhoto, 32) +
+                ",\nsignaturePhotos=" + shorten(signaturePhotos, 32) +
+                ",\nadditionalPersonalDetails=" + additionalPersonalDetails +
+                ",\nadditionalDocumentDetails=" + additionalDocumentDetails +
+                ",\npassiveAuthentication=" + passiveAuthentication +
+                ",\npassiveAuthenticationDetails=" + passiveAuthenticationDetails +
+                ",\nactiveAuthenticationResult=" + activeAuthenticationResult +
+                ",\nchipAuthenticationResult=" + chipAuthenticationResult +
+                ",\nerrors=" + TextUtils.join(", ", errors);
         if (filesBinary != null) {
             description += ",\nfilesBinary=" + filesBinary;
         }
@@ -124,7 +124,7 @@ public class EmrtdPassport implements Parcelable {
      * Public CREATOR that generates instances of your {@link EmrtdPassport} class from a Parcel.
      */
     public static final Parcelable.Creator<EmrtdPassport> CREATOR
-        = new Parcelable.Creator<EmrtdPassport>() {
+            = new Parcelable.Creator<EmrtdPassport>() {
         public EmrtdPassport createFromParcel(Parcel in) {
             try {
                 return new EmrtdPassport(new JSONObject(in.readString()));
@@ -161,9 +161,9 @@ public class EmrtdPassport implements Parcelable {
         @Override
         public String toString() {
             return "SODInfo{" +
-                "\n\thashAlgorithm='" + hashAlgorithm + '\'' +
-                ",\n\thashForDataGroup=" + hashForDataGroup +
-                "\n}";
+                    "\n\thashAlgorithm='" + hashAlgorithm + '\'' +
+                    ",\n\thashForDataGroup=" + hashForDataGroup +
+                    "\n}";
         }
     }
 
@@ -204,19 +204,19 @@ public class EmrtdPassport implements Parcelable {
         @Override
         public String toString() {
             return "MRZInfo{" +
-                "\n\tdocumentType='" + documentType + '\'' +
-                ",\n\tdocumentCode='" + documentCode + '\'' +
-                ",\n\tissuingState='" + issuingState + '\'' +
-                ",\n\tprimaryIdentifier='" + primaryIdentifier + '\'' +
-                ",\n\tsecondaryIdentifier=" + Arrays.toString(secondaryIdentifier) +
-                ",\n\tnationality='" + nationality + '\'' +
-                ",\n\tdocumentNumber='" + documentNumber + '\'' +
-                ",\n\tdateOfBirth='" + dateOfBirth + '\'' +
-                ",\n\tdateOfExpiry='" + dateOfExpiry + '\'' +
-                ",\n\tgender='" + gender + '\'' +
-                ",\n\toptionalData1='" + optionalData1 + '\'' +
-                ",\n\toptionalData2='" + optionalData2 + '\'' +
-                "\n}";
+                    "\n\tdocumentType='" + documentType + '\'' +
+                    ",\n\tdocumentCode='" + documentCode + '\'' +
+                    ",\n\tissuingState='" + issuingState + '\'' +
+                    ",\n\tprimaryIdentifier='" + primaryIdentifier + '\'' +
+                    ",\n\tsecondaryIdentifier=" + Arrays.toString(secondaryIdentifier) +
+                    ",\n\tnationality='" + nationality + '\'' +
+                    ",\n\tdocumentNumber='" + documentNumber + '\'' +
+                    ",\n\tdateOfBirth='" + dateOfBirth + '\'' +
+                    ",\n\tdateOfExpiry='" + dateOfExpiry + '\'' +
+                    ",\n\tgender='" + gender + '\'' +
+                    ",\n\toptionalData1='" + optionalData1 + '\'' +
+                    ",\n\toptionalData2='" + optionalData2 + '\'' +
+                    "\n}";
         }
     }
 
@@ -247,9 +247,9 @@ public class EmrtdPassport implements Parcelable {
             title = obj.optString("title");
             personalSummary = obj.optString("personalSummary");
             proofOfCitizenshipImage = JSONUtils.decodeB64(
-                obj.optString("proofOfCitizenshipImage"));
+                    obj.optString("proofOfCitizenshipImage"));
             otherValidTravelDocumentNumbers = JSONUtils.optStringArray(
-                obj, "otherValidTravelDocumentNumbers");
+                    obj, "otherValidTravelDocumentNumbers");
             custodyInformation = obj.optString("custodyInformation");
         }
 
@@ -261,20 +261,20 @@ public class EmrtdPassport implements Parcelable {
         @Override
         public String toString() {
             return "AdditionalPersonalDetails{" +
-                "\n\tfullNameOfHolder='" + fullNameOfHolder + '\'' +
-                ",\n\totherNames=" + Arrays.toString(otherNames) +
-                ",\n\tpersonalNumber='" + personalNumber + '\'' +
-                ",\n\tfullDateOfBirth='" + fullDateOfBirth + '\'' +
-                ",\n\tplaceOfBirth='" + placeOfBirth + '\'' +
-                ",\n\tpermanentAddress=" + Arrays.toString(permanentAddress) +
-                ",\n\ttelephone='" + telephone + '\'' +
-                ",\n\tprofession='" + profession + '\'' +
-                ",\n\ttitle='" + title + '\'' +
-                ",\n\tpersonalSummary='" + personalSummary + '\'' +
-                ",\n\tproofOfCitizenshipImage=" + Arrays.toString(proofOfCitizenshipImage) +
-                ",\n\totherValidTravelDocumentNumbers=" + Arrays.toString(otherValidTravelDocumentNumbers) +
-                ",\n\tcustodyInformation='" + custodyInformation + '\'' +
-                "\n}";
+                    "\n\tfullNameOfHolder='" + fullNameOfHolder + '\'' +
+                    ",\n\totherNames=" + Arrays.toString(otherNames) +
+                    ",\n\tpersonalNumber='" + personalNumber + '\'' +
+                    ",\n\tfullDateOfBirth='" + fullDateOfBirth + '\'' +
+                    ",\n\tplaceOfBirth='" + placeOfBirth + '\'' +
+                    ",\n\tpermanentAddress=" + Arrays.toString(permanentAddress) +
+                    ",\n\ttelephone='" + telephone + '\'' +
+                    ",\n\tprofession='" + profession + '\'' +
+                    ",\n\ttitle='" + title + '\'' +
+                    ",\n\tpersonalSummary='" + personalSummary + '\'' +
+                    ",\n\tproofOfCitizenshipImage=" + Arrays.toString(proofOfCitizenshipImage) +
+                    ",\n\totherValidTravelDocumentNumbers=" + Arrays.toString(otherValidTravelDocumentNumbers) +
+                    ",\n\tcustodyInformation='" + custodyInformation + '\'' +
+                    "\n}";
         }
     }
 
@@ -299,7 +299,7 @@ public class EmrtdPassport implements Parcelable {
             imageOfRear = JSONUtils.decodeB64(obj.optString("imageOfRear"));
             dateAndTimeOfPersonalization = obj.optString("dateAndTimeOfPersonalization");
             personalizationSystemSerialNumber =
-                obj.optString("personalizationSystemSerialNumber");
+                    obj.optString("personalizationSystemSerialNumber");
         }
 
         private static AdditionalDocumentDetails opt(JSONObject obj) throws JSONException {
@@ -310,16 +310,16 @@ public class EmrtdPassport implements Parcelable {
         @Override
         public String toString() {
             return "AdditionalDocumentDetails{" +
-                "\n\tissuingAuthority='" + issuingAuthority + '\'' +
-                ",\n\tdateOfIssue='" + dateOfIssue + '\'' +
-                ",\n\tnamesOfOtherPersons='" + namesOfOtherPersons + '\'' +
-                ",\n\tendorsementsAndObservations='" + endorsementsAndObservations + '\'' +
-                ",\n\ttaxOrExitRequirements='" + taxOrExitRequirements + '\'' +
-                ",\n\timageOfFront=" + Arrays.toString(imageOfFront) +
-                ",\n\timageOfRear=" + Arrays.toString(imageOfRear) +
-                ",\n\tdateAndTimeOfPersonalization='" + dateAndTimeOfPersonalization + '\'' +
-                ",\n\tpersonalizationSystemSerialNumber='" + personalizationSystemSerialNumber + '\'' +
-                "\n}";
+                    "\n\tissuingAuthority='" + issuingAuthority + '\'' +
+                    ",\n\tdateOfIssue='" + dateOfIssue + '\'' +
+                    ",\n\tnamesOfOtherPersons='" + namesOfOtherPersons + '\'' +
+                    ",\n\tendorsementsAndObservations='" + endorsementsAndObservations + '\'' +
+                    ",\n\ttaxOrExitRequirements='" + taxOrExitRequirements + '\'' +
+                    ",\n\timageOfFront=" + Arrays.toString(imageOfFront) +
+                    ",\n\timageOfRear=" + Arrays.toString(imageOfRear) +
+                    ",\n\tdateAndTimeOfPersonalization='" + dateAndTimeOfPersonalization + '\'' +
+                    ",\n\tpersonalizationSystemSerialNumber='" + personalizationSystemSerialNumber + '\'' +
+                    "\n}";
         }
     }
 
@@ -336,7 +336,7 @@ public class EmrtdPassport implements Parcelable {
             documentCertificateValid = JSONUtils.optBool(obj, "documentCertificateValid");
             dataGroupsChecked = JSONUtils.optIntArray(obj, "dataGroupsChecked");
             dataGroupsWithValidHash = JSONUtils.optIntArray(
-                obj, "dataGroupsWithValidHash");
+                    obj, "dataGroupsWithValidHash");
             allHashesValid = JSONUtils.optBool(obj, "allHashesValid");
             error = obj.getString("error");
         }
@@ -349,13 +349,13 @@ public class EmrtdPassport implements Parcelable {
         @Override
         public String toString() {
             return "PassiveAuthenticationDetails{" +
-                "\n\tsodSignatureValid=" + sodSignatureValid +
-                ",\n\tdocumentCertificateValid=" + documentCertificateValid +
-                ",\n\tdataGroupsChecked=" + Arrays.toString(dataGroupsChecked) +
-                ",\n\tdataGroupsWithValidHash=" + Arrays.toString(dataGroupsWithValidHash) +
-                ",\n\tallHashesValid=" + allHashesValid +
-                ",\n\terror='" + error + '\'' +
-                "\n}";
+                    "\n\tsodSignatureValid=" + sodSignatureValid +
+                    ",\n\tdocumentCertificateValid=" + documentCertificateValid +
+                    ",\n\tdataGroupsChecked=" + Arrays.toString(dataGroupsChecked) +
+                    ",\n\tdataGroupsWithValidHash=" + Arrays.toString(dataGroupsWithValidHash) +
+                    ",\n\tallHashesValid=" + allHashesValid +
+                    ",\n\terror='" + error + '\'' +
+                    "\n}";
         }
     }
 

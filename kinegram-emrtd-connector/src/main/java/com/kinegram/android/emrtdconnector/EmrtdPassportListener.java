@@ -1,7 +1,5 @@
 package com.kinegram.android.emrtdconnector;
 
-import org.json.JSONException;
-
 /**
  * Interface to listen for an {@link EmrtdPassport} result.
  */

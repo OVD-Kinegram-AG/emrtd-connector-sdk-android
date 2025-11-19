@@ -15,9 +15,9 @@ public class WebsocketChipAuthenticationHandoverMessage extends WebsocketMessage
     public final SecureMessagingInfo secureMessagingInfo;
 
     public WebsocketChipAuthenticationHandoverMessage(
-        int maxTransceiveLengthForSecureMessaging,
-        int maxBlockSize,
-        @NonNull SecureMessagingInfo secureMessagingInfo
+            int maxTransceiveLengthForSecureMessaging,
+            int maxBlockSize,
+            @NonNull SecureMessagingInfo secureMessagingInfo
     ) {
         super(TYPE_CA_HANDOVER);
         this.maxTransceiveLengthForSecureMessaging = maxTransceiveLengthForSecureMessaging;

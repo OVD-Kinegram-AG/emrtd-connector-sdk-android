@@ -102,11 +102,11 @@ public class ConnectionOptions {
          * @return This instance of the builder for easier chaining.
          */
         public Builder setChipAccessKeyFromMrz(
-            String documentNumber,
-            String dateOfBirth,
-            String dateOfExpiry) {
+                String documentNumber,
+                String dateOfBirth,
+                String dateOfExpiry) {
             this.chipAccessKey = new ChipAccessKey.FromMrz(
-                documentNumber, dateOfBirth, dateOfExpiry);
+                    documentNumber, dateOfBirth, dateOfExpiry);
             return this;
         }
 
@@ -172,7 +172,7 @@ public class ConnectionOptions {
         public ConnectionOptions build() {
             if (chipAccessKey == null) {
                 throw new IllegalArgumentException(
-                    "A chip access key must be set");
+                        "A chip access key must be set");
             }
             return new ConnectionOptions(this);
         }

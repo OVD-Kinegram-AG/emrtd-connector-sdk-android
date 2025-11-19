@@ -46,10 +46,10 @@ public abstract class TracedAndroidWebSocketClient extends AndroidWebsocketClien
         Span parentSpan = parentSpanSupplier != null ? parentSpanSupplier.get() : null;
         try (Scope ignored = parentSpan == null ? null : parentSpan.makeCurrent()) {
             Span msgSpan = EmrtdConnector.getTracer().spanBuilder("websocket_transmit")
-                .setAttribute("messaging.operation.type", "send")
-                .setAttribute("messaging.system", "websocket")
-                .setAttribute("messaging.message.body.size", message.length())
-                .startSpan();
+                    .setAttribute("messaging.operation.type", "send")
+                    .setAttribute("messaging.system", "websocket")
+                    .setAttribute("messaging.message.body.size", message.length())
+                    .startSpan();
 
             if (includeSensitiveData) {
                 msgSpan.setAttribute("messaging.message.body.content", message);
@@ -83,16 +83,16 @@ public abstract class TracedAndroidWebSocketClient extends AndroidWebsocketClien
         Span parentSpan = parentSpanSupplier != null ? parentSpanSupplier.get() : null;
         try (Scope ignored = parentSpan == null ? null : parentSpan.makeCurrent()) {
             Span msgSpan = EmrtdConnector.getTracer().spanBuilder("websocket_transmit")
-                .setAttribute("messaging.operation.type", "send")
-                .setAttribute("messaging.system", "websocket")
-                .setAttribute("messaging.message.body.size", binary.remaining())
-                .startSpan();
+                    .setAttribute("messaging.operation.type", "send")
+                    .setAttribute("messaging.system", "websocket")
+                    .setAttribute("messaging.message.body.size", binary.remaining())
+                    .startSpan();
 
             if (includeSensitiveData) {
                 byte[] data = new byte[binary.remaining()];
                 binary.duplicate().get(data);
                 msgSpan.setAttribute("messaging.message.body.content_base64", Base64.encodeToString(data,
-                    Base64.URL_SAFE | Base64.NO_WRAP | Base64.NO_PADDING));
+                        Base64.URL_SAFE | Base64.NO_WRAP | Base64.NO_PADDING));
             }
 
             try (Scope ignored2 = msgSpan.makeCurrent()) {
@@ -131,10 +131,10 @@ public abstract class TracedAndroidWebSocketClient extends AndroidWebsocketClien
         Span parentSpan = parentSpanSupplier != null ? parentSpanSupplier.get() : null;
         try (Scope ignored = parentSpan == null ? null : parentSpan.makeCurrent()) {
             Span msgSpan = EmrtdConnector.getTracer().spanBuilder("websocket_receive")
-                .setAttribute("messaging.operation.type", "receive")
-                .setAttribute("messaging.system", "websocket")
-                .setAttribute("messaging.message.body.size", message.length())
-                .startSpan();
+                    .setAttribute("messaging.operation.type", "receive")
+                    .setAttribute("messaging.system", "websocket")
+                    .setAttribute("messaging.message.body.size", message.length())
+                    .startSpan();
 
             if (includeSensitiveData) {
                 msgSpan.setAttribute("messaging.message.body.content", message);
@@ -169,16 +169,16 @@ public abstract class TracedAndroidWebSocketClient extends AndroidWebsocketClien
         Span parentSpan = parentSpanSupplier != null ? parentSpanSupplier.get() : null;
         try (Scope ignored = parentSpan == null ? null : parentSpan.makeCurrent()) {
             Span msgSpan = EmrtdConnector.getTracer().spanBuilder("websocket_receive")
-                .setAttribute("messaging.operation.type", "receive")
-                .setAttribute("messaging.system", "websocket")
-                .setAttribute("messaging.message.body.size", binary.remaining())
-                .startSpan();
+                    .setAttribute("messaging.operation.type", "receive")
+                    .setAttribute("messaging.system", "websocket")
+                    .setAttribute("messaging.message.body.size", binary.remaining())
+                    .startSpan();
 
             if (includeSensitiveData) {
                 byte[] data = new byte[binary.remaining()];
                 binary.duplicate().get(data);
                 msgSpan.setAttribute("messaging.message.body.content_base64", Base64.encodeToString(data,
-                    Base64.URL_SAFE | Base64.NO_WRAP | Base64.NO_PADDING));
+                        Base64.URL_SAFE | Base64.NO_WRAP | Base64.NO_PADDING));
             }
 
             try (Scope ignored2 = msgSpan.makeCurrent()) {

@@ -119,43 +119,43 @@ public class IsoDepCardService extends CardService {
     @Override
     public ResponseAPDU transmit(CommandAPDU ourCommandAPDU) throws CardServiceException {
         Span span = EmrtdConnector.getTracer().spanBuilder("iso_dep_transmit")
-            .startSpan();
+                .startSpan();
         try (Scope ignored = span.makeCurrent()) {
             if (!isOpen()) {
                 throw new TagLostException("Not Connected");
             }
             AttributesBuilder requestAttributes = Attributes.builder()
-                .put("command_apdu.cla", ourCommandAPDU.getCLA())
-                .put("command_apdu.ins", ourCommandAPDU.getINS())
-                .put("command_apdu.p1", ourCommandAPDU.getP1())
-                .put("command_apdu.p2", ourCommandAPDU.getP2())
-                .put("command_apdu.nc", ourCommandAPDU.getNc())
-                .put("command_apdu.ne", ourCommandAPDU.getNe());
+                    .put("command_apdu.cla", ourCommandAPDU.getCLA())
+                    .put("command_apdu.ins", ourCommandAPDU.getINS())
+                    .put("command_apdu.p1", ourCommandAPDU.getP1())
+                    .put("command_apdu.p2", ourCommandAPDU.getP2())
+                    .put("command_apdu.nc", ourCommandAPDU.getNc())
+                    .put("command_apdu.ne", ourCommandAPDU.getNe());
             if (enableDiagnostics) {
                 requestAttributes.put("command_apdu.bytes_hex", toHex(ourCommandAPDU.getBytes()));
             }
             span.addEvent(
-                "transmit_apdu_command",
-                requestAttributes.build());
+                    "transmit_apdu_command",
+                    requestAttributes.build());
             byte[] responseBytes = isoDep.transceive(ourCommandAPDU.getBytes());
             if (responseBytes == null) {
                 // MUST NOT happen according to the IsoDep docs
                 throw new AssertionError("Unexpected IsoDep null response");
             }
             AttributesBuilder responseAttributes = Attributes.builder()
-                .put("apdu_response.length", responseBytes.length);
+                    .put("apdu_response.length", responseBytes.length);
             if (enableDiagnostics) {
                 responseAttributes.put(
-                    "apdu_response.bytes_hex", toHex(responseBytes));
+                        "apdu_response.bytes_hex", toHex(responseBytes));
             }
             span.addEvent("received_apdu_response", responseAttributes.build());
             if (responseBytes.length < 2) {
                 throw new TagLostException(
-                    "Received APDU response with less than 2 bytes (" + responseBytes.length + ")");
+                        "Received APDU response with less than 2 bytes (" + responseBytes.length + ")");
             }
             ResponseAPDU ourResponseAPDU = new ResponseAPDU(responseBytes);
             APDUEvent event = new APDUEvent(
-                this, "ISODep", ++apduCount, ourCommandAPDU, ourResponseAPDU
+                    this, "ISODep", ++apduCount, ourCommandAPDU, ourResponseAPDU
             );
             notifyExchangedAPDU(event);
             return ourResponseAPDU;

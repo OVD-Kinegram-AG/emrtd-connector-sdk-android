@@ -30,7 +30,7 @@ public class WebsocketAcceptMessage extends WebsocketMessage {
 
     public static WebsocketAcceptMessage fromJson(JSONObject json) throws JSONException {
         return new WebsocketAcceptMessage(
-            Base64.decode(json.getString("activeAuthenticationChallenge"), Base64.NO_WRAP)
+                Base64.decode(json.getString("activeAuthenticationChallenge"), Base64.NO_WRAP)
         );
     }
 }

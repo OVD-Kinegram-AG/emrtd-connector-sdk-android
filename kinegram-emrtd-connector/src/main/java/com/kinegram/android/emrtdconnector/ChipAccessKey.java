@@ -78,9 +78,9 @@ public abstract class ChipAccessKey {
          * @param dateOfExpiry   The expiry date of the document.
          */
         public FromMrz(
-            String documentNumber,
-            String dateOfBirth,
-            String dateOfExpiry) {
+                String documentNumber,
+                String dateOfBirth,
+                String dateOfExpiry) {
             this.documentNumber = documentNumber;
             this.dateOfBirth = dateOfBirth;
             this.dateOfExpiry = dateOfExpiry;

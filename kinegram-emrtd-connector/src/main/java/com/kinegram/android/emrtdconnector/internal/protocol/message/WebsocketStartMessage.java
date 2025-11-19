@@ -19,11 +19,11 @@ public class WebsocketStartMessage extends WebsocketMessage {
     public final boolean enableDiagnostics;
 
     public WebsocketStartMessage(
-        @NonNull String validationId,
-        @NonNull String clientId,
-        @NonNull String platform,
-        boolean nfcAdapterSupportsExtendedLength,
-        boolean enableDiagnostics) {
+            @NonNull String validationId,
+            @NonNull String clientId,
+            @NonNull String platform,
+            boolean nfcAdapterSupportsExtendedLength,
+            boolean enableDiagnostics) {
         super(TYPE_START);
         this.validationId = validationId;
         this.clientId = clientId;
@@ -46,11 +46,11 @@ public class WebsocketStartMessage extends WebsocketMessage {
 
     public static WebsocketStartMessage fromJson(JSONObject json) throws JSONException {
         return new WebsocketStartMessage(
-            json.getString("validationId"),
-            json.getString("clientId"),
-            json.getString("platform"),
-            json.getBoolean("nfcAdapterSupportsExtendedLength"),
-            json.getBoolean("enableDiagnostics")
+                json.getString("validationId"),
+                json.getString("clientId"),
+                json.getString("platform"),
+                json.getBoolean("nfcAdapterSupportsExtendedLength"),
+                json.getBoolean("enableDiagnostics")
         );
     }
 }

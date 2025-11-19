@@ -55,7 +55,7 @@ public class EmrtdConnector {
 
     private static Tracer getTracer(TracerProvider tracerProvider) {
         return tracerProvider.get(
-            "com.kinegram.android.emrtdconnector", BuildConfig.LIBRARY_VERSION);
+                "com.kinegram.android.emrtdconnector", BuildConfig.LIBRARY_VERSION);
     }
 
     /**
@@ -108,21 +108,21 @@ public class EmrtdConnector {
      * @throws URISyntaxException If the WebSocketUrl is an invalid string.
      */
     public EmrtdConnector(
-        String clientId,
-        String webSocketUrl,
-        ClosedListener closedListener,
-        StatusListener statusListener,
-        EmrtdPassportListener emrtdPassportListener
+            String clientId,
+            String webSocketUrl,
+            ClosedListener closedListener,
+            StatusListener statusListener,
+            EmrtdPassportListener emrtdPassportListener
     ) throws URISyntaxException {
         String msg = "`clientId`, `websocketUrl` or `closedListener` is null";
         requireNonNull(msg, clientId, webSocketUrl, closedListener);
 
         URI webSocketUri;
         if (emrtdPassportListener != null
-            && !webSocketUrl.toLowerCase().contains(RET_QUERY)) {
+                && !webSocketUrl.toLowerCase().contains(RET_QUERY)) {
             webSocketUri = new URI(webSocketUrl +
-                (webSocketUrl.contains("?") ? "&" : "?") +
-                RET_QUERY);
+                    (webSocketUrl.contains("?") ? "&" : "?") +
+                    RET_QUERY);
         } else {
             webSocketUri = new URI(webSocketUrl);
         }
@@ -161,9 +161,9 @@ public class EmrtdConnector {
         requireNonNull(msg, isoDep, validationId, can);
 
         ConnectionOptions options = new ConnectionOptions.Builder()
-            .setChipAccessKeyFromCan(can)
-            .setValidationId(validationId)
-            .build();
+                .setChipAccessKeyFromCan(can)
+                .setValidationId(validationId)
+                .build();
 
         connect(isoDep, options);
     }
@@ -195,21 +195,21 @@ public class EmrtdConnector {
      */
     @Deprecated
     public void connect(
-        IsoDep isoDep,
-        String validationId,
-        String documentNumber,
-        String dateOfBirth,
-        String dateOfExpiry
+            IsoDep isoDep,
+            String validationId,
+            String documentNumber,
+            String dateOfBirth,
+            String dateOfExpiry
     ) {
         String msg = "`isoDep`, `validationId` or `documentNumber`, " +
-            "`dateOfBirth` or `dateOfExpiry` is null";
+                "`dateOfBirth` or `dateOfExpiry` is null";
         requireNonNull(msg, isoDep, validationId, documentNumber,
-            dateOfBirth, dateOfExpiry);
+                dateOfBirth, dateOfExpiry);
 
         ConnectionOptions options = new ConnectionOptions.Builder()
-            .setChipAccessKeyFromMrz(documentNumber, dateOfBirth, dateOfExpiry)
-            .setValidationId(validationId)
-            .build();
+                .setChipAccessKeyFromMrz(documentNumber, dateOfBirth, dateOfExpiry)
+                .setValidationId(validationId)
+                .build();
         connect(isoDep, options);
     }
 
@@ -247,27 +247,27 @@ public class EmrtdConnector {
         cancel();
 
         sessionCoordinator = new WebsocketSessionCoordinator(
-            isoDep,
-            options,
-            clientId,
-            webSocketUri,
-            status -> handler.post(() -> statusListener.handle(status)),
-            (int code, String reason, boolean remote) ->
-                handler.post(() -> closedListener.handle(code, reason, remote)),
-            emrtdPassportListener == null ? null : (passport) ->
-                handler.post(() -> emrtdPassportListener.handle(passport, null)),
-            e -> {
-                if (e instanceof NfcException) {
-                    this.nfcException = (Exception) e.getCause();
-                } else if (e instanceof WebsocketClientException) {
-                    this.webSocketClientException = (Exception) e.getCause();
-                } else {
-                    this.exception = e;
-                }
-				if (emrtdPassportListener != null) {
-					handler.post(() -> emrtdPassportListener.handle(null, e));
-				}
-            });
+                isoDep,
+                options,
+                clientId,
+                webSocketUri,
+                status -> handler.post(() -> statusListener.handle(status)),
+                (int code, String reason, boolean remote) ->
+                        handler.post(() -> closedListener.handle(code, reason, remote)),
+                emrtdPassportListener == null ? null : (passport) ->
+                        handler.post(() -> emrtdPassportListener.handle(passport, null)),
+                e -> {
+                    if (e instanceof NfcException) {
+                        this.nfcException = (Exception) e.getCause();
+                    } else if (e instanceof WebsocketClientException) {
+                        this.webSocketClientException = (Exception) e.getCause();
+                    } else {
+                        this.exception = e;
+                    }
+                    if (emrtdPassportListener != null) {
+                        handler.post(() -> emrtdPassportListener.handle(null, e));
+                    }
+                });
         sessionCoordinator.start();
     }
 

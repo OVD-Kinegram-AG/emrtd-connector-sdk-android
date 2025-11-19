@@ -23,8 +23,8 @@ public class WebsocketFinishMessage extends WebsocketMessage {
     public final byte[] activeAuthenticationSignature;
 
     public WebsocketFinishMessage(
-        boolean sendResult,
-        @Nullable byte[] activeAuthenticationSignature) {
+            boolean sendResult,
+            @Nullable byte[] activeAuthenticationSignature) {
         super(TYPE_FINISH);
         this.sendResult = sendResult;
         this.activeAuthenticationSignature = activeAuthenticationSignature;
@@ -33,11 +33,11 @@ public class WebsocketFinishMessage extends WebsocketMessage {
     @Override
     public JSONObject toJson() throws JSONException {
         return new JSONObject()
-            .put("type", type)
-            .put("sendResult", sendResult)
-            .put("activeAuthenticationSignature", activeAuthenticationSignature == null
-                ? null :
-                Base64.encodeToString(activeAuthenticationSignature, Base64.NO_WRAP));
+                .put("type", type)
+                .put("sendResult", sendResult)
+                .put("activeAuthenticationSignature", activeAuthenticationSignature == null
+                        ? null :
+                        Base64.encodeToString(activeAuthenticationSignature, Base64.NO_WRAP));
     }
 
     public static WebsocketFinishMessage fromJson(JSONObject json) throws JSONException {

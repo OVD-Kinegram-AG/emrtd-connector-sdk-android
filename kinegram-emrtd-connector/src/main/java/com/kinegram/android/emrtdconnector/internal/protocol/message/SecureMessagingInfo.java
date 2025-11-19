@@ -41,7 +41,7 @@ public class SecureMessagingInfo {
      * @param ssc       The value of the send sequence counter.
      */
     public SecureMessagingInfo(
-        @NonNull String algorithm, @NonNull String encKey, @NonNull String macKey, long ssc) {
+            @NonNull String algorithm, @NonNull String encKey, @NonNull String macKey, long ssc) {
         this.algorithm = algorithm;
         this.encKey = encKey;
         this.macKey = macKey;
@@ -50,9 +50,9 @@ public class SecureMessagingInfo {
 
     public SecureMessagingWrapper toWrapper() throws GeneralSecurityException {
         Span smSpan = EmrtdConnector.getTracer().spanBuilder("secure_messaging_setup")
-            .setAttribute("crypto.algorithm", algorithm)
-            .setAttribute("crypto.ssc", ssc)
-            .startSpan();
+                .setAttribute("crypto.algorithm", algorithm)
+                .setAttribute("crypto.ssc", ssc)
+                .startSpan();
 
         try (Scope ignored = smSpan.makeCurrent()) {
             smSpan.addEvent("decoding_keys");
@@ -60,10 +60,10 @@ public class SecureMessagingInfo {
             byte[] macBytes = Base64.decode(macKey, Base64.DEFAULT);
 
             smSpan.addEvent("creating_secret_keys",
-                Attributes.builder()
-                    .put("enc_key_length", encBytes.length)
-                    .put("mac_key_length", macBytes.length)
-                    .build());
+                    Attributes.builder()
+                            .put("enc_key_length", encBytes.length)
+                            .put("mac_key_length", macBytes.length)
+                            .build());
 
             SecretKey kEnc = new SecretKeySpec(encBytes, algorithm);
             SecretKey kMac = new SecretKeySpec(macBytes, algorithm);
@@ -89,8 +89,8 @@ public class SecureMessagingInfo {
 
     public static SecureMessagingInfo fromWrapper(SecureMessagingWrapper wrapper) {
         Span smSpan = EmrtdConnector.getTracer().spanBuilder("secure_messaging_extract")
-            .setAttribute("code.function.name", wrapper.getClass().getSimpleName())
-            .startSpan();
+                .setAttribute("code.function.name", wrapper.getClass().getSimpleName())
+                .startSpan();
 
         try (Scope ignored = smSpan.makeCurrent()) {
             String alg = (wrapper instanceof AESSecureMessagingWrapper) ? "AES" : "DESede";
@@ -99,7 +99,7 @@ public class SecureMessagingInfo {
 
             smSpan.addEvent("extracting_keys");
             String encB64 = Base64.encodeToString(
-                wrapper.getEncryptionKey().getEncoded(), Base64.NO_WRAP);
+                    wrapper.getEncryptionKey().getEncoded(), Base64.NO_WRAP);
             String macB64 = Base64.encodeToString(wrapper.getMACKey().getEncoded(), Base64.NO_WRAP);
 
             smSpan.addEvent("secure_messaging_info_created");
@@ -125,10 +125,10 @@ public class SecureMessagingInfo {
 
     public static SecureMessagingInfo fromJson(JSONObject json) throws JSONException {
         return new SecureMessagingInfo(
-            json.getString("algorithm"),
-            json.getString("encKey"),
-            json.getString("macKey"),
-            json.getLong("ssc")
+                json.getString("algorithm"),
+                json.getString("encKey"),
+                json.getString("macKey"),
+                json.getLong("ssc")
         );
     }
 }

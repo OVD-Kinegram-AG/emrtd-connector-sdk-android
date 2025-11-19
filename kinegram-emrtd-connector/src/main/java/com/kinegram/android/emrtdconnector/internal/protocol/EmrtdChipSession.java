@@ -69,10 +69,10 @@ public class EmrtdChipSession {
 
     public void start(byte[] activeAuthenticationChallenge) {
         Span chipSessionSpan = EmrtdConnector.getTracer().spanBuilder("nfc_chip_session")
-            .setAttribute("nfc.timeout_ms", NFC_TIMEOUT_MS)
-            .setAttribute("emrtd_connector.validation_id", options.getValidationId())
-            .setAttribute("has_active_auth_challenge", activeAuthenticationChallenge != null)
-            .startSpan();
+                .setAttribute("nfc.timeout_ms", NFC_TIMEOUT_MS)
+                .setAttribute("emrtd_connector.validation_id", options.getValidationId())
+                .setAttribute("has_active_auth_challenge", activeAuthenticationChallenge != null)
+                .startSpan();
 
         try (Scope ignored = chipSessionSpan.makeCurrent()) {
             isoDep.setTimeout(NFC_TIMEOUT_MS);
@@ -83,21 +83,21 @@ public class EmrtdChipSession {
             }
 
             chipSessionSpan.addEvent("nfc_connected",
-                Attributes.builder()
-                    .put("nfc.connected", isoDep.isConnected())
-                    .put("nfc.extended_length_supported", isoDep.isExtendedLengthApduSupported())
-                    .build());
+                    Attributes.builder()
+                            .put("nfc.connected", isoDep.isConnected())
+                            .put("nfc.extended_length_supported", isoDep.isExtendedLengthApduSupported())
+                            .build());
 
             CardService cardService = new IsoDepCardService(isoDep, options.isDiagnosticsEnabled());
             try {
                 EmrtdResult result = readEmrtdData(cardService, activeAuthenticationChallenge);
 
                 chipSessionSpan.addEvent("chip_read_completed",
-                    Attributes.builder()
-                        .put("emrtd.data_groups_count", result.dataGroupsRawBinary.size())
-                        .put("emrtd.sod_present", result.sodRawBinary != null)
-                        .put("emrtd.has_active_auth_result", result.activeAuthenticationResult != null)
-                        .build());
+                        Attributes.builder()
+                                .put("emrtd.data_groups_count", result.dataGroupsRawBinary.size())
+                                .put("emrtd.sod_present", result.sodRawBinary != null)
+                                .put("emrtd.has_active_auth_result", result.activeAuthenticationResult != null)
+                                .build());
 
                 for (Map.Entry<Integer, byte[]> entry : result.dataGroupsRawBinary.entrySet()) {
                     String name = "dg" + entry.getKey();
@@ -126,17 +126,17 @@ public class EmrtdChipSession {
     }
 
     private EmrtdResult readEmrtdData(CardService cardService, byte[] activeAuthenticationChallenge)
-        throws EmrtdReaderException, AccessControlProtocolException {
+            throws EmrtdReaderException, AccessControlProtocolException {
         return emrtdReader.read(
-            cardService,
-            getAccessInformation(),
-            false,
-            null,
-            null,
-            createProgressListener(),
-            TagLostException.class,
-            this::handleChipAuthentication,
-            activeAuthenticationChallenge
+                cardService,
+                getAccessInformation(),
+                false,
+                null,
+                null,
+                createProgressListener(),
+                TagLostException.class,
+                this::handleChipAuthentication,
+                activeAuthenticationChallenge
         );
     }
 
@@ -155,31 +155,31 @@ public class EmrtdChipSession {
     }
 
     private RemoteChipAuthentication.Result handleChipAuthentication(
-        byte[] dg14Raw,
-        int maxTransceiveLengthForSecureMessaging,
-        int maxBlockSize,
-        SecureMessagingWrapper secureMessagingWrapper) {
+            byte[] dg14Raw,
+            int maxTransceiveLengthForSecureMessaging,
+            int maxBlockSize,
+            SecureMessagingWrapper secureMessagingWrapper) {
 
         Span authSpan = EmrtdConnector.getTracer().spanBuilder("chip_authentication")
-            .setAttribute("nfc.max_transceive_length", maxTransceiveLengthForSecureMessaging)
-            .setAttribute("nfc.max_block_size", maxBlockSize)
-            .setAttribute("file.size", dg14Raw.length)
-            .startSpan();
+                .setAttribute("nfc.max_transceive_length", maxTransceiveLengthForSecureMessaging)
+                .setAttribute("nfc.max_block_size", maxBlockSize)
+                .setAttribute("file.size", dg14Raw.length)
+                .startSpan();
 
         try (Scope ignored = authSpan.makeCurrent()) {
             listener.onFileReady("dg14", dg14Raw);
 
             authSpan.addEvent("chip_auth_handover_started");
             CompletableFuture<RemoteChipAuthentication.Result> future = listener.onChipAuthenticationHandover(
-                maxTransceiveLengthForSecureMessaging, maxBlockSize, secureMessagingWrapper);
+                    maxTransceiveLengthForSecureMessaging, maxBlockSize, secureMessagingWrapper);
 
             RemoteChipAuthentication.Result result;
             try {
                 result = future.get(20, TimeUnit.SECONDS);
                 authSpan.addEvent("chip_auth_handover_completed",
-                    Attributes.builder()
-                        .put("emrtd.auth_successful", result != null)
-                        .build());
+                        Attributes.builder()
+                                .put("emrtd.auth_successful", result != null)
+                                .build());
                 authSpan.setStatus(StatusCode.OK);
             } catch (ExecutionException | InterruptedException | TimeoutException e) {
                 authSpan.recordException(e);
@@ -203,9 +203,9 @@ public class EmrtdChipSession {
         } else {
             ChipAccessKey.FromMrz mrzKey = (ChipAccessKey.FromMrz) accessKey;
             return new AccessInformation.WithMrzDetails(
-                mrzKey.getDocumentNumber(),
-                mrzKey.getDateOfBirth(),
-                mrzKey.getDateOfExpiry()
+                    mrzKey.getDocumentNumber(),
+                    mrzKey.getDateOfBirth(),
+                    mrzKey.getDateOfExpiry()
             );
         }
     }
