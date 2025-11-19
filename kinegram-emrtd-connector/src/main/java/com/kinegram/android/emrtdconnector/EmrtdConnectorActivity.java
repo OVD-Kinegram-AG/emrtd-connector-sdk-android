@@ -15,8 +15,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 
-import org.json.JSONException;
-
 import java.net.URISyntaxException;
 import java.util.Arrays;
 
@@ -40,17 +38,14 @@ public class EmrtdConnectorActivity extends AppCompatActivity {
 			statusTextView.setText(getStatusText(status));
 		}
 	};
-	private final EmrtdPassportListener passportListener = new EmrtdPassportListener() {
-		@Override
-		public void handle(EmrtdPassport emrtdPassport, JSONException exception) {
-			Intent intent = new Intent();
-			intent.putExtra(RETURN_DATA, emrtdPassport);
-			if (exception != null) {
-				intent.putExtra(RETURN_ERROR, exception.toString());
-			}
-			setResult(Activity.RESULT_OK, intent);
-			finish();
+	private final EmrtdPassportListener passportListener = (emrtdPassport, exception) -> {
+		Intent intent = new Intent();
+		intent.putExtra(RETURN_DATA, emrtdPassport);
+		if (exception != null) {
+			intent.putExtra(RETURN_ERROR, exception.toString());
 		}
+		setResult(Activity.RESULT_OK, intent);
+		finish();
 	};
 
 	private EmrtdConnector emrtdConnector;
@@ -84,7 +79,7 @@ public class EmrtdConnectorActivity extends AppCompatActivity {
 		String validationUri = intent.getStringExtra(VALIDATION_URI);
 		validationId = intent.getStringExtra(VALIDATION_ID);
 		if (clientId == null || clientId.isEmpty() ||
-			validationUri == null || validationUri.isEmpty()
+				validationUri == null || validationUri.isEmpty()
 		) {
 			finish();
 			return;
@@ -103,11 +98,11 @@ public class EmrtdConnectorActivity extends AppCompatActivity {
 
 		try {
 			emrtdConnector = new EmrtdConnector(
-				clientId,
-				validationUri,
-				closedListener,
-				statusListener,
-				passportListener);
+					clientId,
+					validationUri,
+					closedListener,
+					statusListener,
+					passportListener);
 		} catch (URISyntaxException e) {
 			statusTextView.setText(e.getLocalizedMessage());
 		}
@@ -129,17 +124,17 @@ public class EmrtdConnectorActivity extends AppCompatActivity {
 		Bundle options = new Bundle();
 		options.putInt(NfcAdapter.EXTRA_READER_PRESENCE_CHECK_DELAY, 50);
 		nfcAdapter.enableReaderMode(
-			this,
-			tag -> {
-				runOnUiThread(() -> handleTag(tag));
-			},
-			NfcAdapter.FLAG_READER_NFC_A |
-				NfcAdapter.FLAG_READER_NFC_B |
-				NfcAdapter.FLAG_READER_NFC_F |
-				NfcAdapter.FLAG_READER_NFC_V |
-				NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK |
-				NfcAdapter.FLAG_READER_NO_PLATFORM_SOUNDS,
-			options
+				this,
+				tag -> {
+					runOnUiThread(() -> handleTag(tag));
+				},
+				NfcAdapter.FLAG_READER_NFC_A |
+						NfcAdapter.FLAG_READER_NFC_B |
+						NfcAdapter.FLAG_READER_NFC_F |
+						NfcAdapter.FLAG_READER_NFC_V |
+						NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK |
+						NfcAdapter.FLAG_READER_NO_PLATFORM_SOUNDS,
+				options
 		);
 	}
 
@@ -170,13 +165,13 @@ public class EmrtdConnectorActivity extends AppCompatActivity {
 			chipAccessKey = new ChipAccessKey.FromCan(can);
 		} else {
 			chipAccessKey = new ChipAccessKey.FromMrz(
-				documentNumber, dateOfBirth, dateOfExpiry);
+					documentNumber, dateOfBirth, dateOfExpiry);
 		}
 
 		ConnectionOptions options = new ConnectionOptions.Builder()
-			.setChipAccessKey(chipAccessKey)
-			.setValidationId(validationId)
-			.build();
+				.setChipAccessKey(chipAccessKey)
+				.setValidationId(validationId)
+				.build();
 
 		progressIndicator.setVisibility(View.VISIBLE);
 		try {
