@@ -1,5 +1,8 @@
 # Kinegram eMRTD Connector SDK Android - Changelog
 
+## 2.1.18
+* Fix returning exception
+
 ## 2.1.17
 * Add a toJSON() method to EmrtdPassport
 
