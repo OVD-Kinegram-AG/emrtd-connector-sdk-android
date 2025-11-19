@@ -38,11 +38,8 @@ public class EmrtdConnector {
     private final EmrtdPassportListener emrtdPassportListener;
 
     private WebsocketSessionCoordinator sessionCoordinator;
-
     private Exception nfcException;
-
     private Exception webSocketClientException;
-
     private Exception exception;
 
     /**
@@ -267,6 +264,9 @@ public class EmrtdConnector {
                 } else {
                     this.exception = e;
                 }
+				if (emrtdPassportListener != null) {
+					handler.post(() -> emrtdPassportListener.handle(null, e));
+				}
             });
         sessionCoordinator.start();
     }

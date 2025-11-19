@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
                 EmrtdConnectorActivity.RETURN_ERROR
             ) ?: "Unknown error"
             Toast.makeText(
-                this,
+                applicationContext,
                 error,
                 Toast.LENGTH_LONG
             ).show()

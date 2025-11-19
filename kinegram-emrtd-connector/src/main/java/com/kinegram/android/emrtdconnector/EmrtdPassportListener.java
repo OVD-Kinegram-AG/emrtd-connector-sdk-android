@@ -12,5 +12,5 @@ public interface EmrtdPassportListener {
      * @param emrtdPassport containing the Result
      * @param exception     non null if an Exception occurred while parsing server message
      */
-    void handle(EmrtdPassport emrtdPassport, JSONException exception);
+    void handle(EmrtdPassport emrtdPassport, Exception exception);
 }

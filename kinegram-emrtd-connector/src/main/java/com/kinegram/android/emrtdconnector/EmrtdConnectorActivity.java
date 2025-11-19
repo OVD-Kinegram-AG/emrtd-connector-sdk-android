@@ -39,13 +39,14 @@ public class EmrtdConnectorActivity extends AppCompatActivity {
 		}
 	};
 	private final EmrtdPassportListener passportListener = (emrtdPassport, exception) -> {
-		Intent intent = new Intent();
-		intent.putExtra(RETURN_DATA, emrtdPassport);
 		if (exception != null) {
-			intent.putExtra(RETURN_ERROR, exception.toString());
+			returnError(exception.toString());
+		} else {
+			Intent intent = new Intent();
+			intent.putExtra(RETURN_DATA, emrtdPassport);
+			setResult(Activity.RESULT_OK, intent);
+			finish();
 		}
-		setResult(Activity.RESULT_OK, intent);
-		finish();
 	};
 
 	private EmrtdConnector emrtdConnector;
@@ -177,11 +178,15 @@ public class EmrtdConnectorActivity extends AppCompatActivity {
 		try {
 			emrtdConnector.connect(isoDep, options);
 		} catch (Exception e) {
-			Intent intent = new Intent();
-			intent.putExtra(RETURN_ERROR, e.getLocalizedMessage());
-			setResult(Activity.RESULT_OK, intent);
-			finish();
+			returnError(e.getLocalizedMessage());
 		}
+	}
+
+	private void returnError(String message) {
+		Intent intent = new Intent();
+		intent.putExtra(RETURN_ERROR, message);
+		setResult(Activity.RESULT_OK, intent);
+		finish();
 	}
 
 	private int getStatusText(String status) {

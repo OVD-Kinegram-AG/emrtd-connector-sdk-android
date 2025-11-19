@@ -22,7 +22,6 @@ import com.kinegram.android.emrtdconnector.EmrtdConnector
 import com.kinegram.android.emrtdconnector.EmrtdConnectorActivity
 import com.kinegram.android.emrtdconnector.EmrtdPassport
 import com.kinegram.android.emrtdconnector.StatusListener
-import org.json.JSONException
 
 class ReadingActivity : AppCompatActivity() {
     private lateinit var statusTextView: TextView
@@ -163,7 +162,11 @@ class ReadingActivity : AppCompatActivity() {
         }
     }
 
-    private fun emrtdPassportListener(emrtdPassport: EmrtdPassport?, e: JSONException) {
+    private fun emrtdPassportListener(emrtdPassport: EmrtdPassport?, e: Exception?) {
+        if (e != null) {
+            Toast.makeText(applicationContext, e.message, Toast.LENGTH_LONG).show()
+            return;
+        }
         showResultButton.setOnClickListener {
             val intent = Intent(this, ResultActivity::class.java).apply {
                 putExtra(ResultActivity.RESULT_KEY, emrtdPassport)
