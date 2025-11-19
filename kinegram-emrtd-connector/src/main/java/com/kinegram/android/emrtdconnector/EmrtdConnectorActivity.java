@@ -46,7 +46,7 @@ public class EmrtdConnectorActivity extends AppCompatActivity {
 			Intent intent = new Intent();
 			intent.putExtra(RETURN_DATA, emrtdPassport);
 			if (exception != null) {
-				intent.putExtra(RETURN_ERROR, exception);
+				intent.putExtra(RETURN_ERROR, exception.toString());
 			}
 			setResult(Activity.RESULT_OK, intent);
 			finish();
