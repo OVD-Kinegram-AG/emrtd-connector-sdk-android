@@ -107,22 +107,55 @@ public class EmrtdChipSession {
                 listener.onFinish(result);
             } catch (EmrtdReaderException e) {
                 chipSessionSpan.recordException(e);
-                chipSessionSpan.setStatus(StatusCode.ERROR, "EMRTD reader error");
-                listener.onError(e, ClosedListener.EMRTD_PASSPORT_READER_ERROR);
+                if (hasNfcCommunicationErrorInCauseChain(e)) {
+                    chipSessionSpan.setStatus(StatusCode.ERROR, "NFC communication failed");
+                    listener.onError(e, ClosedListener.NFC_CHIP_COMMUNICATION_FAILED);
+                } else {
+                    chipSessionSpan.setStatus(StatusCode.ERROR, "EMRTD reader error");
+                    listener.onError(e, ClosedListener.EMRTD_PASSPORT_READER_ERROR);
+                }
             } catch (AccessControlProtocolException e) {
                 chipSessionSpan.recordException(e);
-                chipSessionSpan.setStatus(StatusCode.ERROR, "Access control failed");
-                listener.onError(e, ClosedListener.ACCESS_CONTROL_FAILED);
+                if (hasNfcCommunicationErrorInCauseChain(e)) {
+                    chipSessionSpan.setStatus(StatusCode.ERROR, "NFC communication failed");
+                    listener.onError(e, ClosedListener.NFC_CHIP_COMMUNICATION_FAILED);
+                } else {
+                    chipSessionSpan.setStatus(StatusCode.ERROR, "Access control failed");
+                    listener.onError(e, ClosedListener.ACCESS_CONTROL_FAILED);
+                }
             } finally {
                 cardService.close();
             }
-        } catch (IOException e) {
+        } catch (IOException | SecurityException e) {
             chipSessionSpan.recordException(e);
             chipSessionSpan.setStatus(StatusCode.ERROR, "NFC communication failed");
             listener.onError(e, ClosedListener.NFC_CHIP_COMMUNICATION_FAILED);
         } finally {
             chipSessionSpan.end();
         }
+    }
+
+    /**
+     * Checks if the exception or any exception in its cause chain is an NFC communication error.
+     */
+    private boolean hasNfcCommunicationErrorInCauseChain(Throwable throwable) {
+        Throwable current = throwable;
+        while (current != null) {
+            // IOException and SecurityException are always communication errors
+            if (current instanceof IOException || current instanceof SecurityException) {
+                return true;
+            }
+
+            String className = current.getClass().getName();
+
+            // TagLost exceptions are always communication errors
+            if (className.contains("TagLost")) {
+                return true;
+            }
+
+            current = current.getCause();
+        }
+        return false;
     }
 
     private EmrtdResult readEmrtdData(CardService cardService, byte[] activeAuthenticationChallenge)

@@ -375,7 +375,7 @@ public class WebsocketSessionCoordinator {
     }
 
     private void handleError(Exception e, String reason) {
-        Log.e(TAG, "Protocol error: " + reason, e);
+        Log.e(TAG, "Error: " + reason, e);
 
         if (sessionSpan != null) {
             sessionSpan.recordException(e);
@@ -409,12 +409,12 @@ public class WebsocketSessionCoordinator {
     }
 
     private void closeNfcConnection() {
-        if (isoDep.isConnected()) {
-            try {
+        try {
+            if (isoDep.isConnected()) {
                 isoDep.close();
-            } catch (Exception e) {
-                Log.w(TAG, "Failed to close IsoDep", e);
             }
+        } catch (Exception e) {
+            Log.w(TAG, "Failed to close IsoDep", e);
         }
     }
 

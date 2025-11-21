@@ -164,8 +164,8 @@ class ReadingActivity : AppCompatActivity() {
 
     private fun emrtdPassportListener(emrtdPassport: EmrtdPassport?, e: Exception?) {
         if (e != null) {
-            Toast.makeText(applicationContext, e.message, Toast.LENGTH_LONG).show()
-            return;
+            // closedListener handles user-friendly errors
+            return
         }
         showResultButton.setOnClickListener {
             val intent = Intent(this, ResultActivity::class.java).apply {
