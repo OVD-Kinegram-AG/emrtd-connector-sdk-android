@@ -1,5 +1,8 @@
 # Kinegram eMRTD Connector SDK Android - Changelog
 
+## 2.1.20
+* Update eMRTD library
+
 ## 2.1.19
 * Improve detection of NFC errors
 
