@@ -36,7 +36,21 @@ import io.opentelemetry.context.Scope;
  * Handles all logic for interacting with an NFC eMRTD.
  */
 public class EmrtdChipSession {
-    public static final int NFC_TIMEOUT_MS = 1000;
+    /**
+     * NFC timeout in milliseconds.
+     * <p>
+     * Must be high enough to cover PACE operations (GENERAL AUTHENTICATE step
+     * 2/3), which can involve large payloads and non-trivial crypto on the
+     * chip.
+     * <p>
+     * ICAO Doc 9303-10 App. B.11 recommends that the PICC keep the total
+     * processing time for a single I-Block <= 5s even when using S(WTX). This
+     * is a PICC-side guideline, it is not the same as the host timeout. The
+     * Android IsoDep timeout must exceed the end-to-end APDU round trip
+     * (including any WTX handled by the NFC stack), so we have to use an even
+     * higher limit to have some headroom.
+     */
+    public static final int NFC_TIMEOUT_MS = 10_000;
 
     /**
      * Listener for steps that happen during the session.
