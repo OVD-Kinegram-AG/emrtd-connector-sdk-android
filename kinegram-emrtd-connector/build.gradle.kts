@@ -55,7 +55,7 @@ dependencies {
     implementation("androidx.coordinatorlayout:coordinatorlayout:1.3.0")
     implementation("com.google.android.material:material:1.13.0")
     implementation("androidx.core:core:1.17.0")
-    implementation("com.kinegram.emrtd:emrtd-sdk-java:3.0.7")
+    implementation("com.kinegram.emrtd:emrtd-sdk-java:3.0.9")
 }
 
 buildscript {
