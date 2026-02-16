@@ -1,5 +1,8 @@
 # Kinegram eMRTD Connector SDK Android - Changelog
 
+## 2.1.23
+* Update eMRTD library
+
 ## 2.1.22
 * Update eMRTD library
 

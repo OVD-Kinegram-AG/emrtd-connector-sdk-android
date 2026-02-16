@@ -11,3 +11,4 @@
 local.properties
 /_site/
 /public
+.vscode/
