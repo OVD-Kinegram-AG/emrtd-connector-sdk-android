@@ -1,8 +1,6 @@
-import org.gradle.kotlin.dsl.configure
-import org.gradle.kotlin.dsl.withType
+import com.github.jk1.license.render.TextReportRenderer
 import org.jetbrains.dokka.gradle.DokkaExtension
 import org.jetbrains.dokka.gradle.engine.plugins.DokkaHtmlPluginParameters
-import com.github.jk1.license.render.*
 import java.net.URI
 
 plugins {
@@ -49,13 +47,35 @@ android {
 
 dependencies {
     implementation("org.java-websocket:Java-WebSocket:1.6.0")
-    implementation("androidx.appcompat:appcompat:1.7.1")
-    implementation("androidx.activity:activity:1.11.0")
+
+    implementation("androidx.appcompat:appcompat:1.7.1") {
+        exclude(group = "androidx.lifecycle", module = "lifecycle-viewmodel-ktx")
+        exclude(group = "androidx.lifecycle", module = "lifecycle-runtime-ktx")
+        exclude(group = "androidx.savedstate", module = "savedstate-ktx")
+    }
+
+    implementation("androidx.activity:activity:1.11.0") {
+        exclude(group = "androidx.lifecycle", module = "lifecycle-viewmodel-ktx")
+        exclude(group = "androidx.lifecycle", module = "lifecycle-runtime-ktx")
+        exclude(group = "androidx.savedstate", module = "savedstate-ktx")
+    }
+
     implementation("androidx.constraintlayout:constraintlayout:2.2.1")
     implementation("androidx.coordinatorlayout:coordinatorlayout:1.3.0")
-    implementation("com.google.android.material:material:1.13.0")
-    implementation("androidx.core:core:1.17.0")
-    implementation("com.kinegram.emrtd:emrtd-sdk-java:3.0.9")
+
+    implementation("com.google.android.material:material:1.13.0") {
+        exclude(group = "androidx.lifecycle", module = "lifecycle-viewmodel-ktx")
+        exclude(group = "androidx.lifecycle", module = "lifecycle-runtime-ktx")
+        exclude(group = "androidx.savedstate", module = "savedstate-ktx")
+    }
+
+    implementation("androidx.core:core:1.17.0") {
+        exclude(group = "androidx.lifecycle", module = "lifecycle-viewmodel-ktx")
+        exclude(group = "androidx.lifecycle", module = "lifecycle-runtime-ktx")
+        exclude(group = "androidx.savedstate", module = "savedstate-ktx")
+    }
+
+    implementation("com.kinegram.emrtd:emrtd-sdk-java:3.0.10")
 }
 
 buildscript {

@@ -17,3 +17,4 @@
 -keepclassmembers class org.jmrtd.PassportService {
     private org.jmrtd.DefaultFileSystem *;
 }
+-keep class com.kinegram.android.emrtdconnector.internal.**

@@ -9,11 +9,12 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.progressindicator.CircularProgressIndicator;
+
+import org.json.JSONException;
 
 import java.net.URISyntaxException;
 import java.util.Arrays;
@@ -41,12 +42,19 @@ public class EmrtdConnectorActivity extends AppCompatActivity {
     private final EmrtdPassportListener passportListener = (emrtdPassport, exception) -> {
         if (exception != null) {
             returnError(exception.toString());
-        } else {
-            Intent intent = new Intent();
-            intent.putExtra(RETURN_DATA, emrtdPassport);
-            setResult(Activity.RESULT_OK, intent);
-            finish();
         }
+
+        String json = null;
+        try {
+            json = emrtdPassport.toJSON().toString();
+        } catch (JSONException e) {
+            returnError(e.getLocalizedMessage());
+        }
+
+        Intent intent = new Intent();
+        intent.putExtra(RETURN_DATA, json);
+        setResult(Activity.RESULT_OK, intent);
+        finish();
     };
 
     private EmrtdConnector emrtdConnector;
@@ -72,7 +80,7 @@ public class EmrtdConnectorActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         if (intent == null) {
-            finish();
+            returnError("Could not get intent");
             return;
         }
 
@@ -82,7 +90,7 @@ public class EmrtdConnectorActivity extends AppCompatActivity {
         if (clientId == null || clientId.isEmpty() ||
                 validationUri == null || validationUri.isEmpty()
         ) {
-            finish();
+            returnError("clientId or validationUri is null or empty");
             return;
         }
 
@@ -112,13 +120,8 @@ public class EmrtdConnectorActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (!nfcAdapter.isEnabled()) {
-            Toast.makeText(this, R.string.nfc_unavailable, Toast.LENGTH_LONG).show();
-            finish();
-            return;
-        }
-
-        if (nfcAdapter == null) {
+        if (nfcAdapter == null || !nfcAdapter.isEnabled()) {
+            returnError(getString(R.string.nfc_unavailable));
             return;
         }
 
@@ -185,7 +188,7 @@ public class EmrtdConnectorActivity extends AppCompatActivity {
     private void returnError(String message) {
         Intent intent = new Intent();
         intent.putExtra(RETURN_ERROR, message);
-        setResult(Activity.RESULT_OK, intent);
+        setResult(Activity.RESULT_CANCELED, intent);
         finish();
     }
 
