@@ -1,5 +1,8 @@
 # Kinegram eMRTD Connector SDK Android - Changelog
 
+## 2.1.25
+* Fix NullPointerException in EmrtdConnectorActivity on failed session
+
 ## 2.1.24
 * Fix wrong access keys sometimes showing as NFC communication errors
 
