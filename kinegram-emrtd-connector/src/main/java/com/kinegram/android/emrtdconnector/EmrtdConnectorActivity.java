@@ -42,13 +42,15 @@ public class EmrtdConnectorActivity extends AppCompatActivity {
     private final EmrtdPassportListener passportListener = (emrtdPassport, exception) -> {
         if (exception != null) {
             returnError(exception.toString());
+            return;
         }
 
-        String json = null;
+        String json;
         try {
             json = emrtdPassport.toJSON().toString();
         } catch (JSONException e) {
             returnError(e.getLocalizedMessage());
+            return;
         }
 
         Intent intent = new Intent();
