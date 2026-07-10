@@ -1,30 +1,40 @@
 #!/usr/bin/env bash
 
+# The product documentation moved to https://docs.kinegram.digital.
+# This script adds redirect stubs for the old README/CHANGELOG pages to
+# the GitHub Pages payload in _site (Dokka/JavaDoc are copied there by
+# `make dokka`).
+
 # Exit on error.
 set -e
+
+DOCS=https://docs.kinegram.digital/mobile-chip-sdk/online/emrtd-connector/android
 
 # Create output directory.
 mkdir -p _site
 
-# MD to HTML.
-for F in ./*.md
-do
-	OF=${F##*/}
-	tools/md2html "$F" "_site/${OF%.md}.html"
-done
-mv _site/README.html _site/index.html
+# stub <name> <target-url>: write a redirect page to _site/<name>.html.
+stub() {
+	cat >"_site/$1.html" <<EOF
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Moved to docs.kinegram.digital</title>
+<meta name="robots" content="noindex">
+<meta http-equiv="refresh" content="0; url=$2">
+<link rel="canonical" href="$2">
+<link rel="icon" href="favicon.svg">
+</head>
+<body>
+<p>This page has moved to <a href="$2">$2</a>.</p>
+</body>
+</html>
+EOF
+}
 
-# Compose sed command.
-if [ "$(uname)" = Darwin ]; then
-	SED=(sed -i '')
-else
-	SED=(sed -i)
-fi
-
+stub index "$DOCS/"
+stub CHANGELOG "$DOCS/changelog"
 
 # Copy resources.
 cp kinegram-emrtd-connector/logo-icon.svg _site/favicon.svg
-
-# Fix links.
-"${SED[@]}" 's_.md#_.html#_g' _site/*.html
-"${SED[@]}" 's_.md"_.html"_g' _site/*.html
