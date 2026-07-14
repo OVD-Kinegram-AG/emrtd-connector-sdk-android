@@ -7,8 +7,15 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  # Build the API references (Dokka + JavaDoc) and upload them to the
+  # versioned reference bucket behind docs.kinegram.digital/reference/
+  publish-reference:
     runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.DOCS_REFERENCE_AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.DOCS_REFERENCE_AWS_SECRET_ACCESS_KEY }}
+      DOCS_REFERENCE_BUCKET: ${{ vars.DOCS_REFERENCE_BUCKET }}
+      DOCS_REFERENCE_KVS_ARN: ${{ vars.DOCS_REFERENCE_KVS_ARN }}
     steps:
       - name: Check-out repo
         uses: actions/checkout@v4
@@ -18,12 +25,20 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: gradle
-      - name: Build documentation
+      - name: Build and upload API references
+        run: make publish_reference
+  # The GitHub Pages site only carries redirect stubs to docs.kinegram.digital
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check-out repo
+        uses: actions/checkout@v4
+      - name: Build redirect stubs
         run: make pages
       - name: Upload artifact for Github pages
         uses: actions/upload-pages-artifact@v3
   deploy:
-    needs: build
+    needs: [build, publish-reference]
     permissions:
       pages: write
       id-token: write
