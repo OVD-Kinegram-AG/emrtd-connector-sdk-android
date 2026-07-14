@@ -24,7 +24,7 @@ functionality.
 [install]: https://docs.kinegram.digital/mobile-chip-sdk/online/emrtd-connector/android/installation
 [usage]: https://docs.kinegram.digital/mobile-chip-sdk/online/emrtd-connector/android/usage
 [changelog]: https://docs.kinegram.digital/mobile-chip-sdk/online/emrtd-connector/android/changelog
-[dokka]: https://ovd-kinegram-ag.github.io/emrtd-connector-sdk-android/dokka/
-[javadoc]: https://ovd-kinegram-ag.github.io/emrtd-connector-sdk-android/javadoc/
+[dokka]: https://docs.kinegram.digital/reference/emrtd-connector-android/latest/dokka/
+[javadoc]: https://docs.kinegram.digital/reference/emrtd-connector-android/latest/javadoc/
 [emrtd]: https://docs.kinegram.digital/concepts/emrtd-security-mechanisms
 [docval]: https://docs.kinegram.digital/mobile-chip-sdk/online/docval-service/
