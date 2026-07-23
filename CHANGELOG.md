@@ -1,5 +1,8 @@
 # Kinegram eMRTD Connector SDK Android - Changelog
 
+## 2.1.26
+* Fix rare NullPointerException on startup in minified (R8) builds
+
 ## 2.1.25
 * Fix NullPointerException in EmrtdConnectorActivity on failed session
 
