@@ -75,7 +75,7 @@ dependencies {
         exclude(group = "androidx.savedstate", module = "savedstate-ktx")
     }
 
-    implementation("com.kinegram.emrtd:emrtd-sdk-java:4.0.1")
+    implementation("com.kinegram.emrtd:emrtd-sdk-java:4.0.2")
 }
 
 buildscript {
