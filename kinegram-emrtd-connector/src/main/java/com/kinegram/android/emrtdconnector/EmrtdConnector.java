@@ -251,6 +251,7 @@ public class EmrtdConnector {
                 options,
                 clientId,
                 webSocketUri,
+                options.headersForHandshake(),
                 status -> handler.post(() -> statusListener.handle(status)),
                 (int code, String reason, boolean remote) ->
                         handler.post(() -> closedListener.handle(code, reason, remote)),

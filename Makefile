@@ -1,4 +1,4 @@
-.PHONY: update-license-report
+.PHONY: test update-license-report
 
 PACKAGE = com.kinegram.android.emrtdconnectorapp
 VERSION = $(shell sed -n 's/^version=//p' gradle.properties | tail -1)
@@ -13,6 +13,9 @@ debug:
 
 lint:
 	./gradlew :kinegram-emrtd-connector:lintDebug
+
+test:
+	./gradlew :kinegram-emrtd-connector:testReleaseUnitTest
 
 aar: lint
 	./gradlew :kinegram-emrtd-connector:assembleRelease

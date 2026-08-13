@@ -1,6 +1,7 @@
 package com.kinegram.android.emrtdconnector;
 
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -10,17 +11,37 @@ public class ConnectionOptions {
     private final String validationId;
     private final boolean enableDiagnostics;
     private final ChipAccessKey chipAccessKey;
+    private final Map<String, String> baggage;
+    private final String baggageHeader;
     private final Map<String, String> httpHeaders;
 
     private ConnectionOptions(Builder builder) {
         this.validationId = builder.validationId;
         this.enableDiagnostics = builder.enableDiagnostics;
         this.chipAccessKey = builder.chipAccessKey;
+        this.baggage = builder.baggage;
+        this.baggageHeader = builder.baggageHeader;
         if (builder.httpHeaders == null) {
-            this.httpHeaders = new HashMap<>();
+            this.httpHeaders = Collections.emptyMap();
         } else {
-            this.httpHeaders = builder.httpHeaders;
+            this.httpHeaders = Collections.unmodifiableMap(
+                    new LinkedHashMap<>(builder.httpHeaders));
         }
+    }
+
+    /**
+     * Returns the http headers for the websocket handshake. These are the
+     * headers from {@link Builder#setHttpHeaders(Map)} together with the
+     * {@code baggage} header of the entries from
+     * {@link Builder#setBaggage(Map)}.
+     */
+    Map<String, String> headersForHandshake() {
+        Map<String, String> headers = new LinkedHashMap<>(httpHeaders);
+        if (baggageHeader != null) {
+            headers.keySet().removeIf(BaggageHeader.NAME::equalsIgnoreCase);
+            headers.put(BaggageHeader.NAME, baggageHeader);
+        }
+        return headers;
     }
 
     /**
@@ -55,10 +76,21 @@ public class ConnectionOptions {
     }
 
     /**
-     * Gets additional http headers that will be used for the websocket
-     * connection.
+     * Gets the baggage entries that become the log context of the session in
+     * the DocVal server. Holds the entries that are sent, so it leaves out the
+     * entries that {@link Builder#setBaggage(Map)} dropped.
      *
-     * @return The http headers.
+     * @return The baggage entries. Empty if none are sent.
+     */
+    public Map<String, String> getBaggage() {
+        return this.baggage;
+    }
+
+    /**
+     * Gets the additional http headers for the websocket connection, as they
+     * were set.
+     *
+     * @return The http headers. Empty if none are set.
      */
     public Map<String, String> getHttpHeaders() {
         return this.httpHeaders;
@@ -71,6 +103,8 @@ public class ConnectionOptions {
         private String validationId;
         private boolean enableDiagnostics;
         private ChipAccessKey chipAccessKey;
+        private Map<String, String> baggage = Collections.emptyMap();
+        private String baggageHeader;
         private Map<String, String> httpHeaders;
 
         public Builder() {
@@ -147,6 +181,36 @@ public class ConnectionOptions {
          */
         public Builder setEnableDiagnostics(boolean enableDiagnostics) {
             this.enableDiagnostics = enableDiagnostics;
+            return this;
+        }
+
+        /**
+         * Sets the baggage entries that become the log context of the session
+         * in the DocVal server.
+         * <p>
+         * The server adds the entries as fields to every log line of the
+         * session. It only takes keys that are on its allow-list.
+         * <p>
+         * The entries go into the {@code baggage} header of the handshake, as
+         * defined by W3C Baggage. This method encodes the values, sorts the
+         * entries by key, and replaces a {@code baggage} header from
+         * {@link #setHttpHeaders(Map)}. A key must be a token of RFC 7230 and a
+         * value must not be empty. An entry that the method cannot send is
+         * dropped with a warning in the log. The method never throws.
+         * {@code null} or an empty map removes the entries.
+         *
+         * @param baggage The baggage entries.
+         * @return This instance of the builder for easier chaining.
+         */
+        public Builder setBaggage(Map<String, String> baggage) {
+            if (baggage == null || baggage.isEmpty()) {
+                this.baggage = Collections.emptyMap();
+                this.baggageHeader = null;
+                return this;
+            }
+            BaggageHeader.Entries entries = BaggageHeader.accept(baggage);
+            this.baggage = entries.map;
+            this.baggageHeader = entries.header;
             return this;
         }
 

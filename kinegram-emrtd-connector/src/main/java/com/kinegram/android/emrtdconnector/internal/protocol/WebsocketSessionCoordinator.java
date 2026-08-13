@@ -82,6 +82,7 @@ public class WebsocketSessionCoordinator {
             @NonNull ConnectionOptions options,
             @NonNull String clientId,
             @NonNull URI webSocketUri,
+            @NonNull Map<String, String> httpHeaders,
             @NonNull StatusListener statusListener,
             @NonNull ClosedListener closedListener,
             @Nullable Consumer<EmrtdPassport> emrtdPassportListener,
@@ -96,7 +97,7 @@ public class WebsocketSessionCoordinator {
         this.clientId = clientId;
         this.webSocketUri = webSocketUri;
 
-        this.websocketClient = new WebsocketClientHandler(webSocketUri, options.getHttpHeaders());
+        this.websocketClient = new WebsocketClientHandler(webSocketUri, httpHeaders);
         this.fileManager = new BinaryFileManager(websocketClient);
         this.dispatcher = new WebsocketMessageDispatcher(messageHandler);
     }

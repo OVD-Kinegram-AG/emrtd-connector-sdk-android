@@ -43,6 +43,15 @@ android {
     buildFeatures {
         buildConfig = true
     }
+
+    testOptions {
+        unitTests {
+            // Android methods on the unit test classpath are stubs that throw.
+            // Classes under test call android.util.Log, so let the stubs return
+            // a default value instead.
+            isReturnDefaultValues = true
+        }
+    }
 }
 
 dependencies {
@@ -76,6 +85,8 @@ dependencies {
     }
 
     implementation("com.kinegram.emrtd:emrtd-sdk-java:4.0.2")
+
+    testImplementation("junit:junit:4.13.2")
 }
 
 buildscript {
