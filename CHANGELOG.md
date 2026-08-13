@@ -1,5 +1,8 @@
 # Kinegram eMRTD Connector SDK Android - Changelog
 
+## 2.2.0
+* Add `ConnectionOptions.Builder#setBaggage(Map)` to send custom log context to the DocVal server. Needs DocVal Service 1.18.0 or newer
+
 ## 2.1.26
 * Fix rare NullPointerException on startup in minified (R8) builds
 
