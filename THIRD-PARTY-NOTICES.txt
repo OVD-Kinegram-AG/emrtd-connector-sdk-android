@@ -675,11 +675,11 @@ POM License: The Apache Software License, Version 2.0 - http://www.apache.org/li
 
 --------------------------------------------------------------------------------
 
-63. Group: org.jetbrains.kotlin  Name: kotlin-stdlib  Version: 2.4.10
+63. Group: org.jetbrains.kotlin  Name: kotlin-stdlib  Version: 2.2.10
 
 POM Project URL: https://kotlinlang.org/
 
-POM License: Apache-2.0 - http://www.apache.org/licenses/LICENSE-2.0.txt
+POM License: The Apache License, Version 2.0 - http://www.apache.org/licenses/LICENSE-2.0.txt
 
 --------------------------------------------------------------------------------
 

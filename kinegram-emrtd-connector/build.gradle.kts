@@ -5,7 +5,6 @@ import java.net.URI
 
 plugins {
     id("com.android.library")
-    id("kotlin-android") // Needed for Dokka to document anything
     id("org.jetbrains.dokka") version "2.1.0"
     id("org.jetbrains.dokka-javadoc") version "2.1.0"
     id("maven-publish")
@@ -105,6 +104,12 @@ extensions.configure<DokkaExtension>("dokka") {
     pluginsConfiguration.withType<DokkaHtmlPluginParameters>().configureEach {
         customAssets.from(project.file("logo-icon.svg"))
         footerMessage.set("© 2024 OVD Kinegram AG")
+    }
+
+    // The Android Gradle Plugin brings its own Kotlin support, and Dokka does not
+    // discover source sets through it, so the module names its own.
+    dokkaSourceSets.register("main") {
+        sourceRoots.from(project.file("src/main/java"))
     }
 
     dokkaSourceSets.configureEach {

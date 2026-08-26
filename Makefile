@@ -15,7 +15,7 @@ lint:
 	./gradlew :kinegram-emrtd-connector:lintDebug
 
 test:
-	./gradlew :kinegram-emrtd-connector:testReleaseUnitTest
+	./gradlew :kinegram-emrtd-connector:test
 
 aar: lint
 	./gradlew :kinegram-emrtd-connector:assembleRelease
