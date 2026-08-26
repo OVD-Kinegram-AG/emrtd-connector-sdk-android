@@ -1,5 +1,11 @@
 # Kinegram eMRTD Connector SDK Android - Changelog
 
+## 2.3.0
+* Add `ConnectionOptions.Builder#setFilesToRead(DataGroupSet)` to read only the data groups a use case needs. Reading less is faster, because DG2 holds the face image and takes most of the reading time
+* Add `StatusListener` constants for the data groups that were not readable before (DG3 to DG6, DG8 to DG10, DG13, DG16)
+* Add the `EmrtdConnectorActivity.DATA_GROUPS` intent extra to select the data groups for a read of the ready-made activity
+* Update eMRTD library to 4.1.0
+
 ## 2.2.0
 * Add `ConnectionOptions.Builder#setBaggage(Map)` to send custom log context to the DocVal server. Needs DocVal Service 1.18.0 or newer
 
