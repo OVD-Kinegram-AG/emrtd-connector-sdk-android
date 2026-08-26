@@ -13,6 +13,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.progressindicator.CircularProgressIndicator;
+import com.kinegram.emrtd.DataGroupSet;
 
 import org.json.JSONException;
 
@@ -27,6 +28,12 @@ public class EmrtdConnectorActivity extends AppCompatActivity {
     public final static String DOCUMENT_NUMBER = "DOCUMENT_NUMBER";
     public final static String DATE_OF_BIRTH = "DATE_OF_BIRTH";
     public final static String DATE_OF_EXPIRY = "DATE_OF_EXPIRY";
+    /**
+     * Optional {@code int[]} extra holding the numbers of the data groups to
+     * read, for example {@code {1, 2}} for the MRZ and the face image. Without
+     * it the read uses {@link DataGroupSet#STANDARD}.
+     */
+    public final static String DATA_GROUPS = "DATA_GROUPS";
     public final static String RETURN_DATA = "DATA";
     public final static String RETURN_ERROR = "ERROR";
 
@@ -68,6 +75,7 @@ public class EmrtdConnectorActivity extends AppCompatActivity {
     private String documentNumber;
     private String dateOfBirth;
     private String dateOfExpiry;
+    private DataGroupSet filesToRead;
 
     private TextView statusTextView;
     private CircularProgressIndicator progressIndicator;
@@ -101,6 +109,16 @@ public class EmrtdConnectorActivity extends AppCompatActivity {
         documentNumber = intent.getStringExtra(DOCUMENT_NUMBER);
         dateOfBirth = intent.getStringExtra(DATE_OF_BIRTH);
         dateOfExpiry = intent.getStringExtra(DATE_OF_EXPIRY);
+
+        int[] dataGroups = intent.getIntArrayExtra(DATA_GROUPS);
+        try {
+            filesToRead = dataGroups == null
+                    ? DataGroupSet.STANDARD
+                    : DataGroupSet.of(dataGroups);
+        } catch (IllegalArgumentException e) {
+            returnError(e.getLocalizedMessage());
+            return;
+        }
 
         Button cancelButton = findViewById(R.id.cancel_button);
         cancelButton.setOnClickListener(v -> finish());
@@ -177,6 +195,7 @@ public class EmrtdConnectorActivity extends AppCompatActivity {
         ConnectionOptions options = new ConnectionOptions.Builder()
                 .setChipAccessKey(chipAccessKey)
                 .setValidationId(validationId)
+                .setFilesToRead(filesToRead)
                 .build();
 
         progressIndicator.setVisibility(View.VISIBLE);
@@ -216,6 +235,24 @@ public class EmrtdConnectorActivity extends AppCompatActivity {
                 return R.string.state_read_dg14;
             case StatusListener.READ_DG15:
                 return R.string.state_read_dg15;
+            case StatusListener.READ_DG3:
+                return R.string.state_read_dg3;
+            case StatusListener.READ_DG4:
+                return R.string.state_read_dg4;
+            case StatusListener.READ_DG5:
+                return R.string.state_read_dg5;
+            case StatusListener.READ_DG6:
+                return R.string.state_read_dg6;
+            case StatusListener.READ_DG8:
+                return R.string.state_read_dg8;
+            case StatusListener.READ_DG9:
+                return R.string.state_read_dg9;
+            case StatusListener.READ_DG10:
+                return R.string.state_read_dg10;
+            case StatusListener.READ_DG13:
+                return R.string.state_read_dg13;
+            case StatusListener.READ_DG16:
+                return R.string.state_read_dg16;
             case StatusListener.CHIP_AUTHENTICATION:
                 return R.string.state_chip_authentication;
             case StatusListener.ACTIVE_AUTHENTICATION:

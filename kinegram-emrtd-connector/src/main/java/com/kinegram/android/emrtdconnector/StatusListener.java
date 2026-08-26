@@ -55,9 +55,44 @@ public interface StatusListener {
     String READ_DG2 = "READ_DG2";
 
     /**
+     * Reading Data Group 3.
+     */
+    String READ_DG3 = "READ_DG3";
+
+    /**
+     * Reading Data Group 4.
+     */
+    String READ_DG4 = "READ_DG4";
+
+    /**
+     * Reading Data Group 5.
+     */
+    String READ_DG5 = "READ_DG5";
+
+    /**
+     * Reading Data Group 6.
+     */
+    String READ_DG6 = "READ_DG6";
+
+    /**
      * Reading Data Group 7.
      */
     String READ_DG7 = "READ_DG7";
+
+    /**
+     * Reading Data Group 8.
+     */
+    String READ_DG8 = "READ_DG8";
+
+    /**
+     * Reading Data Group 9.
+     */
+    String READ_DG9 = "READ_DG9";
+
+    /**
+     * Reading Data Group 10.
+     */
+    String READ_DG10 = "READ_DG10";
 
     /**
      * Reading Data Group 11.
@@ -68,6 +103,16 @@ public interface StatusListener {
      * Reading Data Group 12.
      */
     String READ_DG12 = "READ_DG12";
+
+    /**
+     * Reading Data Group 13.
+     */
+    String READ_DG13 = "READ_DG13";
+
+    /**
+     * Reading Data Group 16.
+     */
+    String READ_DG16 = "READ_DG16";
 
     /**
      * Performing Passive Authentication.

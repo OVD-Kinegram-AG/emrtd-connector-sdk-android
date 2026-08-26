@@ -1,5 +1,7 @@
 package com.kinegram.android.emrtdconnector;
 
+import com.kinegram.emrtd.DataGroupSet;
+
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -11,6 +13,7 @@ public class ConnectionOptions {
     private final String validationId;
     private final boolean enableDiagnostics;
     private final ChipAccessKey chipAccessKey;
+    private final DataGroupSet filesToRead;
     private final Map<String, String> baggage;
     private final String baggageHeader;
     private final Map<String, String> httpHeaders;
@@ -19,6 +22,7 @@ public class ConnectionOptions {
         this.validationId = builder.validationId;
         this.enableDiagnostics = builder.enableDiagnostics;
         this.chipAccessKey = builder.chipAccessKey;
+        this.filesToRead = builder.filesToRead;
         this.baggage = builder.baggage;
         this.baggageHeader = builder.baggageHeader;
         if (builder.httpHeaders == null) {
@@ -76,6 +80,15 @@ public class ConnectionOptions {
     }
 
     /**
+     * Gets the data groups the read requests.
+     *
+     * @return The data groups. {@link DataGroupSet#STANDARD} if none are set.
+     */
+    public DataGroupSet getFilesToRead() {
+        return this.filesToRead;
+    }
+
+    /**
      * Gets the baggage entries that become the log context of the session in
      * the DocVal server. Holds the entries that are sent, so it leaves out the
      * entries that {@link Builder#setBaggage(Map)} dropped.
@@ -103,6 +116,7 @@ public class ConnectionOptions {
         private String validationId;
         private boolean enableDiagnostics;
         private ChipAccessKey chipAccessKey;
+        private DataGroupSet filesToRead = DataGroupSet.STANDARD;
         private Map<String, String> baggage = Collections.emptyMap();
         private String baggageHeader;
         private Map<String, String> httpHeaders;
@@ -153,6 +167,28 @@ public class ConnectionOptions {
          */
         public Builder setChipAccessKey(ChipAccessKey chipAccessKey) {
             this.chipAccessKey = chipAccessKey;
+            return this;
+        }
+
+        /**
+         * Sets the data groups to read from the chip.
+         * <p>
+         * Reading fewer files is worthwhile because DG2 holds the face image
+         * and takes most of the reading time. See {@link DataGroupSet} for the
+         * available selections and for what a selection does not influence.
+         *
+         * @param filesToRead The data groups to read, for example
+         *                    {@link DataGroupSet#MINIMAL_KYC} for the MRZ and
+         *                    the face image. {@code null} restores the default
+         *                    {@link DataGroupSet#STANDARD}.
+         * @return This instance of the builder for easier chaining.
+         */
+        public Builder setFilesToRead(DataGroupSet filesToRead) {
+            if (filesToRead == null) {
+                this.filesToRead = DataGroupSet.STANDARD;
+            } else {
+                this.filesToRead = filesToRead;
+            }
             return this;
         }
 

@@ -84,7 +84,7 @@ dependencies {
         exclude(group = "androidx.savedstate", module = "savedstate-ktx")
     }
 
-    implementation("com.kinegram.emrtd:emrtd-sdk-java:4.0.2")
+    api("com.kinegram.emrtd:emrtd-sdk-java:4.1.0")
 
     testImplementation("junit:junit:4.13.2")
 }

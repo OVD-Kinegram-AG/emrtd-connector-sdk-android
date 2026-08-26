@@ -114,6 +114,11 @@ public class WebsocketSessionCoordinator {
 
                     transitionState(ProtocolState.READING_CHIP);
 
+                    // Names the selection in the session log, so that a field trace shows
+                    // which files a read was asked for.
+                    sendMonitoringMessage(new WebsocketMonitoringMessage(
+                            "Files to read: " + options.getFilesToRead()));
+
                     if (sessionSpan != null) {
                         sessionSpan.addEvent("accept_message_received",
                                 Attributes.builder()

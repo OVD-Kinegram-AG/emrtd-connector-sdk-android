@@ -4,9 +4,11 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.InputFilter
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.Spinner
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -47,6 +49,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var documentNumberEditText: EditText
     private lateinit var dateOfBirthEditText: EditText
     private lateinit var dateOfExpiryEditText: EditText
+    private lateinit var dataGroupsSpinner: Spinner
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,6 +63,13 @@ class MainActivity : AppCompatActivity() {
         dateOfBirthEditText = findViewById(R.id.date_of_birth)
         dateOfExpiryEditText = findViewById(R.id.date_of_expiry)
         documentNumberEditText.filters = arrayOf(InputFilter.AllCaps())
+
+        dataGroupsSpinner = findViewById(R.id.data_groups)
+        dataGroupsSpinner.adapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_spinner_dropdown_item,
+            DataGroupProfile.entries.map { it.label }
+        )
 
         restorePreferredValues()
 
@@ -89,6 +99,9 @@ class MainActivity : AppCompatActivity() {
         documentNumberEditText.setText(get(EmrtdConnectorActivity.DOCUMENT_NUMBER))
         dateOfBirthEditText.setText(get(EmrtdConnectorActivity.DATE_OF_BIRTH))
         dateOfExpiryEditText.setText(get(EmrtdConnectorActivity.DATE_OF_EXPIRY))
+        dataGroupsSpinner.setSelection(
+            DataGroupProfile.of(get(EmrtdConnectorActivity.DATA_GROUPS)).ordinal
+        )
     }
 
     private fun storePreferredValues() {
@@ -103,6 +116,10 @@ class MainActivity : AppCompatActivity() {
             putString(
                 EmrtdConnectorActivity.DATE_OF_EXPIRY,
                 dateOfExpiryEditText.text.toString()
+            )
+            putString(
+                EmrtdConnectorActivity.DATA_GROUPS,
+                selectedDataGroupProfile().name
             )
         }
     }
@@ -156,7 +173,14 @@ class MainActivity : AppCompatActivity() {
             EmrtdConnectorActivity.VALIDATION_URI,
             "wss://docval.kurzdigital.com/ws2/validate"
         )
+        putExtra(
+            EmrtdConnectorActivity.DATA_GROUPS,
+            selectedDataGroupProfile().dataGroupNumbers
+        )
     }
+
+    private fun selectedDataGroupProfile() =
+        DataGroupProfile.entries[dataGroupsSpinner.selectedItemPosition]
 
     private fun getUUIDString() = UUID.randomUUID().toString()
 

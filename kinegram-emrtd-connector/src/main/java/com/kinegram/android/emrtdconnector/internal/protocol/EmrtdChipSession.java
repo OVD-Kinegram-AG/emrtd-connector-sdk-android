@@ -86,6 +86,7 @@ public class EmrtdChipSession {
                 .setAttribute("nfc.timeout_ms", NFC_TIMEOUT_MS)
                 .setAttribute("emrtd_connector.validation_id", options.getValidationId())
                 .setAttribute("has_active_auth_challenge", activeAuthenticationChallenge != null)
+                .setAttribute("emrtd.files_to_read", options.getFilesToRead().toString())
                 .startSpan();
 
         try (Scope ignored = chipSessionSpan.makeCurrent()) {
@@ -183,7 +184,8 @@ public class EmrtdChipSession {
                 createProgressListener(),
                 TagLostException.class,
                 this::handleChipAuthentication,
-                activeAuthenticationChallenge
+                activeAuthenticationChallenge,
+                options.getFilesToRead()
         );
     }
 

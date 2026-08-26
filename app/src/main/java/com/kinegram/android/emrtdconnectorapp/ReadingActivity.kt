@@ -22,6 +22,7 @@ import com.kinegram.android.emrtdconnector.EmrtdConnector
 import com.kinegram.android.emrtdconnector.EmrtdConnectorActivity
 import com.kinegram.android.emrtdconnector.EmrtdPassport
 import com.kinegram.android.emrtdconnector.StatusListener
+import com.kinegram.emrtd.DataGroupSet
 
 class ReadingActivity : AppCompatActivity() {
     private lateinit var statusTextView: TextView
@@ -36,6 +37,7 @@ class ReadingActivity : AppCompatActivity() {
     private lateinit var documentNumber: String
     private lateinit var dateOfBirth: String
     private lateinit var dateOfExpiry: String
+    private lateinit var filesToRead: DataGroupSet
 
     private lateinit var pendingIntent: PendingIntent
     private lateinit var emrtdConnector: EmrtdConnector
@@ -61,6 +63,10 @@ class ReadingActivity : AppCompatActivity() {
         documentNumber = intent.getStringExtra(EmrtdConnectorActivity.DOCUMENT_NUMBER) ?: ""
         dateOfBirth = intent.getStringExtra(EmrtdConnectorActivity.DATE_OF_BIRTH) ?: ""
         dateOfExpiry = intent.getStringExtra(EmrtdConnectorActivity.DATE_OF_EXPIRY) ?: ""
+        filesToRead = intent.getIntArrayExtra(EmrtdConnectorActivity.DATA_GROUPS)
+            ?.let { DataGroupSet.of(*it) }
+            ?: DataGroupSet.STANDARD
+        statusTextView.text = getString(R.string.reading_data_groups, filesToRead)
 
         emrtdConnector = EmrtdConnector(
             clientId,
@@ -132,6 +138,7 @@ class ReadingActivity : AppCompatActivity() {
         val options = ConnectionOptions.Builder()
             .setValidationId(validationId)
             .setChipAccessKey(chipAccessKey)
+            .setFilesToRead(filesToRead)
             .build()
 
         emrtdConnector.connect(isoDep, options)
@@ -154,9 +161,18 @@ class ReadingActivity : AppCompatActivity() {
             StatusListener.ACTIVE_AUTHENTICATION -> {}
             StatusListener.READ_DG1 -> {}
             StatusListener.READ_DG2 -> {}
+            StatusListener.READ_DG3 -> {}
+            StatusListener.READ_DG4 -> {}
+            StatusListener.READ_DG5 -> {}
+            StatusListener.READ_DG6 -> {}
             StatusListener.READ_DG7 -> {}
+            StatusListener.READ_DG8 -> {}
+            StatusListener.READ_DG9 -> {}
+            StatusListener.READ_DG10 -> {}
             StatusListener.READ_DG11 -> {}
             StatusListener.READ_DG12 -> {}
+            StatusListener.READ_DG13 -> {}
+            StatusListener.READ_DG16 -> {}
             StatusListener.PASSIVE_AUTHENTICATION -> {}
             StatusListener.DONE -> {}
         }

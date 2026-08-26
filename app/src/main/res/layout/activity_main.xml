@@ -111,5 +111,18 @@
             android:layout_height="wrap_content"
             android:text="@string/access_chip_using_mrz_info" />
 
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="24dp" />
+
+        <TextView
+            style="@style/Label"
+            android:text="@string/data_groups" />
+
+        <Spinner
+            android:id="@+id/data_groups"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
     </LinearLayout>
 </ScrollView>

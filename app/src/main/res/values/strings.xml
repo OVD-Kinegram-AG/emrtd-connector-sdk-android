@@ -12,9 +12,11 @@
     <string name="mrz_date_hint">YYMMDD</string>
     <string name="access_chip_using_can">Access Chip using CAN</string>
     <string name="access_chip_using_mrz_info">Access Chip using MRZ Info</string>
+    <string name="data_groups">Data groups to read (both buttons)</string>
 
     <string name="access_chip">Access Chip</string>
     <string name="place_phone_on_document">Place Phone on Document</string>
+    <string name="reading_data_groups">Data groups: %s</string>
     <string name="nfc_unavailable">NFC unavailable</string>
     <string name="cancel">Cancel</string>
     <string name="closed_by_remote_endpoint_message">WebSocket closed by remote endpoint\n%1d: %2s</string>

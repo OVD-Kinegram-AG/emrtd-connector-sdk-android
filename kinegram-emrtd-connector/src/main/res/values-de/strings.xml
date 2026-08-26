@@ -30,6 +30,15 @@
     <string name="state_read_dg12">Lese Data Group 12</string>
     <string name="state_read_dg14">Lese Data Group 14</string>
     <string name="state_read_dg15">Lese Data Group 15</string>
+    <string name="state_read_dg3">Lese Data Group 3</string>
+    <string name="state_read_dg4">Lese Data Group 4</string>
+    <string name="state_read_dg5">Lese Data Group 5</string>
+    <string name="state_read_dg6">Lese Data Group 6</string>
+    <string name="state_read_dg8">Lese Data Group 8</string>
+    <string name="state_read_dg9">Lese Data Group 9</string>
+    <string name="state_read_dg10">Lese Data Group 10</string>
+    <string name="state_read_dg13">Lese Data Group 13</string>
+    <string name="state_read_dg16">Lese Data Group 16</string>
     <string name="state_chip_authentication">Chip Authentication</string>
     <string name="state_active_authentication">Active Authentication</string>
     <string name="state_passive_authentication">Passive Authentication</string>
