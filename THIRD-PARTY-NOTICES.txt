@@ -585,7 +585,7 @@ POM License: The Apache Software License, Version 2.0 - http://www.apache.org/li
 
 --------------------------------------------------------------------------------
 
-52. Group: com.kinegram.emrtd  Name: emrtd-sdk-java  Version: 4.0.2
+52. Group: com.kinegram.emrtd  Name: emrtd-sdk-java  Version: 4.1.0
 
 POM Project URL: https://kinegram.digital
 
@@ -675,11 +675,11 @@ POM License: The Apache Software License, Version 2.0 - http://www.apache.org/li
 
 --------------------------------------------------------------------------------
 
-63. Group: org.jetbrains.kotlin  Name: kotlin-stdlib  Version: 2.0.21
+63. Group: org.jetbrains.kotlin  Name: kotlin-stdlib  Version: 2.4.10
 
 POM Project URL: https://kotlinlang.org/
 
-POM License: The Apache License, Version 2.0 - http://www.apache.org/licenses/LICENSE-2.0.txt
+POM License: Apache-2.0 - http://www.apache.org/licenses/LICENSE-2.0.txt
 
 --------------------------------------------------------------------------------
 
