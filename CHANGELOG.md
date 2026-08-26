@@ -1,5 +1,9 @@
 # Kinegram eMRTD Connector SDK Android - Changelog
 
+## 2.3.1
+* Fix the third-party notices, which still named version 4.0.2 of the eMRTD library
+* Update Kotlin to 2.4.10, which brings a newer `kotlin-stdlib`
+
 ## 2.3.0
 * Add `ConnectionOptions.Builder#setFilesToRead(DataGroupSet)` to read only the data groups a use case needs. Reading less is faster, because DG2 holds the face image and takes most of the reading time
 * Add `StatusListener` constants for the data groups that were not readable before (DG3 to DG6, DG8 to DG10, DG13, DG16)
