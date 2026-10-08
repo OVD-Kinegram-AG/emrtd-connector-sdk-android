@@ -1,5 +1,10 @@
 # Kinegram eMRTD Connector SDK Android - Changelog
 
+## 2.4.0
+* Add `EmrtdPassport.PassiveAuthenticationDetails#revocation` with the revocation status of the Document Signer Certificate, checked against the Certificate Revocation Lists (CRLs) of the DocVal server. Needs DocVal Service 1.19.1 or newer
+* Fix results failing to parse when the DocVal server could not run all Passive Authentication checks, e.g. without a trusted Country Certificate
+* `EmrtdPassport.PassiveAuthenticationDetails#error` is now `null` instead of the string `"null"` when there is no error
+
 ## 2.3.1
 * Fix the third-party notices, which still named version 4.0.2 of the eMRTD library
 * Update Kotlin to 2.4.10, which brings a newer `kotlin-stdlib`
