@@ -33,6 +33,9 @@
     <string name="document_is_expired">❌ Document is expired</string>
     <string name="passive_authentication_failed">❌ Data Integrity and Authenticity not confirmed.</string>
     <string name="passive_authentication_success">✅ Data Integrity and Authenticity confirmed.</string>
+    <string name="certificate_not_revoked">✅ Document Signer Certificate is not revoked.</string>
+    <string name="certificate_revoked">❌ Document Signer Certificate is revoked.</string>
+    <string name="certificate_revocation_undetermined">⚠️ Revocation status of the Document Signer Certificate is undetermined.</string>
     <string name="chip_is_cloned">❌ Chip is cloned.</string>
     <string name="chip_is_not_cloned">✅ Chip ist not cloned.</string>
 </resources>

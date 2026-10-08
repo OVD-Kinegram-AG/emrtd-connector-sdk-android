@@ -25,6 +25,14 @@ class ResultActivity : AppCompatActivity() {
             R.string.passive_authentication_failed
         }
 
+        val revocationDescriptionResId =
+            when (emrtd.passiveAuthenticationDetails?.revocation?.certStatus) {
+                EmrtdPassport.CertStatus.UNREVOKED -> R.string.certificate_not_revoked
+                EmrtdPassport.CertStatus.REVOKED -> R.string.certificate_revoked
+                EmrtdPassport.CertStatus.UNDETERMINED -> R.string.certificate_revocation_undetermined
+                null -> 0
+            }
+
         val cloneDescriptionResId =
             listOf(emrtd.activeAuthenticationResult, emrtd.chipAuthenticationResult).let {
                 when {
@@ -44,6 +52,9 @@ class ResultActivity : AppCompatActivity() {
                 append(getString(R.string.document_is_expired), "\n\n")
             }
             append(getString(passiveAuthenticationDescriptionResId), "\n\n")
+            if (revocationDescriptionResId != 0) {
+                append(getString(revocationDescriptionResId), "\n\n")
+            }
             if (cloneDescriptionResId != 0) {
                 append(getString(cloneDescriptionResId), "\n\n")
             }

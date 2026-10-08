@@ -331,9 +331,16 @@ public class EmrtdPassport implements Parcelable {
         public final Boolean allHashesValid;
         public final String error;
 
+        /**
+         * The revocation check of the Document Signer Certificate.
+         * Null if the Document Validation Service is older than 1.19.1.
+         */
+        public final Revocation revocation;
+
         private PassiveAuthenticationDetails(JSONObject obj) throws JSONException {
             sodSignatureValid = JSONUtils.optBool(obj, "sodSignatureValid");
             documentCertificateValid = JSONUtils.optBool(obj, "documentCertificateValid");
+            revocation = Revocation.opt(obj);
             dataGroupsChecked = JSONUtils.optIntArray(obj, "dataGroupsChecked");
             dataGroupsWithValidHash = JSONUtils.optIntArray(
                     obj, "dataGroupsWithValidHash");
@@ -351,11 +358,128 @@ public class EmrtdPassport implements Parcelable {
             return "PassiveAuthenticationDetails{" +
                     "\n\tsodSignatureValid=" + sodSignatureValid +
                     ",\n\tdocumentCertificateValid=" + documentCertificateValid +
+                    ",\n\trevocation=" + revocation +
                     ",\n\tdataGroupsChecked=" + Arrays.toString(dataGroupsChecked) +
                     ",\n\tdataGroupsWithValidHash=" + Arrays.toString(dataGroupsWithValidHash) +
                     ",\n\tallHashesValid=" + allHashesValid +
                     ",\n\terror='" + error + '\'' +
                     "\n}";
+        }
+    }
+
+    /**
+     * The revocation check of the Document Signer Certificate against the
+     * Certificate Revocation Lists (CRLs) of the Document Validation Service.
+     */
+    public static class Revocation {
+        /**
+         * The revocation status of the Document Signer Certificate.
+         * Null if the status is unknown to this version of the SDK.
+         */
+        public final CertStatus certStatus;
+        /**
+         * The revocation policy of the server, "soft-fail" or "hard-fail".
+         */
+        public final String policy;
+        /**
+         * The grace period of a stale CRL under "hard-fail", in seconds.
+         */
+        public final long staleCrlGraceSeconds;
+        /**
+         * The CRL behind certStatus. Null if no CRL applies to the
+         * Document Signer Certificate.
+         */
+        public final Crl crl;
+
+        private Revocation(JSONObject obj) {
+            certStatus = CertStatus.fromJson(obj.optString("certStatus"));
+            policy = obj.optString("policy", null);
+            staleCrlGraceSeconds = obj.optLong("staleCrlGraceSeconds");
+            crl = Crl.opt(obj);
+        }
+
+        private static Revocation opt(JSONObject obj) {
+            JSONObject objRevocation = obj.optJSONObject("revocation");
+            return objRevocation != null ? new Revocation(objRevocation) : null;
+        }
+
+        @Override
+        public String toString() {
+            return "Revocation{" +
+                    "\n\tcertStatus=" + certStatus +
+                    ",\n\tpolicy='" + policy + '\'' +
+                    ",\n\tstaleCrlGraceSeconds=" + staleCrlGraceSeconds +
+                    ",\n\tcrl=" + crl +
+                    "\n}";
+        }
+    }
+
+    /**
+     * A Certificate Revocation List (CRL).
+     */
+    public static class Crl {
+        /**
+         * The thisUpdate of the CRL, in ISO 8601, UTC, e.g. "2026-09-01T12:00:00Z".
+         */
+        public final String thisUpdate;
+        /**
+         * The nextUpdate of the CRL, in ISO 8601, UTC. The CRL is stale if
+         * this is in the past.
+         */
+        public final String nextUpdate;
+        /**
+         * The issuer name of the CRL.
+         */
+        public final String issuer;
+
+        private Crl(JSONObject obj) {
+            thisUpdate = obj.optString("thisUpdate", null);
+            nextUpdate = obj.optString("nextUpdate", null);
+            issuer = obj.optString("issuer", null);
+        }
+
+        private static Crl opt(JSONObject obj) {
+            JSONObject objCrl = obj.optJSONObject("crl");
+            return objCrl != null ? new Crl(objCrl) : null;
+        }
+
+        @Override
+        public String toString() {
+            return "Crl{" +
+                    "\n\tthisUpdate='" + thisUpdate + '\'' +
+                    ",\n\tnextUpdate='" + nextUpdate + '\'' +
+                    ",\n\tissuer='" + issuer + '\'' +
+                    "\n}";
+        }
+    }
+
+    public enum CertStatus {
+        /**
+         * A fresh CRL applies to the certificate and does not list it.
+         */
+        UNREVOKED,
+        /**
+         * An applicable CRL lists the certificate, or the CSCA key that
+         * issued it is compromised.
+         */
+        REVOKED,
+        /**
+         * The DocVal Service cannot tell whether the certificate is revoked.
+         */
+        UNDETERMINED;
+
+        private static CertStatus fromJson(String value) {
+            for (CertStatus status : values()) {
+                if (status.name().equalsIgnoreCase(value)) {
+                    return status;
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public String toString() {
+            return this.name();
         }
     }
 
