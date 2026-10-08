@@ -345,7 +345,7 @@ public class EmrtdPassport implements Parcelable {
             dataGroupsWithValidHash = JSONUtils.optIntArray(
                     obj, "dataGroupsWithValidHash");
             allHashesValid = JSONUtils.optBool(obj, "allHashesValid");
-            error = obj.getString("error");
+            error = obj.isNull("error") ? null : obj.getString("error");
         }
 
         private static PassiveAuthenticationDetails opt(JSONObject obj) throws JSONException {

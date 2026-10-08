@@ -52,7 +52,7 @@ class JSONUtils {
     }
 
     static Boolean optBool(JSONObject obj, String name) throws JSONException {
-        return obj.has(name) ? obj.getBoolean(name) : null;
+        return obj.isNull(name) ? null : obj.getBoolean(name);
     }
 
     static byte[] decodeB64(String s) {
