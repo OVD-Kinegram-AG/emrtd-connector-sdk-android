@@ -7,7 +7,7 @@ import com.kinegram.android.emrtdconnector.ChipAccessKey;
 import com.kinegram.android.emrtdconnector.ClosedListener;
 import com.kinegram.android.emrtdconnector.ConnectionOptions;
 import com.kinegram.android.emrtdconnector.EmrtdConnector;
-import com.kinegram.android.emrtdconnector.internal.IsoDepCardService;
+import com.kinegram.android.emrtdconnector.internal.NfcCardService;
 import com.kinegram.emrtd.AccessInformation;
 import com.kinegram.emrtd.EmrtdReader;
 import com.kinegram.emrtd.EmrtdReaderException;
@@ -103,7 +103,7 @@ public class EmrtdChipSession {
                             .put("nfc.extended_length_supported", isoDep.isExtendedLengthApduSupported())
                             .build());
 
-            CardService cardService = new IsoDepCardService(isoDep, options.isDiagnosticsEnabled());
+            CardService cardService = new NfcCardService(isoDep, options.isDiagnosticsEnabled());
             try {
                 EmrtdResult result = readEmrtdData(cardService, activeAuthenticationChallenge);
 
