@@ -1,5 +1,8 @@
 # Kinegram eMRTD Connector SDK Android - Changelog
 
+## 2.4.1
+* Replace the internal, LGPL-derived `IsoDepCardService` with an own implementation
+
 ## 2.4.0
 * Add `EmrtdPassport.PassiveAuthenticationDetails#revocation` with the revocation status of the Document Signer Certificate, checked against the Certificate Revocation Lists (CRLs) of the DocVal server. Needs DocVal Service 1.19.1 or newer
 * Fix results failing to parse when the DocVal server could not run all Passive Authentication checks, e.g. without a trusted Country Certificate
