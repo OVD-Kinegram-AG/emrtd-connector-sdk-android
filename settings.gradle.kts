@@ -11,6 +11,12 @@ dependencyResolutionManagement {
         mavenLocal()
         google()
         mavenCentral()
+        // Needed for emrtd-sdk-java
+        maven {
+            name = "kinegram"
+            url = uri("https://maven.registry.kinegram.digital/releases")
+            content { includeGroupByRegex("com\\.kinegram\\..*") }
+        }
         maven {
             url = uri("https://git.kurzdigital.com/api/v4/groups/326/-/packages/maven")
             name = "gitlab-maven"

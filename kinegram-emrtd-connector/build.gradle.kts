@@ -167,8 +167,14 @@ publishing {
     }
     repositories {
         maven {
-            name = "local"
-            url = uri("${project.buildDir}/repo")
+            name = "kinegram"
+            url = uri(
+                providers.gradleProperty("kinegramRepository")
+                    .getOrElse("s3://kinegram-maven-registry-prod/releases")
+            )
+            // Uses the standard AWS credential chain, for example
+            // AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY.
+            authentication { create<AwsImAuthentication>("awsIm") }
         }
     }
 }
@@ -178,24 +184,6 @@ signing {
     val signingPassword = project.findProperty("signingPassword") as String?
     useInMemoryPgpKeys(signingKey, signingPassword)
     sign(publishing.publications["release"])
-}
-
-// Maven Central has deprecated their old OSSRH publishing method in favor of their new "Central
-// "Portal". Unfortunately, the only two official ways to publish to this new central portal are
-// with Maven or by manually uploading a ZIP file. According to Sonatype, Gradle support is on
-// their roadmap but as of today (2024-03-11) the only option are unofficial community Gradle
-// plugins with single-digital GitHub stars. So for now, we create a zip file and use the manual
-// upload process.
-// See https://github.com/gradle/gradle/issues/28120
-tasks.register<Zip>("generateDistributionZip") {
-    val publishTask = tasks.named(
-        "publishReleasePublicationToLocalRepository",
-        PublishToMavenRepository::class.java
-    )
-    from(publishTask.map { it.repository.url })
-    into("")
-    exclude("**/maven-metadata*.*") // Sonatype does not want these files in ZIP file
-    archiveFileName.set("kinegram-emrtd-connector.zip")
 }
 
 licenseReport {

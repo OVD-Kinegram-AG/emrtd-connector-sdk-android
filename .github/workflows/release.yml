@@ -1,5 +1,5 @@
-# When a tag in the format x.y.z is pushed, this workflow will build the project,
-# create a GitHub release and upload the distribution to Maven Central.
+# When a tag in the format x.y.z is pushed, this workflow publishes the library
+# to the Kinegram Maven registry and creates a GitHub release.
 name: Release
 
 on:
@@ -29,13 +29,30 @@ jobs:
         run: echo -e "\nversion=$GITHUB_REF_NAME" >> gradle.properties
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-      - name: Build distribution
-        run: ./gradlew :kinegram-emrtd-connector:generateDistributionZip
-      - name: Archive distribution
-        uses: actions/upload-artifact@v4
-        with:
-          name: distribution
-          path: kinegram-emrtd-connector/build/distributions/kinegram-emrtd-connector.zip
+      # A published version never changes. Stop if the registry has it already.
+      - name: Check that the version is new
+        run: |
+          status=$(curl --silent --output /dev/null --write-out '%{http_code}' \
+            "https://maven.registry.kinegram.digital/releases/com/kinegram/android/emrtdconnector/$GITHUB_REF_NAME/emrtdconnector-$GITHUB_REF_NAME.pom")
+          if [ "$status" != 404 ]; then
+            echo "The registry answers $status for version $GITHUB_REF_NAME. Expected 404."
+            exit 1
+          fi
+      - name: Publish to the Kinegram Maven registry
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.MAVEN_PUBLISHER_AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.MAVEN_PUBLISHER_AWS_SECRET_ACCESS_KEY }}
+          # Gradle's S3 transport uses the AWS SDK for Java 1.x. This hides the
+          # end-of-support notice of the SDK, which comes with a long stack trace.
+          # See https://github.com/gradle/gradle/issues/27774
+          AWS_JAVA_V1_DISABLE_DEPRECATION_ANNOUNCEMENT: "true"
+        run: |
+          # Without credentials, Gradle reports only "Access Denied".
+          if [ -z "$AWS_ACCESS_KEY_ID" ] || [ -z "$AWS_SECRET_ACCESS_KEY" ]; then
+            echo "The secrets MAVEN_PUBLISHER_AWS_ACCESS_KEY_ID and MAVEN_PUBLISHER_AWS_SECRET_ACCESS_KEY are missing."
+            exit 1
+          fi
+          ./gradlew :kinegram-emrtd-connector:publishReleasePublicationToKinegramRepository
   create-github-release:
     needs: build
     permissions:
@@ -63,21 +80,3 @@ jobs:
         with:
           body_path: "CHANGELOG-${{ github.ref_name }}.md"
           body: ""
-  # Currently there is no official Gradle plugin to publish artifacts to the new Central Portal, so
-  # we have to do it manually using the Publisher API.
-  upload-distribution-to-central-portal:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download distribution artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: distribution
-      - name: Upload Artifact
-        run: |
-          curl --request POST \
-            --verbose \
-            --fail-with-body \
-            --header 'Authorization: Bearer ${{secrets.SONATYPE_TOKEN}}' \
-            --form bundle=@kinegram-emrtd-connector.zip \
-            "https://central.sonatype.com/api/v1/publisher/upload?publishingType=AUTOMATIC&name=com.kinegram.android:emrtdconnector:$GITHUB_REF_NAME"
