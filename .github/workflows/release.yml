@@ -13,6 +13,8 @@ jobs:
       contents: write
       discussions: write
     runs-on: ubuntu-latest
+    # Holds the signing key and the publisher keys. It accepts only tags.
+    environment: release
     env:
       ORG_GRADLE_PROJECT_signingKey : ${{ secrets.SIGNING_KEY }}
       ORG_GRADLE_PROJECT_signingPassword : ${{ secrets.SIGNING_PASSWORD }}
