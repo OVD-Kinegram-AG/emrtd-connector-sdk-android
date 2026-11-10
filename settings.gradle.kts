@@ -8,13 +8,16 @@ pluginManagement {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
-        mavenLocal()
         google()
         mavenCentral()
         // Needed for emrtd-sdk-java
         maven {
             name = "kinegram"
             url = uri("https://maven.registry.kinegram.digital/releases")
+            content { includeGroupByRegex("com\\.kinegram\\..*") }
+        }
+        // Local builds of emrtd-sdk-java for tests before a release
+        mavenLocal {
             content { includeGroupByRegex("com\\.kinegram\\..*") }
         }
     }
